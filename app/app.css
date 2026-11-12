@@ -283,3 +283,14 @@ nav.jump button { flex: none; border: 1px solid var(--line); background: var(--s
 #apkban .ab-x { flex: none; border: 0; background: none; color: var(--muted); font-size: 22px; line-height: 1; padding: 4px; cursor: pointer; }
 /* без «якорной» прокрутки: иначе сжатие плашки сдвигает страницу */
 html, body { overflow-anchor: none; }
+/* поиск по тексту КР */
+.khits { display: flex; flex-direction: column; gap: 8px; margin: 0 12px; }
+.khit { gap: 0; padding: 4px 14px; }
+.kh-h { display: flex; align-items: center; gap: 8px; padding: 8px 0; text-decoration: none; color: var(--fg); }
+.kh-h b { font-size: 15px; line-height: 1.25; }
+.kh-s { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; border-top: 1px solid var(--line); text-decoration: none; color: var(--fg); font-size: 14px; line-height: 1.4; }
+.kh-s small { font-size: 12px; color: var(--muted); }
+.kh-s mark, .kh-s mark { background: var(--warn-soft); color: inherit; border-radius: 3px; padding: 0 1px; }
+.kh-more { padding: 8px 0; border-top: 1px solid var(--line); font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; }
+.rec.flash, .ks.flash { animation: flash 2.4s ease-out; }
+@keyframes flash { 0%, 30% { box-shadow: 0 0 0 3px var(--accent); background: var(--warn-soft); } 100% { box-shadow: 0 0 0 0 transparent; } }

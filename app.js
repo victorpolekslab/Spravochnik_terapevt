@@ -555,7 +555,7 @@ function setTitle(t, back, actions) {
 $('#back').onclick = () => history.back();
 function route() {
   const h = decodeURIComponent(location.hash.slice(1) || 'home');
-  const [p, a, b] = h.split('/');
+  const [p, a, b, c] = h.split('/');
   closeSheet(true); stickyCompact(null);
   curTab = ['ref'].includes(p) ? 'ref' : p === 'about' ? 'about' : 'home';
   $$('#tabs a').forEach(x => x.classList.toggle('on', x.dataset.tab === curTab));
@@ -567,7 +567,8 @@ function route() {
     else if (p === 'calc') calcPage(a);
     else if (p === 'mkb') mkbPage(a || '');
     else if (p === 'code') codePage(a);
-    else if (p === 'kr') krPage(a, b);
+    else if (p === 'kr') krPage(a, b && b !== '-' ? b : undefined, c);
+    else if (p === 'mref') { refPage(a); setTitle(REF[a] ? REF[a].title : 'Справка', true); }
     else if (p === 'ref') a ? refPage(a) : refList();
     else if (p === 'about') about();
     else home(false);
@@ -582,7 +583,7 @@ function rail(active) {
   return `<nav class="rail" aria-label="Системы">${SYS.map(s => `<a href="${s[0] === 'fav' ? '#home' : '#sys/' + s[0]}" class="${s[0] === active ? 'on sys' : ''}" style="${s[0] === active ? sysVars(s) : ''}" aria-label="${esc(s[2])}">${svg(s[3], s[0] === 'fav' && active === 'fav' ? 'style="fill:currentColor"' : '')}<span>${s[1]}</span></a>`).join('')}</nav>`;
 }
 function mkbBar(q = '') {
-  return `<div class="mkbbar"><label class="field">${svg('search')}<input id="mq" type="search" placeholder="МКБ-10: код или диагноз" value="${esc(q)}" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-label="Поиск по МКБ-10: код или диагноз">${q ? '<button class="clr" aria-label="Очистить">×</button>' : ''}</label></div>`;
+  return `<div class="mkbbar"><label class="field">${svg('search')}<input id="mq" type="search" placeholder="МКБ-10 или поиск по КР" value="${esc(q)}" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-label="Поиск по МКБ-10: код или диагноз">${q ? '<button class="clr" aria-label="Очистить">×</button>' : ''}</label></div>`;
 }
 function bindMkb(live) {
   const i = $('#mq'); if (!i) return;
@@ -726,8 +727,54 @@ function asCodes(q) {
   if (/^[А-Я]\d/.test(q)) return [...new Set([LOOK[q[0]], KBD[q[0]]].filter(Boolean).map(x => x + q.slice(1)))];
   return null;
 }
-let MKBIDX = null;
-function mkbIdx() { if (!MKBIDX) MKBIDX = MKB.n.map(r => r[1].toLowerCase().replace(/ё/g, 'е')); return MKBIDX; }
+let MKBIDX = null, KRIDX = null;
+const plainT = h => String(h || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\s+/g, ' ').trim();
+const norm = t => t.toLowerCase().replace(/ё/g, 'е');
+function krIdx() {
+  if (KRIDX) return KRIDX;
+  KRIDX = [];
+  const add = (id, tgt, sec, text) => { if (text) KRIDX.push({ id, tgt, sec, text, low: norm(text) }); };
+  Object.values(BRIEF.docs).forEach(d => {
+    add(d.id, 's1', 'Классификация', plainT(d.classification.html));
+    d.treatment.forEach((r, i) => add(d.id, 't' + i, 'Лечение' + (r.h ? ' · ' + r.h.replace(/^[\d.]+\s*/, '') : ''), plainT(r.html) + ' ' + (r.comment_doses || []).join(' ')));
+    (d.treatment_special || []).forEach((r, i) => add(d.id, 'p' + i, 'Особые ситуации', plainT(r.html)));
+    if (d.referral) add(d.id, 's3', 'Направление и госпитализация', plainT(d.referral));
+    add(d.id, 's4', 'Обследование', d.exam.items.concat(d.exam.other).join('. '));
+    add(d.id, 's5', 'Диспансерное наблюдение', d.dispensary.order.map(r => r.name + ' ' + r.ind.join(' ')).join('. ') + ' ' + d.dispensary.kr.map(r => plainT(r.html)).join(' '));
+  });
+  return KRIDX;
+}
+const stems = q => norm(q).split(/[\s,.;:()]+/).filter(w => w.length > 1).map(w => w.length > 4 ? w.slice(0, Math.max(4, w.length - 2)) : w);
+function snippet(text, low, ws) {
+  let pos = -1; ws.forEach(w => { const i = low.indexOf(w); if (i >= 0 && (pos < 0 || i < pos)) pos = i; });
+  const a = Math.max(0, pos - 70), b = Math.min(text.length, pos + 150);
+  let sn = esc((a ? '…' : '') + text.slice(a, b) + (b < text.length ? '…' : ''));
+  ws.forEach(w => { sn = sn.replace(new RegExp('(' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '[а-яёa-z0-9-]*)', 'gi'), '<mark>$1</mark>'); });
+  return sn;
+}
+function searchKR(q) {
+  const ws = stems(q); if (!ws.length || ws.join('').length < 4) return [];
+  const by = {};
+  krIdx().forEach(e => {
+    if (!ws.every(w => e.low.includes(w))) return;
+    const score = ws.reduce((a, w) => a + e.low.split(w).length - 1, 0) + (e.tgt[0] === 't' ? 2 : 0);
+    (by[e.id] = by[e.id] || []).push({ e, score });
+  });
+  return Object.entries(by).map(([id, hits]) => ({ id, hits: hits.sort((x, y) => y.score - x.score), score: hits.reduce((a, h) => a + h.score, 0) + (norm(BRIEF.docs[id].name).includes(ws[0]) ? 50 : 0) })).sort((x, y) => y.score - x.score).slice(0, 12).map(r => ({ ...r, ws }));
+}
+function krHitsHtml(list) {
+  if (!list.length) return '';
+  return `<h2 class="sec-h">В тексте кратких КР: ${list.length}</h2><div class="khits">${list.map(r => { const d = BRIEF.docs[r.id];
+    return `<div class="card khit"><a class="kh-h" href="#kr/${r.id}"><span class="krb">КР${esc(r.id)}</span><b>${esc(d.name)}</b></a>${r.hits.slice(0, 3).map(h => `<a class="kh-s" href="#kr/${r.id}/-/${h.e.tgt}"><small>${esc(h.e.sec)}</small><span>${snippet(h.e.text, h.e.low, r.ws)}</span></a>`).join('')}${r.hits.length > 3 ? `<a class="kh-more" href="#kr/${r.id}">ещё ${r.hits.length - 3} в этой КР ›</a>` : ''}</div>`; }).join('')}</div>`;
+}
+function goTarget(t) {
+  const el = t[0] === 's' && t.length === 2 ? $('#' + t) : $('#r-' + t);
+  if (!el) return;
+  for (let p = el.parentElement; p; p = p.parentElement) if (p.tagName === 'DETAILS') p.open = true;
+  el.scrollIntoView({ block: 'center' });
+  el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 2400);
+}
+function mkbIdx() { if (!MKBIDX) MKBIDX = MKB.n.map(r => ' ' + r[1].toLowerCase().replace(/ё/g, 'е').replace(/[^а-яa-z0-9]+/g, ' ')); return MKBIDX; }
 function krFor(code) { return (MKB.kr[code] || []); }
 function mkbRow(r) {
   const ks = krFor(r[0]), nb = ks.filter(k => BRIEF.docs[k]).length;
@@ -735,7 +782,7 @@ function mkbRow(r) {
   return `<li><a href="#code/${encodeURIComponent(r[0])}"><span class="code">${esc(r[0])}</span><span style="flex:1;min-width:0">${esc(r[1])}</span>${badge}${svg('chev', 'class="chev" style="width:18px;height:18px"')}</a></li>`;
 }
 function mkbPage(q) {
-  setTitle('Поиск по МКБ-10', true);
+  setTitle('Поиск: МКБ-10 и КР', true);
   view.innerHTML = mkbBar(q) + '<div id="mres"></div>';
   bindMkb(true); mkbResults(q);
   const i = $('#mq'); if (i && !q) i.focus();
@@ -749,16 +796,16 @@ function mkbResults(q) {
   else {
     const ws = q.toLowerCase().replace(/ё/g, 'е').split(/\s+/).filter(w => w.length > 1).map(w => w.slice(0, Math.max(3, w.length - 2)));
     const idx = mkbIdx(); rows = [];
-    for (let i = 0; i < idx.length && rows.length < 300; i++) if (ws.every(w => idx[i].includes(w))) rows.push(MKB.n[i]);
+    for (let i = 0; i < idx.length && rows.length < 300; i++) if (ws.every(w => idx[i].includes(' ' + w))) rows.push(MKB.n[i]);
   }
-  box.innerHTML = `<h2 class="sec-h">${code ? 'Коды, начинающиеся на ' + esc(code) : 'Найдено'}: ${rows.length}${rows.length >= 300 ? '+' : ''}</h2>` + (rows.length ? `<ul class="list">${rows.map(mkbRow).join('')}</ul>` : '<div class="empty">В МКБ-10 не найдено. Попробуйте код (I48) или часть названия.</div>') +
+  const kh = cs ? '' : krHitsHtml(searchKR(q));
+  box.innerHTML = kh + `<h2 class="sec-h">${code ? 'Коды, начинающиеся на ' + esc(code) : 'Диагнозы МКБ-10'}: ${rows.length}${rows.length >= 300 ? '+' : ''}</h2>` + (rows.length ? `<ul class="list">${rows.map(mkbRow).join('')}</ul>` : '<div class="empty">В МКБ-10 не найдено. Попробуйте код (I48) или часть названия.</div>') +
     '<p class="hint">«КР N» — сколько действующих КР для взрослых указывают этот код в применимости. Зелёная метка — есть краткая КР в справочнике.</p>';
 }
 function codePage(code) {
   const i = MKB.n.findIndex(r => r[0] === code); if (i < 0) return mkbPage(code);
   const r = MKB.n[i];
   const ks = krFor(code), brief = ks.filter(k => BRIEF.docs[k]), refs = refsFor(code);
-  if (!ks.length && refs.length === 1) { location.replace('#ref/' + refs[0].id); return; }
   if (ks.length === 1 && brief.length === 1 && !refs.length) { location.replace('#kr/' + ks[0] + '/' + encodeURIComponent(code)); return; }
   setTitle(code + ' — МКБ-10', true);
   const kids = []; for (let j = i + 1; j < MKB.n.length && MKB.n[j][2] > r[2]; j++) if (MKB.n[j][2] === r[2] + 1) kids.push(MKB.n[j]);
@@ -766,7 +813,7 @@ function codePage(code) {
     return b ? `<li><a href="#kr/${k}/${encodeURIComponent(code)}"><span style="flex:1"><div class="tt">${esc(b.name)}</div><div class="ts">КР${esc(k)} · краткая КР${b.mode === 'brief' ? ' (сокращённая)' : ''}${(window.INTL || {})[k] ? ' · есть международная версия (' + esc(INTL[k].org) + ' ' + INTL[k].year + ')' : ''}</div></span>${svg('chev', 'class="chev"')}</a></li>`
       : `<li><a href="https://cr.minzdrav.gov.ru/preview-cr/${k}"><span style="flex:1"><div class="tt">${esc(m[0])}</div><div class="ts">КР${esc(k)} · нет в справочнике терапевта — открыть на cr.minzdrav.gov.ru</div></span>${svg('chev', 'class="chev"')}</a></li>`; }).join('');
   view.innerHTML = `<div class="krhead"><div style="font-size:26px;font-weight:800;color:var(--accent)">${esc(code)}</div><div style="font-size:17px;font-weight:600">${esc(r[1])}</div></div>
-    ${refs.length ? `<h2 class="sec-h">Справка</h2><ul class="list">${refs.map(r => `<li><a href="#ref/${r.id}"><span style="flex:1"><div class="tt">${esc(r.title)}</div><div class="ts">${esc(r.badge || '')}</div></span>${svg('chev', 'class="chev"')}</a></li>`).join('')}</ul>` : ''}
+    ${refs.length ? `<h2 class="sec-h">Справка</h2><ul class="list">${refs.map(r => `<li><a href="#mref/${r.id}/${encodeURIComponent(code)}"><span style="flex:1"><div class="tt">${esc(r.title)}</div><div class="ts">${esc(r.badge || '')}</div></span>${svg('chev', 'class="chev"')}</a></li>`).join('')}</ul>` : ''}
     <h2 class="sec-h">${ks.length ? 'Клинические рекомендации: ' + ks.length : 'Клинические рекомендации'}</h2>${ks.length ? `<ul class="list">${krList}</ul>` : '<div class="empty">Действующих КР для взрослых с этим кодом нет.</div>'}
     ${kids.length ? `<h2 class="sec-h">Входящие коды: ${kids.length}</h2><ul class="list">${kids.map(mkbRow).join('')}</ul>` : ''}`;
 }
@@ -822,9 +869,9 @@ function modeSwitch(id, mode) {
   return `<div class="seg kmode" data-kmode="1"><button data-m="kr" class="${mode === 'kr' ? 'on' : ''}" aria-pressed="${mode === 'kr'}">КР Минздрава</button><button data-m="intl" class="${mode === 'intl' ? 'on' : ''}" aria-pressed="${mode === 'intl'}">Международные</button></div>`;
 }
 function bindMode(id, hlCode) { $$('[data-kmode] button').forEach(b => b.onclick = () => { LS.set('krmode', b.dataset.m); krPage(id, hlCode); window.scrollTo(0, 0); }); }
-function krPage(id, hlCode) {
+function krPage(id, hlCode, target) {
   const d = BRIEF.docs[id]; if (!d) { view.innerHTML = '<div class="empty">КР не найдена.</div>'; return; }
-  if (INTLX[id] && LS.get('krmode', 'kr') === 'intl') return intlPage(d, INTLX[id], hlCode);
+  if (INTLX[id] && LS.get('krmode', 'kr') === 'intl' && !target) return intlPage(d, INTLX[id], hlCode);
   setTitle('КР' + d.id, true);
   const S = (n, sid, title, src, body) => `<section class="ks" id="${sid}"><h3><span class="n">${n}</span><span>${title}</span><span class="src">${esc(src)}</span></h3>${body}</section>`;
   const GO = [];
@@ -835,14 +882,14 @@ function krPage(id, hlCode) {
   if (d.formulation_ext) form += `<div class="card"><span class="chip warn" style="align-self:flex-start">не из КР · ${esc(d.formulation_ext.src)}</span><ul style="margin:0;padding-left:20px">${d.formulation_ext.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul><span class="meta">${esc(d.formulation_ext.note)}</span></div>`;
   if (d.formulation_draft) form += `<div class="card"><span class="chip warn" style="align-self:flex-start">черновик · составлен, не из КР</span><ul style="margin:0;padding-left:20px">${d.formulation_draft.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul><span class="meta">${esc(d.formulation_draft.note)}</span></div>`;
   if (!form) form = '<div class="empty">Примера формулировки в КР нет.</div>';
-  const recH = r => `<div class="rec kr">${markTerms(r.html)}${r.grade ? `<span class="grade">${esc(r.grade)}</span>` : ''}${r.comment_doses && r.comment_doses.length ? `<div class="cm">${markTerms(r.comment_doses.map(esc).join(' '))}</div>` : ''}</div>`;
+  const recH = r => `<div class="rec kr" id="r-t${d.treatment.indexOf(r)}">${markTerms(r.html)}${r.grade ? `<span class="grade">${esc(r.grade)}</span>` : ''}${r.comment_doses && r.comment_doses.length ? `<div class="cm">${markTerms(r.comment_doses.map(esc).join(' '))}</div>` : ''}</div>`;
   const groups = []; d.treatment.forEach(r => { const g = groups[groups.length - 1]; if (g && g.h === r.h) g.items.push(r); else groups.push({ h: r.h, items: [r] }); });
   const recs = groups.map(g => `<details class="fold"><summary>${esc(g.h || 'Общие положения')}<span class="meta">${g.items.length}${g.items.some(x => x.dose) ? ' · дозы' : ''}</span></summary><div>${g.items.map(recH).join('')}</div></details>`).join('');
   let ext = '';
   if (d.doses) ext += `<div class="card"><b>${esc(d.doses.title)}</b><div class="tbl kr"><table><thead><tr><th>Класс</th><th>Препарат</th><th>Начальная</th><th>Обычная</th><th>Максимальная</th><th>Особенности</th><th>Источник</th></tr></thead><tbody>${d.doses.rows.map(r => `<tr>${r.slice(0, 6).map((c, i) => `<td>${i === 1 ? markTerms(esc(c)) : esc(c)}</td>`).join('')}<td><a href="${esc(r[6])}">инструкция</a></td></tr>`).join('')}</tbody></table></div><span class="meta">${esc(d.doses.note)}</span></div>`;
   if (d.dose_table) ext += `<div class="card"><b>${esc(d.dose_table.title)}</b><div class="tbl kr"><table><thead><tr><th>Препарат</th><th>Доза и режим</th><th>Источник</th></tr></thead><tbody>${d.dose_table.rows.map(r => `<tr><td><b>${markTerms(esc(r[0]))}</b></td><td>${esc(r[1])}</td><td>${r[3] ? `<a href="${esc(r[3])}">${esc(r[2])}</a>` : esc(r[2]) + esc(d.id)}</td></tr>`).join('')}</tbody></table></div><span class="meta">${esc(d.dose_table.note)}</span></div>`;
   const tabs = d.dose_tables.map(t => `<details class="fold"><summary>${esc(t.title)}</summary><div class="kr">${wrapT(markTerms(t.html))}</div></details>`).join('');
-  const sp = (d.treatment_special || []).length ? `<details class="fold"><summary>Особые ситуации и стационар<span class="meta">${d.treatment_special.length}</span></summary><div>${d.treatment_special.map(r => `<div class="rec kr"><b style="font-size:12px;color:var(--muted)">${esc(r.h)}</b>${markTerms(r.html)}${r.grade ? `<span class="grade">${esc(r.grade)}</span>` : ''}</div>`).join('')}</div></details>` : '';
+  const sp = (d.treatment_special || []).length ? `<details class="fold"><summary>Особые ситуации и стационар<span class="meta">${d.treatment_special.length}</span></summary><div>${d.treatment_special.map((r, i) => `<div class="rec kr" id="r-p${i}"><b style="font-size:12px;color:var(--muted)">${esc(r.h)}</b>${markTerms(r.html)}${r.grade ? `<span class="grade">${esc(r.grade)}</span>` : ''}</div>`).join('')}</div></details>` : '';
   const ref = d.referral ? `<details class="fold" ${d.mode === 'brief' ? 'open' : ''}><summary>Когда направить и госпитализировать</summary><div class="kr">${wrapT(d.referral)}</div></details>` : '';
   const full = `<div style="display:flex;flex-direction:column;gap:8px">${ext}${recs || '<div class="empty">Рекомендаций с препаратами в разделе 3 не найдено.</div>'}${tabs}${sp}</div>`;
   const treat = d.mode === 'brief' ? `<div class="card" style="background:var(--warn-soft)">Лечение ведёт профильный специалист или стационар. Терапевту — обследование, наблюдение и показания к направлению.</div><div style="height:8px"></div>${ref}<div style="height:8px"></div><details class="fold"><summary>Рекомендации по лечению из КР<span class="meta">${d.treatment.length}</span></summary><div>${full}</div></details>` : `${full}<div style="height:8px"></div>${ref}`;
@@ -857,6 +904,7 @@ function krPage(id, hlCode) {
     <p class="foot">Фрагменты — из текста КР${esc(d.id)}, база КР от ${dt(d.built)}. Черновик, требует проверки врачом. Подсвеченные препараты и методы открывают обзоры Cochrane. ${esc(d.dispensary.order_note)}</p>`;
   $$('[data-j]').forEach(b => b.onclick = () => { const s = $('#' + b.dataset.j); if (s) s.scrollIntoView({ behavior: 'smooth' }); });
   bindMode(d.id, hlCode);
+  if (target) setTimeout(() => goTarget(target), 60);
   view.onclick = e => {
     const b = e.target.closest('.term'); if (b) { cochraneSheet(TERM_BY[b.dataset.term], d.id); return; }
     const g = e.target.closest('[data-go]'); if (g) { showTx(d, GO[+g.dataset.go]); return; }
