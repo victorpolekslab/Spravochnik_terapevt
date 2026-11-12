@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>ПОАК перед плановой операцией</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#A8322F}a:hover{color:#7F2422}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 2140px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F7F9; color: #1B1F24; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+<header style="background: #A8322F; color: #FFFFFF; height: 56px; display: flex; align-items: center; gap: 4px; padding: 0 12px 0 4px; box-sizing: border-box; flex: none">
+<a href="RefList.dc.html" aria-label="Назад" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #FFFFFF"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></a>
+<h1 style="margin: 0; font-size: 18px; font-weight: 600; flex-grow: 1; line-height: 1.2">ПОАК перед плановой операцией</h1>
+</header>
+
+<main style="flex-grow: 1; padding: 12px 12px 8px; display: flex; flex-direction: column; gap: 12px">
+
+<section style="padding: 14px; background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 14px; display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 17px; font-weight: 800; line-height: 1.3">Переводить на НМГ не нужно</div>
+<div style="font-size: 14.5px; line-height: 1.45">ПОАК прерывают на время операции без «моста»: действие препарата заканчивается предсказуемо, а гепарин в периоперационном периоде повышает риск кровотечений, не снижая риск тромбозов.</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<span style="font-size: 11.5px; font-weight: 700; color: #1F5FA8; background: #E3EEFB; border-radius: 6px; padding: 2px 7px">КР382_2: ЕОК IC · УУР B · УДД 2</span>
+<span style="font-size: 11.5px; font-weight: 700; color: #1F5FA8; background: #E3EEFB; border-radius: 6px; padding: 2px 7px">КР960_1: УУР C · УДД 4</span>
+</div>
+</section>
+
+<h2 style="margin: 6px 2px 0; font-size: 13px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: #5E6873">Когда последний приём</h2>
+
+<section aria-live="polite" style="padding: 14px 16px; background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,.06); display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: baseline; gap: 8px">
+<span style="font-size: 40px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; color: {{tone}}">{{big}}</span>
+<span style="font-size: 15px; font-weight: 600; color: #5E6873">{{unit}}</span>
+</div>
+<div style="font-size: 15.5px; font-weight: 700; line-height: 1.3">{{verdict}}</div>
+<div style="font-size: 13.5px; line-height: 1.4; color: #5E6873">{{resume}}</div>
+<div style="font-size: 12px; font-weight: 600; color: #22643C">КР382_2, табл. П7 · КР960_1, табл. 22</div>
+</section>
+
+<div role="group" aria-label="Препарат">
+<div style="font-size: 12.5px; font-weight: 700; color: #5E6873; margin: 0 2px 6px">Препарат</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px; padding: 3px; background: #EEF1F4; border-radius: 12px">
+<sc-for list="{{drugs}}" as="it" hint-placeholder-count="2"><button aria-pressed="{{it.pressed}}" onClick="{{it.pick}}" style="{{it.style}}">{{it.label}}</button></sc-for>
+</div>
+</div>
+
+<div role="group" aria-label="Риск кровотечения вмешательства">
+<div style="font-size: 12.5px; font-weight: 700; color: #5E6873; margin: 0 2px 6px">Риск кровотечения вмешательства · табл. П5</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; padding: 3px; background: #EEF1F4; border-radius: 12px">
+<sc-for list="{{risks}}" as="it" hint-placeholder-count="3"><button aria-pressed="{{it.pressed}}" onClick="{{it.pick}}" style="{{it.style}}">{{it.label}}</button></sc-for>
+</div>
+<div style="margin: 6px 2px 0; font-size: 12.5px; line-height: 1.4; color: #5E6873">{{riskHint}}</div>
+</div>
+
+<div role="group" aria-label="Клиренс креатинина">
+<div style="font-size: 12.5px; font-weight: 700; color: #5E6873; margin: 0 2px 6px">Клиренс креатинина (Кокрофт–Голт), мл/мин</div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 3px; padding: 3px; background: #EEF1F4; border-radius: 12px">
+<sc-for list="{{ccs}}" as="it" hint-placeholder-count="5"><button aria-pressed="{{it.pressed}}" onClick="{{it.pick}}" style="{{it.style}}">{{it.label}}</button></sc-for>
+</div>
+<a href="#" style="display: inline-block; margin: 8px 2px 0; font-size: 13px; font-weight: 700; text-decoration: none; background: #FDF0D9; color: #7A4A00; border-radius: 8px; padding: 5px 10px">Рассчитать клиренс креатинина ›</a>
+</div>
+
+<h2 style="margin: 10px 2px 0; font-size: 13px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: #5E6873">Нужен ли «мост» на НМГ</h2>
+<section style="background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 14px; overflow: hidden">
+<sc-for list="{{flags}}" as="f" hint-placeholder-count="3">
+<button aria-pressed="{{f.pressed}}" onClick="{{f.toggle}}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 10px 14px; border: none; border-bottom: 1px solid #DDE2E7; background: #FFFFFF; font: inherit; color: #1B1F24; text-align: left; cursor: pointer">
+<span style="{{f.box}}"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span>
+<span style="font-size: 14.5px; font-weight: 600; line-height: 1.3">{{f.label}}</span>
+</button>
+</sc-for>
+<div style="padding: 12px 14px; display: flex; gap: 10px">
+<span style="flex: none; width: 4px; border-radius: 2px; background: {{bridgeTone}}"></span>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-size: 15px; font-weight: 700; line-height: 1.3">{{bridgeVerdict}}</div>
+<div style="font-size: 13.5px; line-height: 1.45; color: #5E6873">{{bridgeText}}</div>
+</div>
+</div>
+</section>
+
+<details style="background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 14px">
+<summary style="padding: 13px 14px; font-size: 15px; font-weight: 700; cursor: pointer">Если «мост» решено проводить · табл. П3</summary>
+<div style="padding: 0 14px 14px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.45">
+<div><b>#Эноксапарин натрия</b> — 1 мг/кг п/к каждые 12 ч</div>
+<div>КК 15–29 мл/мин — 1 мг/кг п/к каждые 24 ч; КК &lt; 15 — не рекомендован</div>
+<div>Ожирение (ИМТ &gt; 40 или масса &gt; 120 кг): 0,7–0,8 мг/кг каждые 12 ч (КК ≥ 30) или каждые 24 ч (КК &lt; 30); масса &gt; 150 кг — не рекомендован</div>
+<div>Последняя доза НМГ — <b>за 24 ч</b> до вмешательства <span style="font-size: 12px; color: #5E6873">(КР960_1, УУР C · УДД 4)</span></div>
+<div>После операции лечебные дозы НМГ: при низком риске кровотечения — в течение 24 ч, при высоком — не ранее 48–72 ч <span style="font-size: 12px; color: #5E6873">(КР960_1, УУР B · УДД 2)</span></div>
+<div style="font-size: 12.5px; color: #5E6873"># — применение вне инструкции.</div>
+</div>
+</details>
+
+<h2 style="margin: 10px 2px 0; font-size: 13px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: #5E6873">Порядок действий</h2>
+<ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="5">
+<li style="display: flex; gap: 10px; padding: 12px 14px; background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 14px">
+<span style="flex: none; width: 24px; height: 24px; border-radius: 12px; background: #A8322F; color: #FFFFFF; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center">{{s.n}}</span>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 14.5px; font-weight: 700; line-height: 1.3">{{s.t}}</span>
+<span style="font-size: 13.5px; line-height: 1.45; color: #3D4651">{{s.d}}</span>
+<span style="font-size: 11.5px; font-weight: 600; color: #22643C">{{s.src}}</span>
+</div>
+</li>
+</sc-for>
+</ol>
+
+<p style="margin: 4px 2px 0; font-size: 12px; line-height: 1.45; color: #5E6873">Варфарин ведут иначе: малые вмешательства — при МНО 2–2,5 без отмены; при высоком риске кровотечения — операция при МНО &lt; 1,5, «мост» по показаниям (КР382_2, разд. 3.1.1.7). Срочные операции и ЧКВ здесь не рассматриваются. База КР от 03.11.2026.</p>
+</main>
+
+<nav aria-label="Разделы приложения" style="flex: none; position: sticky; bottom: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: #FFFFFF; border-top: 1px solid #DDE2E7">
+<a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 58px; text-decoration: none; color: #5E6873; font-size: 12px; font-weight: 500"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"></path></svg>Калькуляторы</a>
+<a href="RefList.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 58px; text-decoration: none; color: #A8322F; font-size: 12px; font-weight: 700"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21V5M8 7h7M8 11h7"></path></svg>Справочник</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":2140}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { drug: 'xa', risk: 'high', cc: 1, flags: { stroke3: false, cha7: false, cha56: false } };
+  }
+  renderVals() {
+    const st = this.state;
+    const seg = (on) => 'border: none; border-radius: 9px; min-height: 44px; padding: 6px 2px; font: inherit; font-size: 14px; font-weight: 600; line-height: 1.2; cursor: pointer; ' +
+      (on ? 'background: #FFFFFF; color: #1B1F24; box-shadow: 0 1px 3px rgba(0,0,0,.14)' : 'background: transparent; color: #5E6873');
+    const CC = ['≥80', '50–80', '30–50', '15–30', '<15'];
+    const T = { dabi: { low: [24, 36, 48, 0, 0], high: [48, 72, 96, 0, 0] }, xa: { low: [24, 24, 24, 36, 0], high: [48, 48, 48, 48, 0] } };
+    let big, unit, verdict, resume, tone;
+    if (st.risk === 'min') {
+      big = '0'; unit = 'ч'; tone = '#2E9150';
+      verdict = 'Не отменять ПОАК';
+      resume = 'Минимальный риск кровотечения: вмешательство выполняют без отмены антикоагулянта (КР382_2: УУР B · УДД 2).';
+    } else {
+      const h = T[st.drug][st.risk][st.cc];
+      if (!h) {
+        big = '—'; unit = ''; tone = '#A8322F';
+        verdict = st.drug === 'dabi' ? 'Дабигатран при КК < 30 мл/мин не показан' : 'ПОАК при КК < 15 мл/мин не показаны';
+        resume = 'Пересмотреть антикоагулянтную терапию вместе с кардиологом.';
+      } else {
+        big = '≥ ' + h; unit = 'ч до операции'; tone = st.risk === 'high' ? '#A8322F' : '#A07800';
+        verdict = 'Последний приём ПОАК не позднее чем за ' + h + ' ч';
+        resume = st.risk === 'high'
+          ? 'Возобновить через 48 ч после операции при стабильном гемостазе (КР960_1: УУР C · УДД 4).'
+          : 'Возобновить через 24 ч после операции при стабильном гемостазе (КР960_1: УУР C · УДД 4).';
+      }
+    }
+    const RH = {
+      min: 'Удаление 1–3 зубов, импланты, катаракта и глаукома, эндоскопия без биопсии, поверхностные вмешательства на коже.',
+      low: 'Гастроскопия с биопсией, биопсия мочевого пузыря или простаты, ангиография лучевым доступом, имплантация ЭКС.',
+      high: 'Полипэктомия и сложная эндоскопия, абдоминальная, торакальная, тазовая, большая ортопедическая хирургия, спинальная анестезия, биопсия печени и почки, ТУРП.'
+    };
+    const fl = st.flags;
+    let bridgeVerdict, bridgeText, bridgeTone;
+    if (fl.stroke3 || fl.cha7) {
+      bridgeVerdict = 'Очень высокий риск ТЭО — «мост» допустим как исключение';
+      bridgeText = 'Для ПОАК «мост» требуется лишь в редких случаях. Решение — индивидуально, с оценкой риска кровотечения, лучше вместе с кардиологом и хирургом. Дозы — ниже.';
+      bridgeTone = '#A8322F';
+    } else if (fl.cha56) {
+      bridgeVerdict = 'Умеренно высокий риск ТЭО — «мост» можно рассмотреть';
+      bridgeText = 'Только при приемлемом риске кровотечения. В большинстве случаев ПОАК просто прерывают на срок из таблицы.';
+      bridgeTone = '#A07800';
+    } else {
+      bridgeVerdict = '«Мост» не нужен';
+      bridgeText = 'Рутинный «мост» повышает риск кровотечений и не рекомендован (КР382_2: ЕОК IC · УУР B · УДД 2).';
+      bridgeTone = '#2E9150';
+    }
+    const box = (on) => 'flex: none; width: 24px; height: 24px; box-sizing: border-box; border-radius: 7px; display: flex; align-items: center; justify-content: center; ' + (on ? 'background: #A8322F; border: 2px solid #A8322F' : 'background: #FFFFFF; border: 2px solid #9AA3AC');
+    const F = [['stroke3', 'Инсульт или ТИА менее 3 месяцев назад'], ['cha7', 'CHA₂DS₂-VASc ≥ 7 баллов'], ['cha56', 'CHA₂DS₂-VASc 5–6 или инсульт/ТИА ≥ 3 месяцев назад']];
+    const steps = [
+      { t: 'Оценить риск кровотечения', d: 'Риск самого вмешательства (табл. П5) и факторы пациента: кровотечение за 3 месяца, тромбоцитопения, антиагреганты, кровотечение при прошлых процедурах. Шкала HAS-BLED.', src: 'КР382_2, разд. 3.1.1.7 · РКО IC' },
+      { t: 'Минимальный риск — не отменять', d: 'Удаление зубов, катаракта, поверхностные вмешательства, ангиография лучевым доступом, имплантация ЭКС.', src: 'КР382_2: УУР B · УДД 2' },
+      { t: 'Остальные — прервать ПОАК без «моста»', d: 'Срок отмены — по препарату, клиренсу креатинина и риску кровотечения (таблица выше). Измерять остаточную активность при своевременной отмене не нужно.', src: 'КР382_2, табл. П7 · КР960_1, разд. 3.8.2.2' },
+      { t: 'Профилактика ВТЭО на время перерыва', d: 'Механическая и, по оценённому риску ВТЭО, фармакологическая (профилактические дозы). Это не «мост».', src: 'КР960_1: УУР A · УДД 1' },
+      { t: 'Возобновить ПОАК', d: 'Через 24 ч (низкий риск кровотечения) или 48 ч (высокий) после операции при стабильном гемостазе.', src: 'КР960_1: УУР C · УДД 4 · КР382_2: через 12–48 ч' }
+    ];
+    return {
+      big, unit, verdict, resume, tone, riskHint: RH[st.risk], bridgeVerdict, bridgeText, bridgeTone,
+      steps: steps.map((s, i) => Object.assign({ n: i + 1 }, s)),
+      drugs: [['dabi', 'Дабигатран'], ['xa', 'Апиксабан, ривароксабан, эдоксабан']].map(([k, l]) => ({ label: l, pressed: String(st.drug === k), style: seg(st.drug === k), pick: () => this.setState({ drug: k }) })),
+      risks: [['min', 'Минимальный'], ['low', 'Низкий'], ['high', 'Высокий']].map(([k, l]) => ({ label: l, pressed: String(st.risk === k), style: seg(st.risk === k), pick: () => this.setState({ risk: k }) })),
+      ccs: CC.map((l, i) => ({ label: l, pressed: String(st.cc === i), style: seg(st.cc === i), pick: () => this.setState({ cc: i }) })),
+      flags: F.map(([k, l]) => ({ label: l, pressed: String(!!fl[k]), box: box(!!fl[k]), toggle: () => this.setState({ flags: Object.assign({}, fl, { [k]: !fl[k] }) }) }))
+    };
+  }
+}
+</script>
+</body>
+</html>
