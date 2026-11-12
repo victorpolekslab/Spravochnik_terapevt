@@ -123,7 +123,7 @@ def build_data(db, version):
                 for v in o:
                     walk(v)
         walk(g.get('classification', {}))
-        if g['id'] not in docs:
+        if g['id'] not in docs and not g.get('pseudo'):
             print(f'! intl {g["id"]}: нет краткой КР')
         intl[g['id']] = g
 
