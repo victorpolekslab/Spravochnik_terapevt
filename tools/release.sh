@@ -16,7 +16,7 @@ if [ "$MODE" = apk ]; then
 else
   python3 tools/build_app.py site --key "$OTA_KEY" --keep build/pages
 fi
-rsync -a --delete --exclude .git build/site/ build/pages/
+find build/pages -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} + && cp -a build/site/. build/pages/
 cd build/pages && git add -A && git commit -qm "Публикация $(date -u +%Y%m%d%H%M)" && git push -q origin gh-pages
 cd ../.. && git worktree remove --force build/pages
 echo "Готово: https://victorpolekslab.github.io/Spravochnik_terapevt/"
