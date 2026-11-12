@@ -210,25 +210,26 @@ def build_site(a):
         subprocess.run(['openssl', 'dgst', '-sha256', '-verify', a.pub, '-signature', '/dev/stdin', mp], input=sig, check=True, capture_output=True)
 
     # веб-версия для iPhone и браузеров: тот же интерфейс + service worker (офлайн, обновление при открытии)
-    app = os.path.join(site, 'app')
-    os.makedirs(app)
-    for f in files:
-        shutil.copy(os.path.join(www, f[0]), app)
     tag = hashlib.sha256(json.dumps(files).encode()).hexdigest()[:10]
     sw = SW_JS.replace('__VERSION__', f'{v}-{tag}').replace('__FILES__', json.dumps(['./'] + [f'{f[0]}?h={f[1][:10]}' for f in files]))
-    open(os.path.join(app, 'sw.js'), 'w', encoding='utf-8').write(sw)
+    for d in (site, os.path.join(site, 'app')):
+        os.makedirs(d, exist_ok=True)
+        for f in files:
+            shutil.copy(os.path.join(www, f[0]), d)
+        open(os.path.join(d, 'sw.js'), 'w', encoding='utf-8').write(sw)
 
     meta = json.loads(open(os.path.join(www, 'data_meta.js'), encoding='utf-8').read()[len('var META='):-2])
     apk_info = {}
     if a.apk:
-        os.makedirs(os.path.join(site, 'download'))
+        os.makedirs(os.path.join(site, 'download'), exist_ok=True)
         shutil.copy(a.apk, os.path.join(site, 'download', 'SpravochnikTerapevt.apk'))
-        apk_info = {'versionCode': a.version_code, 'versionName': a.version_name, 'url': SITE_URL + 'download/SpravochnikTerapevt.apk',
+        apk_info = {'versionCode': a.version_code, 'versionName': a.version_name, 'url': SITE_URL + 'download/SpravochnikTerapevt.apk', 'page': SITE_URL + 'download/',
                     'size': os.path.getsize(a.apk), 'sha256': sha(a.apk), 'notes': a.notes, 'minSdk': 26}
         open(os.path.join(site, 'android.json'), 'w', encoding='utf-8').write(json.dumps(apk_info, ensure_ascii=False, indent=1))
     if not a.apk and a.keep and os.path.exists(os.path.join(a.keep, 'android.json')):
         # обновление только данных: APK и android.json — с прошлой публикации
-        shutil.copytree(os.path.join(a.keep, 'download'), os.path.join(site, 'download'))
+        os.makedirs(os.path.join(site, 'download'), exist_ok=True)
+        shutil.copy(os.path.join(a.keep, 'download', 'SpravochnikTerapevt.apk'), os.path.join(site, 'download'))
         shutil.copy(os.path.join(a.keep, 'android.json'), site)
         apk_info = json.load(open(os.path.join(site, 'android.json'), encoding='utf-8'))
     mb = round(apk_info.get('size', 0) / 1048576, 1)
@@ -248,7 +249,10 @@ h1{{font-size:26px;margin:0 0 4px}}.m{{color:#5C6670;font-size:14px}}.b{{display
 <div class="m">Черновик для проверки врачом. Не заменяет инструкцию к препарату и решение врача.</div></div>
 {f'<div class="m">SHA-256 APK: <code>{apk_info["sha256"]}</code></div>' if apk_info else ''}
 </main></body></html>'''
-    open(os.path.join(site, 'index.html'), 'w', encoding='utf-8').write(html)
+    html = html.replace('href="download/SpravochnikTerapevt.apk"', 'href="SpravochnikTerapevt.apk"').replace('href="app/"', 'href="../"')
+    html = html.replace('victorpolekslab.github.io/Spravochnik_terapevt/app/', 'victorpolekslab.github.io/Spravochnik_terapevt/')
+    os.makedirs(os.path.join(site, 'download'), exist_ok=True)
+    open(os.path.join(site, 'download', 'index.html'), 'w', encoding='utf-8').write(html)
     open(os.path.join(site, '.nojekyll'), 'w').close()
     print('site', site, 'ota v', v, 'files', len(files))
 
@@ -270,7 +274,9 @@ self.addEventListener('message', e => { if (e.data === 'skip') self.skipWaiting(
 self.addEventListener('fetch', e => {
   const u = new URL(e.request.url);
   if (e.request.method !== 'GET' || u.origin !== location.origin) return;
-  e.respondWith(caches.open(CACHE).then(c => c.match(u.pathname.endsWith('/') ? './' : e.request, { ignoreSearch: true }).then(r => r || fetch(e.request))));
+  const root = new URL('./', self.location).pathname;
+  if (u.pathname.endsWith('/') && u.pathname !== root) return;
+  e.respondWith(caches.open(CACHE).then(c => c.match(u.pathname === root ? './' : e.request, { ignoreSearch: true }).then(r => r || fetch(e.request))));
 });
 '''
 

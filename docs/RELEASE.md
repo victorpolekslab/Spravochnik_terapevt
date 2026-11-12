@@ -24,8 +24,9 @@
 
 | Путь | Что |
 |---|---|
-| `index.html` | страница скачивания |
-| `app/` | веб-версия (iPhone, любой браузер) с офлайн-кэшем |
+| `index.html`, `sw.js`, `data_*.js` | веб-версия в корне сайта (офлайн-кэш); на Android — баннер «Скачать APK» |
+| `download/` | страница скачивания и APK |
+| `app/` | копия веб-версии для уже установленных по старой ссылке |
 | `download/SpravochnikTerapevt.apk` | APK |
 | `android.json` | versionCode, versionName, url, sha256 |
 | `ota/manifest.json`, `ota/manifest.sig`, `ota/files/*` | данные для фонового обновления |
