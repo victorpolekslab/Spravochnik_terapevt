@@ -38,7 +38,9 @@ const SYS = [
   ['brain', 'Нервная<br>и психика', 'Нервная система и психика', 'brain', '#E0F2F2', '#1D6A6B'],
   ['old', 'Гериатрия', 'Гериатрия', 'old', '#EFE8F8', '#6A3FA0']
 ];
+const SYSD = { fav: ['#3E2020', '#F0827A'], heart: ['#3E2020', '#F0827A'], kidney: ['#3A3015', '#E8B660'], lung: ['#1B2C42', '#7FB2F0'], drop: ['#3D2818', '#F0A060'], gut: ['#1C3125', '#6CC58C'], bone: ['#2E2A25', '#C8BBA8'], brain: ['#173333', '#6CC8C8'], old: ['#2C2340', '#B89AE8'] };
 const SYSM = Object.fromEntries(SYS.map(s => [s[0], s]));
+const sysVars = s => `--tb:${s[4]};--tc:${s[5]};--tbd:${SYSD[s[0]][0]};--tcd:${SYSD[s[0]][1]}`;
 const PLANNED = {
   heart: 'SCORE2, шкала Уэллса, NYHA и тест 6-минутной ходьбы, лодыжечно-плечевой индекс', kidney: '—', lung: 'mMRC, CAT, ACT, CRB-65, Центор/МакАйзек, индекс пачко-лет',
   drop: 'FINDRISC', gut: 'FIB-4, Чайлд–Пью, MELD, AUDIT', bone: 'FRAX', brain: 'HADS, PHQ-9, GAD-7', old: '«Возраст не помеха», Мини-Ког'
@@ -577,7 +579,7 @@ function go(h) { if (location.hash === h) route(); else location.hash = h; }
 
 /* ---------------------------------------------------------------- главная: избранное */
 function rail(active) {
-  return `<nav class="rail" aria-label="Системы">${SYS.map(s => `<a href="${s[0] === 'fav' ? '#home' : '#sys/' + s[0]}" class="${s[0] === active ? 'on' : ''}" style="${s[0] === active ? `color:${s[5]};background:${s[4]}` : ''}" aria-label="${esc(s[2])}">${svg(s[3], s[0] === 'fav' && active === 'fav' ? 'style="fill:currentColor"' : '')}<span>${s[1]}</span></a>`).join('')}</nav>`;
+  return `<nav class="rail" aria-label="Системы">${SYS.map(s => `<a href="${s[0] === 'fav' ? '#home' : '#sys/' + s[0]}" class="${s[0] === active ? 'on sys' : ''}" style="${s[0] === active ? sysVars(s) : ''}" aria-label="${esc(s[2])}">${svg(s[3], s[0] === 'fav' && active === 'fav' ? 'style="fill:currentColor"' : '')}<span>${s[1]}</span></a>`).join('')}</nav>`;
 }
 function mkbBar(q = '') {
   return `<div class="mkbbar"><label class="field">${svg('search')}<input id="mq" type="search" placeholder="МКБ-10: код или диагноз" value="${esc(q)}" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-label="Поиск по МКБ-10: код или диагноз">${q ? '<button class="clr" aria-label="Очистить">×</button>' : ''}</label></div>`;
@@ -593,9 +595,9 @@ function bindMkb(live) {
 function debounce(f, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => f(...a), ms); }; }
 function tile(id, edit) {
   const c = CALCS[id], s = SYSM[c.sys];
-  const inner = `${svg(s[3], `style="color:${s[5]};width:28px;height:28px"`)}<b>${esc(c.t)}</b>`;
-  if (!edit) return `<a class="tile" href="#calc/${id}" style="background:${s[4]}">${inner}</a>`;
-  return `<div class="tile" style="background:${s[4]};outline:1.5px dashed #9AA3AC;outline-offset:2px">${inner}<button class="rm" data-rm="${id}" aria-label="Убрать «${esc(c.t)}» из избранного">${svg('minus')}</button><button class="mv" data-mv="${id}" aria-label="Переместить «${esc(c.t)}» левее">${svg('left')}</button></div>`;
+  const inner = `${svg(s[3], 'class="ti"')}<b>${esc(c.t)}</b>`;
+  if (!edit) return `<a class="tile sys" href="#calc/${id}" style="${sysVars(s)}">${inner}</a>`;
+  return `<div class="tile sys" style="${sysVars(s)};outline:1.5px dashed #9AA3AC;outline-offset:2px">${inner}<button class="rm" data-rm="${id}" aria-label="Убрать «${esc(c.t)}» из избранного">${svg('minus')}</button><button class="mv" data-mv="${id}" aria-label="Переместить «${esc(c.t)}» левее">${svg('left')}</button></div>`;
 }
 function home(edit) {
   setTitle('Избранное', false, edit ? '<button id="done">Готово</button>' : '<button id="ed">Изменить</button>');

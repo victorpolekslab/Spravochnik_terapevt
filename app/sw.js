@@ -1,6 +1,6 @@
 /* Справочник терапевта — офлайн-кэш веб-версии. Версия меняется при любом изменении файлов. */
-const VERSION = '202611120752-23d584774c';
-const FILES = ["./", "app.css?h=eb601450c0", "app.js?h=3dc977ce61", "data_brief.js?h=9d1947f5bd", "data_intl.js?h=e59bc3e9aa", "data_meta.js?h=56508a2b78", "data_mkb.js?h=d622a23a8f", "data_ref.js?h=fe38c527fe", "data_terms.js?h=d50ec20475", "icon-180.png?h=7e09a70b6e", "icon-192.png?h=ce7392dc4a", "icon-512.png?h=3c87e994ac", "icon-maskable-512.png?h=490c4d9679", "index.html?h=c2c3ec7fbd", "manifest.webmanifest?h=077e009353"];
+const VERSION = '202611120851-37b1bc10cb';
+const FILES = ["./", "app.css?h=aca042c475", "app.js?h=898a39fdc3", "data_brief.js?h=9d1947f5bd", "data_intl.js?h=e59bc3e9aa", "data_meta.js?h=c5d8076256", "data_mkb.js?h=d622a23a8f", "data_ref.js?h=fe38c527fe", "data_terms.js?h=d50ec20475", "icon-180.png?h=7e09a70b6e", "icon-192.png?h=ce7392dc4a", "icon-512.png?h=3c87e994ac", "icon-maskable-512.png?h=490c4d9679", "index.html?h=c2c3ec7fbd", "manifest.webmanifest?h=077e009353"];
 const CACHE = 'terapevt-' + VERSION;
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => Promise.all(FILES.map(u => fetch(u, { cache: 'reload' }).then(r => {
