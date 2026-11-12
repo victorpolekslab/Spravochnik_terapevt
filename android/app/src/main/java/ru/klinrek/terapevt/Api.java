@@ -60,7 +60,7 @@ final class Api {
             boolean ok = false; String body;
             try {
                 String host = new URL(url).getHost();
-                if (!url.startsWith("https://") || !(host.equals("eutils.ncbi.nlm.nih.gov") || host.equals("victorpolekslab.github.io")))
+                if (!url.startsWith("https://") || !(host.equals("eutils.ncbi.nlm.nih.gov") || host.equals("victorpolekslab.github.io") || host.equals("raw.githubusercontent.com")))
                     throw new SecurityException("адрес не разрешён");
                 body = new String(Ota.get(url), "UTF-8");
                 ok = true;
