@@ -553,11 +553,16 @@ function setTitle(t, back, actions) {
   $('#hact').innerHTML = actions || '';
 }
 $('#back').onclick = () => history.back();
+// Препараты: поиск по инструкциям и проверка взаимодействий (drugs.js, данные — ветка drugs репозитория Spravochnik_nmp)
+const DM = window.DrugsModule ? window.DrugsModule({ view, go, setTitle: (t, back) => setTitle(t, back), fetchText: nfetch }) : null;
+if (DM) setTimeout(() => DM.preload(), 1500);
 function route() {
-  const h = decodeURIComponent(location.hash.slice(1) || 'home');
+  const raw = location.hash.slice(1) || 'home';
+  const qs = raw.indexOf('?') >= 0 ? raw.slice(raw.indexOf('?') + 1) : '';
+  const h = decodeURIComponent(raw.split('?')[0]);
   const [p, a, b, c] = h.split('/');
   closeSheet(true); stickyCompact(null);
-  curTab = ['ref'].includes(p) ? 'ref' : p === 'about' ? 'about' : 'home';
+  curTab = ['ref'].includes(p) ? 'ref' : p === 'about' ? 'about' : ['drugs', 'drug', 'ix'].includes(p) ? 'drugs' : 'home';
   $$('#tabs a').forEach(x => x.classList.toggle('on', x.dataset.tab === curTab));
   window.scrollTo(0, 0);
   try {
@@ -571,6 +576,7 @@ function route() {
     else if (p === 'mref') { refPage(a); setTitle(REF[a] ? REF[a].title : 'Справка', true); }
     else if (p === 'ref') a ? refPage(a) : refList();
     else if (p === 'about') about();
+    else if (DM && ['drugs', 'drug', 'ix'].includes(p)) DM.route([p, a, b], new URLSearchParams(qs));
     else home(false);
   } catch (e) { view.innerHTML = `<div class="empty">Ошибка отображения: ${esc(e.message)}</div>`; }
   if (N && N.ok) N.ok();
@@ -957,7 +963,7 @@ const EU = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
 function cochraneSheet(t, krId) {
   if (!t) return;
   const cond = TERMS.conditions[krId] || '';
-  openSheet(`<div class="sh-h"><div><b>${esc(t.ru[0].toUpperCase() + t.ru.slice(1))}</b><span class="meta">${esc(t.en)} · обзоры Cochrane${cond ? ' · ' + esc(cond.split(' OR ')[0]) : ''}</span></div><button class="x" data-close="1" aria-label="Закрыть">×</button></div><div id="cr"><div class="load">Ищу обзоры в PubMed…</div></div>
+  openSheet(`<div class="sh-h"><div><b>${esc(t.ru[0].toUpperCase() + t.ru.slice(1))}</b><span class="meta">${esc(t.en)} · обзоры Cochrane${cond ? ' · ' + esc(cond.split(' OR ')[0]) : ''}</span></div><button class="x" data-close="1" aria-label="Закрыть">×</button></div>${t.kind !== 'method' && DM && DM.has(t.ru) ? `<div class="btn2" style="margin:0 0 10px"><a class="p" href="${DM.href(t.ru)}">Инструкция и взаимодействия</a></div>` : ''}<div id="cr"><div class="load">Ищу обзоры в PubMed…</div></div>
     <p class="note" style="margin:10px 0 0">Поиск: PubMed (NCBI E-utilities), журнал «Cochrane Database Syst Rev». Абстракты не хранятся в приложении. © Cochrane, John Wiley &amp; Sons.</p>`);
   const en = /\s/.test(t.en) ? '"' + t.en + '"' : t.en;
   const base = `(${en}[tiab] OR ${en}[mh]) AND "Cochrane Database Syst Rev"[ta] NOT retracted publication[pt]`;
