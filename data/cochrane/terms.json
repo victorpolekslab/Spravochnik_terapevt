@@ -1,0 +1,2024 @@
+{
+ "about": "Термины для ссылок «препарат/метод → обзоры Cochrane». Поиск выполняет приложение (PubMed E-utilities), абстракты не хранятся. См. docs/cochrane.md",
+ "query": {
+  "esearch": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&retmax=10&sort=relevance&term={term}",
+  "term_with_condition": "({en}[tiab] OR {en}[mh]) AND ({condition}) AND \"Cochrane Database Syst Rev\"[ta] NOT retracted publication[pt]",
+  "term_fallback": "({en}[tiab] OR {en}[mh]) AND \"Cochrane Database Syst Rev\"[ta] NOT retracted publication[pt]",
+  "esummary": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&retmode=json&id={ids}",
+  "efetch_abstract": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&rettype=abstract&retmode=xml&id={pmid}",
+  "cochrane_en": "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.{cd}/full",
+  "cochrane_ru": "https://www.cochrane.org/ru/{cd_base}"
+ },
+ "conditions": {
+  "62_3": "hypertension",
+  "155_2": "stable angina OR coronary artery disease",
+  "156_2": "heart failure",
+  "752_1": "dyslipidemia OR hypercholesterolemia",
+  "160_2": "bradycardia OR heart block",
+  "569_2": "ventricular arrhythmia",
+  "382_2": "atrial fibrillation",
+  "619_3": "supraventricular tachycardia",
+  "154_4": "acute coronary syndrome",
+  "157_5": "myocardial infarction",
+  "814_1": "stroke",
+  "290_2": "type 2 diabetes",
+  "469_3": "chronic kidney disease",
+  "894_1": "IgA nephropathy",
+  "816_1": "focal segmental glomerulosclerosis",
+  "359_3": "asthma",
+  "603_3": "chronic obstructive pulmonary disease",
+  "655_2": "chronic bronchitis",
+  "654_2": "community-acquired pneumonia",
+  "838_1": "viral pneumonia",
+  "783_1": "hypersensitivity pneumonitis",
+  "677_1": "idiopathic pulmonary fibrosis",
+  "795_1": "lung transplantation",
+  "277_2": "peptic ulcer",
+  "708_2": "gastritis OR Helicobacter pylori",
+  "273_5": "chronic pancreatitis",
+  "715_2": "liver cirrhosis",
+  "711_2": "alcoholic liver disease",
+  "1033_1": "primary biliary cholangitis",
+  "176_2": "Crohn disease",
+  "193_2": "ulcerative colitis",
+  "1000_1": "eosinophilic esophagitis",
+  "87_5": "osteoporosis",
+  "617_5": "dementia OR cognitive impairment",
+  "115_3": "diabetic retinopathy",
+  "738_2": "familial adenomatous polyposis",
+  "949_1": "colorectal polyps",
+  "574_3": "gastric cancer",
+  "1_4": "hepatocellular carcinoma",
+  "893_1": "cancer of unknown primary"
+ },
+ "terms": [
+  {
+   "kind": "drug",
+   "ru": "ацетилсалициловая кислота",
+   "en": "aspirin",
+   "rx": "ацетилсалицилов\\w*\\s+кислот\\w*|\\bАСК\\b",
+   "id": "aspirin",
+   "used_in": 6
+  },
+  {
+   "kind": "drug",
+   "ru": "клопидогрел",
+   "en": "clopidogrel",
+   "rx": "(?<![\\w-])#?клопидогрел\\w{0,3}(?![\\w])",
+   "id": "clopidogrel",
+   "used_in": 6
+  },
+  {
+   "kind": "drug",
+   "ru": "тикагрелор",
+   "en": "ticagrelor",
+   "rx": "(?<![\\w-])#?тикагрелор\\w{0,3}(?![\\w])",
+   "id": "ticagrelor",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "прасугрел",
+   "en": "prasugrel",
+   "rx": "(?<![\\w-])#?прасугрел\\w{0,3}(?![\\w])",
+   "id": "prasugrel",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "варфарин",
+   "en": "warfarin",
+   "rx": "(?<![\\w-])#?варфарин\\w{0,3}(?![\\w])",
+   "id": "warfarin",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "апиксабан",
+   "en": "apixaban",
+   "rx": "(?<![\\w-])#?апиксабан\\w{0,3}(?![\\w])",
+   "id": "apixaban",
+   "used_in": 5
+  },
+  {
+   "kind": "drug",
+   "ru": "ривароксабан",
+   "en": "rivaroxaban",
+   "rx": "(?<![\\w-])#?ривароксабан\\w{0,3}(?![\\w])",
+   "id": "rivaroxaban",
+   "used_in": 7
+  },
+  {
+   "kind": "drug",
+   "ru": "эдоксабан",
+   "en": "edoxaban",
+   "rx": "(?<![\\w-])#?эдоксабан\\w{0,3}(?![\\w])",
+   "id": "edoxaban",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "дабигатрана этексилат",
+   "en": "dabigatran",
+   "rx": "дабигатран\\w*(?:\\s+этексилат\\w*)?",
+   "id": "dabigatran",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "эноксапарин натрия",
+   "en": "enoxaparin",
+   "rx": "эноксапарин\\w*(?:\\s+натрия)?",
+   "id": "enoxaparin",
+   "used_in": 7
+  },
+  {
+   "kind": "drug",
+   "ru": "гепарин натрия",
+   "en": "unfractionated heparin",
+   "rx": "(?<!\\w)гепарин\\w*\\s+натрия",
+   "id": "unfractionated_heparin",
+   "used_in": 8
+  },
+  {
+   "kind": "drug",
+   "ru": "фондапаринукс натрия",
+   "en": "fondaparinux",
+   "rx": "фондапаринукс\\w*(?:\\s+натрия)?",
+   "id": "fondaparinux",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "эналаприл",
+   "en": "enalapril",
+   "rx": "(?<![\\w-])#?эналаприл\\w{0,3}(?![\\w])",
+   "id": "enalapril",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "лизиноприл",
+   "en": "lisinopril",
+   "rx": "(?<![\\w-])#?лизиноприл\\w{0,3}(?![\\w])",
+   "id": "lisinopril",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "периндоприл",
+   "en": "perindopril",
+   "rx": "(?<![\\w-])#?периндоприл\\w{0,3}(?![\\w])",
+   "id": "perindopril",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "рамиприл",
+   "en": "ramipril",
+   "rx": "(?<![\\w-])#?рамиприл\\w{0,3}(?![\\w])",
+   "id": "ramipril",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "каптоприл",
+   "en": "captopril",
+   "rx": "(?<![\\w-])#?каптоприл\\w{0,3}(?![\\w])",
+   "id": "captopril",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "лозартан",
+   "en": "losartan",
+   "rx": "(?<![\\w-])#?лозартан\\w{0,3}(?![\\w])",
+   "id": "losartan",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "валсартан",
+   "en": "valsartan",
+   "rx": "валсартан\\w*(?![\\w+])(?!\\s*\\+)",
+   "id": "valsartan",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "кандесартан",
+   "en": "candesartan",
+   "rx": "(?<![\\w-])#?кандесартан\\w{0,3}(?![\\w])",
+   "id": "candesartan",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "телмисартан",
+   "en": "telmisartan",
+   "rx": "(?<![\\w-])#?телмисартан\\w{0,3}(?![\\w])",
+   "id": "telmisartan",
+   "used_in": 0
+  },
+  {
+   "kind": "drug",
+   "ru": "валсартан+сакубитрил",
+   "en": "sacubitril valsartan",
+   "rx": "валсартан\\w*\\s*\\+\\s*сакубитрил\\w*|сакубитрил\\w*",
+   "id": "sacubitril_valsartan",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "амлодипин",
+   "en": "amlodipine",
+   "rx": "(?<![\\w-])#?амлодипин\\w{0,3}(?![\\w])",
+   "id": "amlodipine",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "нифедипин",
+   "en": "nifedipine",
+   "rx": "(?<![\\w-])#?нифедипин\\w{0,3}(?![\\w])",
+   "id": "nifedipine",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "верапамил",
+   "en": "verapamil",
+   "rx": "(?<![\\w-])#?верапамил\\w{0,3}(?![\\w])",
+   "id": "verapamil",
+   "used_in": 8
+  },
+  {
+   "kind": "drug",
+   "ru": "дилтиазем",
+   "en": "diltiazem",
+   "rx": "(?<![\\w-])#?дилтиазем\\w{0,3}(?![\\w])",
+   "id": "diltiazem",
+   "used_in": 7
+  },
+  {
+   "kind": "drug",
+   "ru": "бисопролол",
+   "en": "bisoprolol",
+   "rx": "(?<![\\w-])#?бисопролол\\w{0,3}(?![\\w])",
+   "id": "bisoprolol",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "метопролол",
+   "en": "metoprolol",
+   "rx": "(?<![\\w-])#?метопролол\\w{0,3}(?![\\w])",
+   "id": "metoprolol",
+   "used_in": 7
+  },
+  {
+   "kind": "drug",
+   "ru": "карведилол",
+   "en": "carvedilol",
+   "rx": "(?<![\\w-])#?карведилол\\w{0,3}(?![\\w])",
+   "id": "carvedilol",
+   "used_in": 5
+  },
+  {
+   "kind": "drug",
+   "ru": "небиволол",
+   "en": "nebivolol",
+   "rx": "(?<![\\w-])#?небиволол\\w{0,3}(?![\\w])",
+   "id": "nebivolol",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "атенолол",
+   "en": "atenolol",
+   "rx": "(?<![\\w-])#?атенолол\\w{0,3}(?![\\w])",
+   "id": "atenolol",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "пропранолол",
+   "en": "propranolol",
+   "rx": "(?<![\\w-])#?пропранолол\\w{0,3}(?![\\w])",
+   "id": "propranolol",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "гидрохлоротиазид",
+   "en": "hydrochlorothiazide",
+   "rx": "(?<![\\w-])#?гидрохлоротиазид\\w{0,3}(?![\\w])",
+   "id": "hydrochlorothiazide",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "индапамид",
+   "en": "indapamide",
+   "rx": "(?<![\\w-])#?индапамид\\w{0,3}(?![\\w])",
+   "id": "indapamide",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "хлорталидон",
+   "en": "chlorthalidone",
+   "rx": "(?<![\\w-])#?хлорталидон\\w{0,3}(?![\\w])",
+   "id": "chlorthalidone",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "фуросемид",
+   "en": "furosemide",
+   "rx": "(?<![\\w-])#?фуросемид\\w{0,3}(?![\\w])",
+   "id": "furosemide",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "торасемид",
+   "en": "torasemide",
+   "rx": "(?<![\\w-])#?торасемид\\w{0,3}(?![\\w])",
+   "id": "torasemide",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "спиронолактон",
+   "en": "spironolactone",
+   "rx": "(?<![\\w-])#?спиронолактон\\w{0,3}(?![\\w])",
+   "id": "spironolactone",
+   "used_in": 5
+  },
+  {
+   "kind": "drug",
+   "ru": "эплеренон",
+   "en": "eplerenone",
+   "rx": "(?<![\\w-])#?эплеренон\\w{0,3}(?![\\w])",
+   "id": "eplerenone",
+   "used_in": 6
+  },
+  {
+   "kind": "drug",
+   "ru": "моксонидин",
+   "en": "moxonidine",
+   "rx": "(?<![\\w-])#?моксонидин\\w{0,3}(?![\\w])",
+   "id": "moxonidine",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "ивабрадин",
+   "en": "ivabradine",
+   "rx": "(?<![\\w-])#?ивабрадин\\w{0,3}(?![\\w])",
+   "id": "ivabradine",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "дигоксин",
+   "en": "digoxin",
+   "rx": "(?<![\\w-])#?дигоксин\\w{0,3}(?![\\w])",
+   "id": "digoxin",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "амиодарон",
+   "en": "amiodarone",
+   "rx": "(?<![\\w-])#?амиодарон\\w{0,3}(?![\\w])",
+   "id": "amiodarone",
+   "used_in": 6
+  },
+  {
+   "kind": "drug",
+   "ru": "соталол",
+   "en": "sotalol",
+   "rx": "(?<![\\w-])#?соталол\\w{0,3}(?![\\w])",
+   "id": "sotalol",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "пропафенон",
+   "en": "propafenone",
+   "rx": "(?<![\\w-])#?пропафенон\\w{0,3}(?![\\w])",
+   "id": "propafenone",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "нитроглицерин",
+   "en": "nitroglycerin",
+   "rx": "(?<![\\w-])#?нитроглицерин\\w{0,3}(?![\\w])",
+   "id": "nitroglycerin",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "изосорбида мононитрат",
+   "en": "isosorbide mononitrate",
+   "rx": "изосорбид\\w*\\s+мононитрат\\w*",
+   "id": "isosorbide_mononitrate",
+   "used_in": 0
+  },
+  {
+   "kind": "drug",
+   "ru": "ранолазин",
+   "en": "ranolazine",
+   "rx": "(?<![\\w-])#?ранолазин\\w{0,3}(?![\\w])",
+   "id": "ranolazine",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "триметазидин",
+   "en": "trimetazidine",
+   "rx": "(?<![\\w-])#?триметазидин\\w{0,3}(?![\\w])",
+   "id": "trimetazidine",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "никорандил",
+   "en": "nicorandil",
+   "rx": "(?<![\\w-])#?никорандил\\w{0,3}(?![\\w])",
+   "id": "nicorandil",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "железа карбоксимальтозат",
+   "en": "ferric carboxymaltose",
+   "rx": "желез\\w*\\s+карбоксимальтозат\\w*",
+   "id": "ferric_carboxymaltose",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "аторвастатин",
+   "en": "atorvastatin",
+   "rx": "(?<![\\w-])#?аторвастатин\\w{0,3}(?![\\w])",
+   "id": "atorvastatin",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "розувастатин",
+   "en": "rosuvastatin",
+   "rx": "(?<![\\w-])#?розувастатин\\w{0,3}(?![\\w])",
+   "id": "rosuvastatin",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "симвастатин",
+   "en": "simvastatin",
+   "rx": "(?<![\\w-])#?симвастатин\\w{0,3}(?![\\w])",
+   "id": "simvastatin",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "эзетимиб",
+   "en": "ezetimibe",
+   "rx": "(?<![\\w-])#?эзетимиб\\w{0,3}(?![\\w])",
+   "id": "ezetimibe",
+   "used_in": 5
+  },
+  {
+   "kind": "drug",
+   "ru": "алирокумаб",
+   "en": "alirocumab",
+   "rx": "(?<![\\w-])#?алирокумаб\\w{0,3}(?![\\w])",
+   "id": "alirocumab",
+   "used_in": 5
+  },
+  {
+   "kind": "drug",
+   "ru": "эволокумаб",
+   "en": "evolocumab",
+   "rx": "(?<![\\w-])#?эволокумаб\\w{0,3}(?![\\w])",
+   "id": "evolocumab",
+   "used_in": 5
+  },
+  {
+   "kind": "drug",
+   "ru": "инклисиран",
+   "en": "inclisiran",
+   "rx": "(?<![\\w-])#?инклисиран\\w{0,3}(?![\\w])",
+   "id": "inclisiran",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "фенофибрат",
+   "en": "fenofibrate",
+   "rx": "(?<![\\w-])#?фенофибрат\\w{0,3}(?![\\w])",
+   "id": "fenofibrate",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "омега-3 полиненасыщенные жирные кислоты",
+   "en": "omega-3 fatty acids",
+   "rx": "омега-3",
+   "id": "omega_3_fatty_acids",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "метформин",
+   "en": "metformin",
+   "rx": "(?<![\\w-])#?метформин\\w{0,3}(?![\\w])",
+   "id": "metformin",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "гликлазид",
+   "en": "gliclazide",
+   "rx": "(?<![\\w-])#?гликлазид\\w{0,3}(?![\\w])",
+   "id": "gliclazide",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "глимепирид",
+   "en": "glimepiride",
+   "rx": "(?<![\\w-])#?глимепирид\\w{0,3}(?![\\w])",
+   "id": "glimepiride",
+   "used_in": 0
+  },
+  {
+   "kind": "drug",
+   "ru": "глибенкламид",
+   "en": "glibenclamide",
+   "rx": "(?<![\\w-])#?глибенкламид\\w{0,3}(?![\\w])",
+   "id": "glibenclamide",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "ситаглиптин",
+   "en": "sitagliptin",
+   "rx": "(?<![\\w-])#?ситаглиптин\\w{0,3}(?![\\w])",
+   "id": "sitagliptin",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "вилдаглиптин",
+   "en": "vildagliptin",
+   "rx": "(?<![\\w-])#?вилдаглиптин\\w{0,3}(?![\\w])",
+   "id": "vildagliptin",
+   "used_in": 0
+  },
+  {
+   "kind": "drug",
+   "ru": "саксаглиптин",
+   "en": "saxagliptin",
+   "rx": "(?<![\\w-])#?саксаглиптин\\w{0,3}(?![\\w])",
+   "id": "saxagliptin",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "линаглиптин",
+   "en": "linagliptin",
+   "rx": "(?<![\\w-])#?линаглиптин\\w{0,3}(?![\\w])",
+   "id": "linagliptin",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "эмпаглифлозин",
+   "en": "empagliflozin",
+   "rx": "(?<![\\w-])#?эмпаглифлозин\\w{0,3}(?![\\w])",
+   "id": "empagliflozin",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "дапаглифлозин",
+   "en": "dapagliflozin",
+   "rx": "(?<![\\w-])#?дапаглифлозин\\w{0,3}(?![\\w])",
+   "id": "dapagliflozin",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "канаглифлозин",
+   "en": "canagliflozin",
+   "rx": "(?<![\\w-])#?канаглифлозин\\w{0,3}(?![\\w])",
+   "id": "canagliflozin",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "эртуглифлозин",
+   "en": "ertugliflozin",
+   "rx": "(?<![\\w-])#?эртуглифлозин\\w{0,3}(?![\\w])",
+   "id": "ertugliflozin",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "лираглутид",
+   "en": "liraglutide",
+   "rx": "(?<![\\w-])#?лираглутид\\w{0,3}(?![\\w])",
+   "id": "liraglutide",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "дулаглутид",
+   "en": "dulaglutide",
+   "rx": "(?<![\\w-])#?дулаглутид\\w{0,3}(?![\\w])",
+   "id": "dulaglutide",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "семаглутид",
+   "en": "semaglutide",
+   "rx": "(?<![\\w-])#?семаглутид\\w{0,3}(?![\\w])",
+   "id": "semaglutide",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "пиоглитазон",
+   "en": "pioglitazone",
+   "rx": "(?<![\\w-])#?пиоглитазон\\w{0,3}(?![\\w])",
+   "id": "pioglitazone",
+   "used_in": 0
+  },
+  {
+   "kind": "drug",
+   "ru": "инсулин гларгин",
+   "en": "insulin glargine",
+   "rx": "инсулин\\w*\\s+гларгин\\w*",
+   "id": "insulin_glargine",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "инсулин деглудек",
+   "en": "insulin degludec",
+   "rx": "инсулин\\w*\\s+деглудек\\w*",
+   "id": "insulin_degludec",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "инсулин детемир",
+   "en": "insulin detemir",
+   "rx": "инсулин\\w*\\s+детемир\\w*",
+   "id": "insulin_detemir",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "колекальциферол",
+   "en": "vitamin D",
+   "rx": "колекальциферол\\w*",
+   "id": "vitamin_d",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "кальция карбонат",
+   "en": "calcium supplementation",
+   "rx": "кальци\\w*\\s+карбонат\\w*",
+   "id": "calcium_supplementation",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "алендроновая кислота",
+   "en": "alendronate",
+   "rx": "алендронов\\w*\\s+кислот\\w*",
+   "id": "alendronate",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "ризедроновая кислота",
+   "en": "risedronate",
+   "rx": "ризедронов\\w*\\s+кислот\\w*",
+   "id": "risedronate",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "ибандроновая кислота",
+   "en": "ibandronate",
+   "rx": "ибандронов\\w*\\s+кислот\\w*",
+   "id": "ibandronate",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "золедроновая кислота",
+   "en": "zoledronic acid",
+   "rx": "золедронов\\w*\\s+кислот\\w*",
+   "id": "zoledronic_acid",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "деносумаб",
+   "en": "denosumab",
+   "rx": "(?<![\\w-])#?деносумаб\\w{0,3}(?![\\w])",
+   "id": "denosumab",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "терипаратид",
+   "en": "teriparatide",
+   "rx": "(?<![\\w-])#?терипаратид\\w{0,3}(?![\\w])",
+   "id": "teriparatide",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "сальбутамол",
+   "en": "salbutamol",
+   "rx": "(?<![\\w-])#?сальбутамол\\w{0,3}(?![\\w])",
+   "id": "salbutamol",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "ипратропия бромид",
+   "en": "ipratropium",
+   "rx": "ипратропи\\w*(?:\\s+бромид\\w*)?",
+   "id": "ipratropium",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "тиотропия бромид",
+   "en": "tiotropium",
+   "rx": "тиотропи\\w*(?:\\s+бромид\\w*)?",
+   "id": "tiotropium",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "гликопиррония бромид",
+   "en": "glycopyrronium",
+   "rx": "гликопирро\\w*(?:\\s+бромид\\w*)?",
+   "id": "glycopyrronium",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "умеклидиния бромид",
+   "en": "umeclidinium",
+   "rx": "умеклидини\\w*(?:\\s+бромид\\w*)?",
+   "id": "umeclidinium",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "аклидиния бромид",
+   "en": "aclidinium",
+   "rx": "аклидини\\w*(?:\\s+бромид\\w*)?",
+   "id": "aclidinium",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "формотерол",
+   "en": "formoterol",
+   "rx": "(?<![\\w-])#?формотерол\\w{0,3}(?![\\w])",
+   "id": "formoterol",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "салметерол",
+   "en": "salmeterol",
+   "rx": "(?<![\\w-])#?салметерол\\w{0,3}(?![\\w])",
+   "id": "salmeterol",
+   "used_in": 0
+  },
+  {
+   "kind": "drug",
+   "ru": "индакатерол",
+   "en": "indacaterol",
+   "rx": "(?<![\\w-])#?индакатерол\\w{0,3}(?![\\w])",
+   "id": "indacaterol",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "олодатерол",
+   "en": "olodaterol",
+   "rx": "(?<![\\w-])#?олодатерол\\w{0,3}(?![\\w])",
+   "id": "olodaterol",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "вилантерол",
+   "en": "vilanterol",
+   "rx": "(?<![\\w-])#?вилантерол\\w{0,3}(?![\\w])",
+   "id": "vilanterol",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "будесонид",
+   "en": "budesonide",
+   "rx": "(?<![\\w-])#?будесонид\\w{0,3}(?![\\w])",
+   "id": "budesonide",
+   "used_in": 5
+  },
+  {
+   "kind": "drug",
+   "ru": "беклометазон",
+   "en": "beclometasone",
+   "rx": "(?<![\\w-])#?беклометазон\\w{0,3}(?![\\w])",
+   "id": "beclometasone",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "флутиказон",
+   "en": "fluticasone",
+   "rx": "(?<![\\w-])#?флутиказон\\w{0,3}(?![\\w])",
+   "id": "fluticasone",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "рофлумиласт",
+   "en": "roflumilast",
+   "rx": "(?<![\\w-])#?рофлумиласт\\w{0,3}(?![\\w])",
+   "id": "roflumilast",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "монтелукаст",
+   "en": "montelukast",
+   "rx": "(?<![\\w-])#?монтелукаст\\w{0,3}(?![\\w])",
+   "id": "montelukast",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "омализумаб",
+   "en": "omalizumab",
+   "rx": "(?<![\\w-])#?омализумаб\\w{0,3}(?![\\w])",
+   "id": "omalizumab",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "меполизумаб",
+   "en": "mepolizumab",
+   "rx": "(?<![\\w-])#?меполизумаб\\w{0,3}(?![\\w])",
+   "id": "mepolizumab",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "бенрализумаб",
+   "en": "benralizumab",
+   "rx": "(?<![\\w-])#?бенрализумаб\\w{0,3}(?![\\w])",
+   "id": "benralizumab",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "дупилумаб",
+   "en": "dupilumab",
+   "rx": "(?<![\\w-])#?дупилумаб\\w{0,3}(?![\\w])",
+   "id": "dupilumab",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "ацетилцистеин",
+   "en": "acetylcysteine",
+   "rx": "(?<![\\w-])#?ацетилцистеин\\w{0,3}(?![\\w])",
+   "id": "acetylcysteine",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "амброксол",
+   "en": "ambroxol",
+   "rx": "(?<![\\w-])#?амброксол\\w{0,3}(?![\\w])",
+   "id": "ambroxol",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "карбоцистеин",
+   "en": "carbocisteine",
+   "rx": "(?<![\\w-])#?карбоцистеин\\w{0,3}(?![\\w])",
+   "id": "carbocisteine",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "амоксициллин",
+   "en": "amoxicillin",
+   "rx": "амоксициллин\\w*(?![\\w+])(?!\\s*\\+)",
+   "id": "amoxicillin",
+   "used_in": 5
+  },
+  {
+   "kind": "drug",
+   "ru": "амоксициллин+клавулановая кислота",
+   "en": "amoxicillin clavulanate",
+   "rx": "амоксициллин\\w*\\s*\\+\\s*клавуланов\\w*\\s+кислот\\w*|клавуланат\\w*",
+   "id": "amoxicillin_clavulanate",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "азитромицин",
+   "en": "azithromycin",
+   "rx": "(?<![\\w-])#?азитромицин\\w{0,3}(?![\\w])",
+   "id": "azithromycin",
+   "used_in": 5
+  },
+  {
+   "kind": "drug",
+   "ru": "кларитромицин",
+   "en": "clarithromycin",
+   "rx": "(?<![\\w-])#?кларитромицин\\w{0,3}(?![\\w])",
+   "id": "clarithromycin",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "доксициклин",
+   "en": "doxycycline",
+   "rx": "(?<![\\w-])#?доксициклин\\w{0,3}(?![\\w])",
+   "id": "doxycycline",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "левофлоксацин",
+   "en": "levofloxacin",
+   "rx": "(?<![\\w-])#?левофлоксацин\\w{0,3}(?![\\w])",
+   "id": "levofloxacin",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "моксифлоксацин",
+   "en": "moxifloxacin",
+   "rx": "(?<![\\w-])#?моксифлоксацин\\w{0,3}(?![\\w])",
+   "id": "moxifloxacin",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "цефтриаксон",
+   "en": "ceftriaxone",
+   "rx": "(?<![\\w-])#?цефтриаксон\\w{0,3}(?![\\w])",
+   "id": "ceftriaxone",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "цефиксим",
+   "en": "cefixime",
+   "rx": "(?<![\\w-])#?цефиксим\\w{0,3}(?![\\w])",
+   "id": "cefixime",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "осельтамивир",
+   "en": "oseltamivir",
+   "rx": "(?<![\\w-])#?осельтамивир\\w{0,3}(?![\\w])",
+   "id": "oseltamivir",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "преднизолон",
+   "en": "prednisolone",
+   "rx": "(?<![\\w-])#?преднизолон\\w{0,3}(?![\\w])",
+   "id": "prednisolone",
+   "used_in": 10
+  },
+  {
+   "kind": "drug",
+   "ru": "метилпреднизолон",
+   "en": "methylprednisolone",
+   "rx": "(?<![\\w-])#?метилпреднизолон\\w{0,3}(?![\\w])",
+   "id": "methylprednisolone",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "дексаметазон",
+   "en": "dexamethasone",
+   "rx": "(?<![\\w-])#?дексаметазон\\w{0,3}(?![\\w])",
+   "id": "dexamethasone",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "омепразол",
+   "en": "omeprazole",
+   "rx": "(?<![\\w-])#?омепразол\\w{0,3}(?![\\w])",
+   "id": "omeprazole",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "эзомепразол",
+   "en": "esomeprazole",
+   "rx": "(?<![\\w-])#?эзомепразол\\w{0,3}(?![\\w])",
+   "id": "esomeprazole",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "пантопразол",
+   "en": "pantoprazole",
+   "rx": "(?<![\\w-])#?пантопразол\\w{0,3}(?![\\w])",
+   "id": "pantoprazole",
+   "used_in": 0
+  },
+  {
+   "kind": "drug",
+   "ru": "рабепразол",
+   "en": "rabeprazole",
+   "rx": "(?<![\\w-])#?рабепразол\\w{0,3}(?![\\w])",
+   "id": "rabeprazole",
+   "used_in": 0
+  },
+  {
+   "kind": "drug",
+   "ru": "лансопразол",
+   "en": "lansoprazole",
+   "rx": "(?<![\\w-])#?лансопразол\\w{0,3}(?![\\w])",
+   "id": "lansoprazole",
+   "used_in": 0
+  },
+  {
+   "kind": "drug",
+   "ru": "висмута трикалия дицитрат",
+   "en": "bismuth",
+   "rx": "висмут\\w*(?:\\s+трикалия\\s+дицитрат\\w*)?",
+   "id": "bismuth",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "метронидазол",
+   "en": "metronidazole",
+   "rx": "(?<![\\w-])#?метронидазол\\w{0,3}(?![\\w])",
+   "id": "metronidazole",
+   "used_in": 4
+  },
+  {
+   "kind": "drug",
+   "ru": "тетрациклин",
+   "en": "tetracycline",
+   "rx": "(?<![\\w-])#?тетрациклин\\w{0,3}(?![\\w])",
+   "id": "tetracycline",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "ребамипид",
+   "en": "rebamipide",
+   "rx": "(?<![\\w-])#?ребамипид\\w{0,3}(?![\\w])",
+   "id": "rebamipide",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "итоприд",
+   "en": "itopride",
+   "rx": "(?<![\\w-])#?итоприд\\w{0,3}(?![\\w])",
+   "id": "itopride",
+   "used_in": 0
+  },
+  {
+   "kind": "drug",
+   "ru": "домперидон",
+   "en": "domperidone",
+   "rx": "(?<![\\w-])#?домперидон\\w{0,3}(?![\\w])",
+   "id": "domperidone",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "панкреатин",
+   "en": "pancreatin",
+   "rx": "(?<![\\w-])#?панкреатин\\w{0,3}(?![\\w])",
+   "id": "pancreatin",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "урсодезоксихолевая кислота",
+   "en": "ursodeoxycholic acid",
+   "rx": "урсодезоксихолев\\w*\\s+кислот\\w*",
+   "id": "ursodeoxycholic_acid",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "лактулоза",
+   "en": "lactulose",
+   "rx": "(?<![\\w-])#?лактулоза\\w{0,3}(?![\\w])",
+   "id": "lactulose",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "рифаксимин",
+   "en": "rifaximin",
+   "rx": "(?<![\\w-])#?рифаксимин\\w{0,3}(?![\\w])",
+   "id": "rifaximin",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "орнитин",
+   "en": "L-ornithine L-aspartate",
+   "rx": "\\bорнитин\\w*",
+   "id": "l_ornithine_l_aspartate",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "адеметионин",
+   "en": "S-adenosylmethionine",
+   "rx": "(?<![\\w-])#?адеметионин\\w{0,3}(?![\\w])",
+   "id": "s_adenosylmethionine",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "пентоксифиллин",
+   "en": "pentoxifylline",
+   "rx": "(?<![\\w-])#?пентоксифиллин\\w{0,3}(?![\\w])",
+   "id": "pentoxifylline",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "месалазин",
+   "en": "mesalazine",
+   "rx": "(?<![\\w-])#?месалазин\\w{0,3}(?![\\w])",
+   "id": "mesalazine",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "азатиоприн",
+   "en": "azathioprine",
+   "rx": "(?<![\\w-])#?азатиоприн\\w{0,3}(?![\\w])",
+   "id": "azathioprine",
+   "used_in": 7
+  },
+  {
+   "kind": "drug",
+   "ru": "инфликсимаб",
+   "en": "infliximab",
+   "rx": "(?<![\\w-])#?инфликсимаб\\w{0,3}(?![\\w])",
+   "id": "infliximab",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "адалимумаб",
+   "en": "adalimumab",
+   "rx": "(?<![\\w-])#?адалимумаб\\w{0,3}(?![\\w])",
+   "id": "adalimumab",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "ведолизумаб",
+   "en": "vedolizumab",
+   "rx": "(?<![\\w-])#?ведолизумаб\\w{0,3}(?![\\w])",
+   "id": "vedolizumab",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "устекинумаб",
+   "en": "ustekinumab",
+   "rx": "(?<![\\w-])#?устекинумаб\\w{0,3}(?![\\w])",
+   "id": "ustekinumab",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "севеламер",
+   "en": "sevelamer",
+   "rx": "(?<![\\w-])#?севеламер\\w{0,3}(?![\\w])",
+   "id": "sevelamer",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "цинакалцет",
+   "en": "cinacalcet",
+   "rx": "(?<![\\w-])#?цинакалцет\\w{0,3}(?![\\w])",
+   "id": "cinacalcet",
+   "used_in": 0
+  },
+  {
+   "kind": "drug",
+   "ru": "эпоэтин альфа",
+   "en": "erythropoietin",
+   "rx": "эпоэтин\\w*",
+   "id": "erythropoietin",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "донепезил",
+   "en": "donepezil",
+   "rx": "(?<![\\w-])#?донепезил\\w{0,3}(?![\\w])",
+   "id": "donepezil",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "галантамин",
+   "en": "galantamine",
+   "rx": "(?<![\\w-])#?галантамин\\w{0,3}(?![\\w])",
+   "id": "galantamine",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "ривастигмин",
+   "en": "rivastigmine",
+   "rx": "(?<![\\w-])#?ривастигмин\\w{0,3}(?![\\w])",
+   "id": "rivastigmine",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "мемантин",
+   "en": "memantine",
+   "rx": "(?<![\\w-])#?мемантин\\w{0,3}(?![\\w])",
+   "id": "memantine",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "алтеплаза",
+   "en": "alteplase",
+   "rx": "(?<![\\w-])#?алтеплаза\\w{0,3}(?![\\w])",
+   "id": "alteplase",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "сертралин",
+   "en": "sertraline",
+   "rx": "(?<![\\w-])#?сертралин\\w{0,3}(?![\\w])",
+   "id": "sertraline",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "эсциталопрам",
+   "en": "escitalopram",
+   "rx": "(?<![\\w-])#?эсциталопрам\\w{0,3}(?![\\w])",
+   "id": "escitalopram",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "прегабалин",
+   "en": "pregabalin",
+   "rx": "(?<![\\w-])#?прегабалин\\w{0,3}(?![\\w])",
+   "id": "pregabalin",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "габапентин",
+   "en": "gabapentin",
+   "rx": "(?<![\\w-])#?габапентин\\w{0,3}(?![\\w])",
+   "id": "gabapentin",
+   "used_in": 3
+  },
+  {
+   "kind": "drug",
+   "ru": "амитриптилин",
+   "en": "amitriptyline",
+   "rx": "(?<![\\w-])#?амитриптилин\\w{0,3}(?![\\w])",
+   "id": "amitriptyline",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "парацетамол",
+   "en": "paracetamol",
+   "rx": "(?<![\\w-])#?парацетамол\\w{0,3}(?![\\w])",
+   "id": "paracetamol",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "трамадол",
+   "en": "tramadol",
+   "rx": "(?<![\\w-])#?трамадол\\w{0,3}(?![\\w])",
+   "id": "tramadol",
+   "used_in": 2
+  },
+  {
+   "kind": "drug",
+   "ru": "аллопуринол",
+   "en": "allopurinol",
+   "rx": "(?<![\\w-])#?аллопуринол\\w{0,3}(?![\\w])",
+   "id": "allopurinol",
+   "used_in": 1
+  },
+  {
+   "kind": "drug",
+   "ru": "колхицин",
+   "en": "colchicine",
+   "rx": "(?<![\\w-])#?колхицин\\w{0,3}(?![\\w])",
+   "id": "colchicine",
+   "used_in": 0
+  },
+  {
+   "kind": "method",
+   "ru": "катетерная аблация",
+   "en": "catheter ablation",
+   "rx": "катетерн\\w+\\s+абл\\w+|радиочастотн\\w+\\s+абл\\w+|криоабл\\w+",
+   "id": "catheter_ablation",
+   "used_in": 3
+  },
+  {
+   "kind": "method",
+   "ru": "кардиоверсия",
+   "en": "cardioversion",
+   "rx": "кардиоверси\\w+",
+   "id": "cardioversion",
+   "used_in": 4
+  },
+  {
+   "kind": "method",
+   "ru": "чрескожное коронарное вмешательство",
+   "en": "percutaneous coronary intervention",
+   "rx": "чрескожн\\w+\\s+коронарн\\w+\\s+вмешательств\\w*|\\bЧКВ\\b",
+   "id": "percutaneous_coronary_intervention",
+   "used_in": 4
+  },
+  {
+   "kind": "method",
+   "ru": "коронарное шунтирование",
+   "en": "coronary artery bypass",
+   "rx": "коронарн\\w+\\s+шунтировани\\w+|\\bАКШ\\b",
+   "id": "coronary_artery_bypass",
+   "used_in": 0
+  },
+  {
+   "kind": "method",
+   "ru": "кардиореабилитация",
+   "en": "cardiac rehabilitation",
+   "rx": "кардиореабилитаци\\w+|кардиологическ\\w+\\s+реабилитаци\\w+",
+   "id": "cardiac_rehabilitation",
+   "used_in": 0
+  },
+  {
+   "kind": "method",
+   "ru": "лёгочная реабилитация",
+   "en": "pulmonary rehabilitation",
+   "rx": "л[её]гочн\\w+\\s+реабилитаци\\w+",
+   "id": "pulmonary_rehabilitation",
+   "used_in": 0
+  },
+  {
+   "kind": "method",
+   "ru": "эрадикационная терапия H. pylori",
+   "en": "Helicobacter pylori eradication",
+   "rx": "эрадикационн\\w+\\s+терапи\\w+",
+   "id": "helicobacter_pylori_eradication",
+   "used_in": 2
+  },
+  {
+   "kind": "method",
+   "ru": "длительная кислородотерапия",
+   "en": "long-term oxygen therapy",
+   "rx": "кислородотерапи\\w+|оксигенотерапи\\w+",
+   "id": "long_term_oxygen_therapy",
+   "used_in": 1
+  },
+  {
+   "kind": "method",
+   "ru": "неинвазивная вентиляция лёгких",
+   "en": "noninvasive ventilation",
+   "rx": "неинвазивн\\w+\\s+вентиляци\\w+|\\bНИВЛ\\b",
+   "id": "noninvasive_ventilation",
+   "used_in": 1
+  },
+  {
+   "kind": "method",
+   "ru": "вакцинация против гриппа",
+   "en": "influenza vaccine",
+   "rx": "вакцинаци\\w+\\s+против\\s+гриппа|противогриппозн\\w+\\s+вакцин\\w+",
+   "id": "influenza_vaccine",
+   "used_in": 0
+  },
+  {
+   "kind": "method",
+   "ru": "пневмококковая вакцинация",
+   "en": "pneumococcal vaccine",
+   "rx": "пневмококков\\w+\\s+вакцин\\w+",
+   "id": "pneumococcal_vaccine",
+   "used_in": 0
+  },
+  {
+   "kind": "method",
+   "ru": "отказ от курения",
+   "en": "smoking cessation",
+   "rx": "отказ\\w*\\s+от\\s+курени\\w+",
+   "id": "smoking_cessation",
+   "used_in": 1
+  },
+  {
+   "kind": "method",
+   "ru": "ограничение соли",
+   "en": "salt reduction",
+   "rx": "ограничени\\w+\\s+(?:потреблени\\w+\\s+)?(?:поваренной\\s+)?соли",
+   "id": "salt_reduction",
+   "used_in": 0
+  },
+  {
+   "kind": "method",
+   "ru": "физическая активность и упражнения",
+   "en": "exercise training",
+   "rx": "физическ\\w+\\s+(?:нагрузк\\w+|упражнени\\w+|тренировк\\w+)|аэробн\\w+\\s+нагрузк\\w+",
+   "id": "exercise_training",
+   "used_in": 0
+  },
+  {
+   "kind": "method",
+   "ru": "снижение массы тела",
+   "en": "weight loss",
+   "rx": "снижени\\w+\\s+массы\\s+тела",
+   "id": "weight_loss",
+   "used_in": 0
+  },
+  {
+   "kind": "method",
+   "ru": "самоконтроль гликемии",
+   "en": "self-monitoring of blood glucose",
+   "rx": "самоконтрол\\w+\\s+гликеми\\w+",
+   "id": "self_monitoring_of_blood_glucose",
+   "used_in": 0
+  },
+  {
+   "kind": "method",
+   "ru": "компрессионный трикотаж",
+   "en": "compression stockings",
+   "rx": "компрессионн\\w+\\s+трикотаж\\w*",
+   "id": "compression_stockings",
+   "used_in": 0
+  },
+  {
+   "kind": "method",
+   "ru": "имплантация кардиовертера-дефибриллятора",
+   "en": "implantable cardioverter defibrillator",
+   "rx": "кардиовертер\\w*-дефибриллятор\\w*|\\bИКД\\b",
+   "id": "implantable_cardioverter_defibrillator",
+   "used_in": 4
+  },
+  {
+   "kind": "method",
+   "ru": "постоянная электрокардиостимуляция",
+   "en": "pacemaker",
+   "rx": "электрокардиостимул\\w+|\\bЭКС\\b",
+   "id": "pacemaker",
+   "used_in": 6
+  }
+ ],
+ "by_kr": {
+  "1000_1": {
+   "budesonide": 3,
+   "montelukast": 1,
+   "omalizumab": 1,
+   "mepolizumab": 1,
+   "benralizumab": 1,
+   "dupilumab": 1,
+   "omeprazole": 1,
+   "esomeprazole": 1,
+   "azathioprine": 1
+  },
+  "1033_1": {
+   "fenofibrate": 4,
+   "vitamin_d": 1,
+   "alendronate": 1,
+   "ibandronate": 1,
+   "denosumab": 1,
+   "prednisolone": 1,
+   "s_adenosylmethionine": 1,
+   "azathioprine": 1,
+   "sertraline": 1
+  },
+  "115_3": {
+   "dexamethasone": 1
+  },
+  "154_4": {
+   "aspirin": 35,
+   "clopidogrel": 15,
+   "ticagrelor": 11,
+   "prasugrel": 11,
+   "apixaban": 4,
+   "rivaroxaban": 9,
+   "edoxaban": 2,
+   "dabigatran": 4,
+   "enoxaparin": 9,
+   "unfractionated_heparin": 3,
+   "fondaparinux": 5,
+   "enalapril": 1,
+   "lisinopril": 1,
+   "ramipril": 1,
+   "captopril": 2,
+   "valsartan": 2,
+   "sacubitril_valsartan": 1,
+   "verapamil": 3,
+   "diltiazem": 3,
+   "metoprolol": 3,
+   "carvedilol": 1,
+   "eplerenone": 2,
+   "amiodarone": 6,
+   "nitroglycerin": 2,
+   "ezetimibe": 8,
+   "alirocumab": 4,
+   "evolocumab": 4,
+   "inclisiran": 4,
+   "cardioversion": 1,
+   "percutaneous_coronary_intervention": 27,
+   "pacemaker": 1
+  },
+  "155_2": {
+   "aspirin": 17,
+   "clopidogrel": 11,
+   "ticagrelor": 3,
+   "prasugrel": 3,
+   "rivaroxaban": 3,
+   "verapamil": 3,
+   "diltiazem": 3,
+   "spironolactone": 1,
+   "eplerenone": 1,
+   "ivabradine": 3,
+   "nitroglycerin": 1,
+   "ranolazine": 1,
+   "trimetazidine": 1,
+   "nicorandil": 1,
+   "atorvastatin": 1,
+   "rosuvastatin": 2,
+   "ezetimibe": 7,
+   "alirocumab": 3,
+   "evolocumab": 3,
+   "inclisiran": 3,
+   "fenofibrate": 3,
+   "omega_3_fatty_acids": 6,
+   "percutaneous_coronary_intervention": 8,
+   "smoking_cessation": 1
+  },
+  "156_2": {
+   "unfractionated_heparin": 2,
+   "fondaparinux": 1,
+   "enalapril": 1,
+   "lisinopril": 1,
+   "perindopril": 1,
+   "ramipril": 1,
+   "captopril": 1,
+   "losartan": 1,
+   "valsartan": 1,
+   "candesartan": 1,
+   "sacubitril_valsartan": 17,
+   "amlodipine": 2,
+   "verapamil": 3,
+   "diltiazem": 3,
+   "bisoprolol": 3,
+   "metoprolol": 4,
+   "carvedilol": 3,
+   "nebivolol": 2,
+   "hydrochlorothiazide": 1,
+   "furosemide": 4,
+   "torasemide": 2,
+   "spironolactone": 4,
+   "eplerenone": 3,
+   "moxonidine": 1,
+   "ivabradine": 9,
+   "digoxin": 5,
+   "amiodarone": 9,
+   "nitroglycerin": 1,
+   "trimetazidine": 2,
+   "nicorandil": 1,
+   "ferric_carboxymaltose": 4,
+   "metformin": 2,
+   "sitagliptin": 1,
+   "saxagliptin": 1,
+   "linagliptin": 1,
+   "empagliflozin": 11,
+   "dapagliflozin": 9,
+   "canagliflozin": 1,
+   "erythropoietin": 1,
+   "sertraline": 1,
+   "escitalopram": 1,
+   "amitriptyline": 1,
+   "allopurinol": 1,
+   "catheter_ablation": 15,
+   "cardioversion": 4,
+   "implantable_cardioverter_defibrillator": 17,
+   "pacemaker": 4
+  },
+  "157_5": {
+   "aspirin": 38,
+   "clopidogrel": 18,
+   "ticagrelor": 10,
+   "prasugrel": 10,
+   "apixaban": 3,
+   "rivaroxaban": 9,
+   "edoxaban": 2,
+   "dabigatran": 3,
+   "enoxaparin": 9,
+   "unfractionated_heparin": 7,
+   "fondaparinux": 4,
+   "enalapril": 1,
+   "lisinopril": 1,
+   "ramipril": 1,
+   "captopril": 1,
+   "valsartan": 2,
+   "sacubitril_valsartan": 1,
+   "verapamil": 2,
+   "diltiazem": 1,
+   "metoprolol": 4,
+   "carvedilol": 1,
+   "eplerenone": 2,
+   "amiodarone": 6,
+   "nitroglycerin": 2,
+   "ezetimibe": 9,
+   "alirocumab": 4,
+   "evolocumab": 4,
+   "inclisiran": 4,
+   "alteplase": 1,
+   "cardioversion": 1,
+   "percutaneous_coronary_intervention": 29
+  },
+  "160_2": {
+   "unfractionated_heparin": 1,
+   "pacemaker": 43
+  },
+  "176_2": {
+   "ferric_carboxymaltose": 1,
+   "budesonide": 4,
+   "prednisolone": 2,
+   "metronidazole": 4,
+   "mesalazine": 1,
+   "infliximab": 8,
+   "adalimumab": 6,
+   "vedolizumab": 7,
+   "ustekinumab": 7
+  },
+  "193_2": {
+   "enoxaparin": 1,
+   "unfractionated_heparin": 1,
+   "fondaparinux": 1,
+   "ferric_carboxymaltose": 1,
+   "budesonide": 4,
+   "prednisolone": 7,
+   "metronidazole": 4,
+   "rifaximin": 1,
+   "mesalazine": 24,
+   "azathioprine": 4,
+   "infliximab": 10,
+   "adalimumab": 7,
+   "vedolizumab": 8,
+   "ustekinumab": 8
+  },
+  "273_5": {
+   "prednisolone": 1,
+   "omeprazole": 1,
+   "pancreatin": 7,
+   "azathioprine": 2,
+   "pregabalin": 2,
+   "paracetamol": 2,
+   "tramadol": 3
+  },
+  "277_2": {
+   "amoxicillin": 2,
+   "levofloxacin": 5,
+   "bismuth": 4,
+   "helicobacter_pylori_eradication": 4
+  },
+  "290_2": {
+   "aspirin": 4,
+   "clopidogrel": 1,
+   "rivaroxaban": 1,
+   "moxonidine": 1,
+   "ezetimibe": 2,
+   "alirocumab": 1,
+   "evolocumab": 1,
+   "metformin": 12,
+   "gliclazide": 1,
+   "glibenclamide": 4,
+   "saxagliptin": 2,
+   "empagliflozin": 3,
+   "dapagliflozin": 3,
+   "canagliflozin": 2,
+   "ertugliflozin": 2,
+   "liraglutide": 7,
+   "dulaglutide": 7,
+   "semaglutide": 7,
+   "insulin_glargine": 3,
+   "insulin_degludec": 3,
+   "insulin_detemir": 2,
+   "dexamethasone": 1,
+   "pregabalin": 1,
+   "gabapentin": 1,
+   "amitriptyline": 1,
+   "tramadol": 1,
+   "implantable_cardioverter_defibrillator": 5
+  },
+  "359_3": {
+   "ipratropium": 1,
+   "tiotropium": 1,
+   "formoterol": 4,
+   "budesonide": 6,
+   "beclometasone": 3,
+   "fluticasone": 5,
+   "azithromycin": 1,
+   "long_term_oxygen_therapy": 1
+  },
+  "382_2": {
+   "aspirin": 9,
+   "clopidogrel": 4,
+   "ticagrelor": 1,
+   "prasugrel": 1,
+   "warfarin": 13,
+   "apixaban": 13,
+   "rivaroxaban": 13,
+   "edoxaban": 13,
+   "dabigatran": 14,
+   "enoxaparin": 6,
+   "unfractionated_heparin": 7,
+   "verapamil": 10,
+   "diltiazem": 7,
+   "bisoprolol": 1,
+   "metoprolol": 2,
+   "carvedilol": 1,
+   "nebivolol": 1,
+   "atenolol": 1,
+   "propranolol": 1,
+   "digoxin": 11,
+   "amiodarone": 18,
+   "sotalol": 8,
+   "propafenone": 14,
+   "azithromycin": 1,
+   "gabapentin": 1,
+   "catheter_ablation": 9,
+   "cardioversion": 12,
+   "percutaneous_coronary_intervention": 7,
+   "pacemaker": 3
+  },
+  "469_3": {
+   "clopidogrel": 1,
+   "enoxaparin": 1,
+   "hydrochlorothiazide": 1,
+   "indapamide": 1,
+   "furosemide": 2,
+   "spironolactone": 2,
+   "eplerenone": 2,
+   "digoxin": 1,
+   "vitamin_d": 1,
+   "calcium_supplementation": 1,
+   "salbutamol": 2,
+   "pentoxifylline": 1,
+   "sevelamer": 2
+  },
+  "569_2": {
+   "verapamil": 9,
+   "metoprolol": 1,
+   "propranolol": 1,
+   "amiodarone": 25,
+   "sotalol": 11,
+   "propafenone": 2,
+   "ranolazine": 1,
+   "catheter_ablation": 1,
+   "implantable_cardioverter_defibrillator": 138,
+   "pacemaker": 15
+  },
+  "603_3": {
+   "salbutamol": 2,
+   "ipratropium": 1,
+   "tiotropium": 2,
+   "glycopyrronium": 2,
+   "umeclidinium": 1,
+   "aclidinium": 1,
+   "formoterol": 3,
+   "indacaterol": 3,
+   "olodaterol": 1,
+   "vilanterol": 1,
+   "roflumilast": 1,
+   "dupilumab": 1,
+   "acetylcysteine": 3,
+   "carbocisteine": 2,
+   "amoxicillin": 4,
+   "amoxicillin_clavulanate": 3,
+   "azithromycin": 4,
+   "clarithromycin": 1,
+   "levofloxacin": 4,
+   "moxifloxacin": 2,
+   "cefixime": 1,
+   "prednisolone": 1,
+   "noninvasive_ventilation": 1
+  },
+  "617_5": {
+   "domperidone": 1,
+   "donepezil": 1,
+   "galantamine": 2,
+   "rivastigmine": 2,
+   "memantine": 9,
+   "gabapentin": 1
+  },
+  "619_3": {
+   "verapamil": 15,
+   "diltiazem": 3,
+   "bisoprolol": 1,
+   "metoprolol": 9,
+   "propranolol": 1,
+   "ivabradine": 3,
+   "digoxin": 3,
+   "amiodarone": 13,
+   "sotalol": 2,
+   "propafenone": 12,
+   "implantable_cardioverter_defibrillator": 1,
+   "pacemaker": 8
+  },
+  "62_3": {
+   "aspirin": 3,
+   "enalapril": 1,
+   "lisinopril": 1,
+   "perindopril": 1,
+   "ramipril": 1,
+   "losartan": 1,
+   "valsartan": 1,
+   "amlodipine": 2,
+   "nifedipine": 3,
+   "verapamil": 1,
+   "diltiazem": 2,
+   "bisoprolol": 2,
+   "metoprolol": 2,
+   "atenolol": 1,
+   "hydrochlorothiazide": 1,
+   "indapamide": 1,
+   "chlorthalidone": 1,
+   "spironolactone": 2,
+   "eplerenone": 1,
+   "moxonidine": 1,
+   "empagliflozin": 2,
+   "dapagliflozin": 2
+  },
+  "654_2": {
+   "enoxaparin": 1,
+   "unfractionated_heparin": 1,
+   "amoxicillin": 2,
+   "amoxicillin_clavulanate": 7,
+   "azithromycin": 2,
+   "clarithromycin": 2,
+   "doxycycline": 1,
+   "levofloxacin": 2,
+   "moxifloxacin": 1,
+   "ceftriaxone": 7,
+   "oseltamivir": 2,
+   "metronidazole": 1,
+   "paracetamol": 1
+  },
+  "655_2": {
+   "salbutamol": 2,
+   "ipratropium": 1,
+   "budesonide": 1,
+   "acetylcysteine": 2,
+   "ambroxol": 3,
+   "carbocisteine": 2,
+   "amoxicillin": 1,
+   "cefixime": 1,
+   "prednisolone": 1
+  },
+  "677_1": {
+   "warfarin": 1,
+   "acetylcysteine": 2,
+   "prednisolone": 1,
+   "azathioprine": 1
+  },
+  "708_2": {
+   "amoxicillin": 4,
+   "clarithromycin": 2,
+   "levofloxacin": 4,
+   "bismuth": 11,
+   "metronidazole": 3,
+   "tetracycline": 2,
+   "rebamipide": 4,
+   "helicobacter_pylori_eradication": 2
+  },
+  "711_2": {
+   "prednisolone": 4,
+   "methylprednisolone": 2,
+   "ursodeoxycholic_acid": 1,
+   "l_ornithine_l_aspartate": 1,
+   "s_adenosylmethionine": 4
+  },
+  "715_2": {
+   "carvedilol": 1,
+   "propranolol": 1,
+   "furosemide": 5,
+   "torasemide": 3,
+   "spironolactone": 4,
+   "ceftriaxone": 1,
+   "lactulose": 1,
+   "rifaximin": 5,
+   "l_ornithine_l_aspartate": 2
+  },
+  "752_1": {
+   "atorvastatin": 7,
+   "rosuvastatin": 9,
+   "simvastatin": 2,
+   "ezetimibe": 35,
+   "alirocumab": 12,
+   "evolocumab": 12,
+   "inclisiran": 10,
+   "fenofibrate": 6,
+   "omega_3_fatty_acids": 4,
+   "metformin": 1,
+   "empagliflozin": 2,
+   "dapagliflozin": 1
+  },
+  "783_1": {
+   "azathioprine": 1
+  },
+  "795_1": {
+   "azithromycin": 1,
+   "methylprednisolone": 1,
+   "azathioprine": 2
+  },
+  "814_1": {
+   "apixaban": 3,
+   "rivaroxaban": 3,
+   "dabigatran": 4,
+   "unfractionated_heparin": 1,
+   "sertraline": 1,
+   "escitalopram": 1,
+   "pregabalin": 1
+  },
+  "816_1": {
+   "apixaban": 1,
+   "rivaroxaban": 1,
+   "enoxaparin": 1,
+   "prednisolone": 12
+  },
+  "838_1": {
+   "methylprednisolone": 1,
+   "dexamethasone": 1
+  },
+  "87_5": {
+   "vitamin_d": 3,
+   "calcium_supplementation": 2,
+   "alendronate": 5,
+   "risedronate": 1,
+   "ibandronate": 2,
+   "zoledronic_acid": 8,
+   "denosumab": 8,
+   "teriparatide": 4
+  },
+  "893_1": {
+   "ferric_carboxymaltose": 1,
+   "vitamin_d": 1,
+   "zoledronic_acid": 2,
+   "denosumab": 3,
+   "infliximab": 1,
+   "erythropoietin": 3
+  },
+  "894_1": {
+   "prednisolone": 1
+  }
+ }
+}

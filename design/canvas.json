@@ -97,6 +97,13 @@
    "h": 1460,
    "title": "12 · Калькулятор: шкала Хорана",
    "is_interactive": true
+  },
+  "KrCochrane.dc.html": {
+   "x": 1410,
+   "y": 1760,
+   "w": 390,
+   "h": 844,
+   "title": "13 · Препарат в КР → обзоры Cochrane"
   }
  },
  "order": [
@@ -111,7 +118,8 @@
   "RefList.dc.html",
   "RefPoak.dc.html",
   "RefDapt.dc.html",
-  "CalcKhorana.dc.html"
+  "CalcKhorana.dc.html",
+  "KrCochrane.dc.html"
  ],
  "notes": {
   "t": {
