@@ -162,6 +162,33 @@ def build_data(db, version):
     }
 
 
+# Дежурные стационары (маршрутизация, Тюменская область) — из «Справочника НМП», ветка main; только чтение.
+# Свежая копия скачивается при каждой сборке, без сети берётся последняя из .cache/nmp_route.
+NMP_RAW = 'https://raw.githubusercontent.com/victorpolekslab/Spravochnik_nmp/main/android/app/src/main/assets/www/'
+ROUTE_SRC = {'route_data.js': ('content_route.js', 'window.ROUTE'), 'route_addr.js': ('content_addr.js', 'window.TMN_ADDR')}
+
+
+def route_files():
+    import urllib.request
+    cache = os.path.join(ROOT, '.cache', 'nmp_route')
+    os.makedirs(cache, exist_ok=True)
+    out = {}
+    for name, (src, mark) in ROUTE_SRC.items():
+        cp = os.path.join(cache, src)
+        try:
+            text = urllib.request.urlopen(NMP_RAW + src, timeout=30).read().decode('utf-8')
+            if mark not in text:
+                raise ValueError(f'в {src} нет {mark}')
+            open(cp, 'w', encoding='utf-8').write(text)
+        except Exception as e:
+            if not os.path.exists(cp):
+                sys.exit(f'дежурные стационары: не удалось скачать {src} ({e}), копии в .cache нет')
+            print(f'! {src}: {e}; беру копию из .cache')
+            text = open(cp, encoding='utf-8').read()
+        out[name] = text
+    return out
+
+
 def build_www(a):
     version = a.version or int(datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d%H%M'))
     www = os.path.join(OUT, 'www')
@@ -171,6 +198,8 @@ def build_www(a):
         if os.path.isfile(os.path.join(WEB, f)):
             shutil.copy(os.path.join(WEB, f), www)
     for name, text in build_data(a.db, version).items():
+        open(os.path.join(www, name), 'w', encoding='utf-8').write(text)
+    for name, text in route_files().items():
         open(os.path.join(www, name), 'w', encoding='utf-8').write(text)
     open(os.path.join(www, 'ota_version.txt'), 'w').write(str(version))
     shutil.rmtree(ASSETS, ignore_errors=True)
