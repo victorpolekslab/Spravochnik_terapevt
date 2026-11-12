@@ -627,13 +627,26 @@ function sysPage(sid) {
 }
 
 /* Закреплённая плашка результата при прокрутке сжимается до числа и вывода, чтобы не закрывать экран */
-let stickObs = null;
+let stickObs = null, stickEl = null;
+// Сжатие не должно менять высоту страницы, иначе на коротких экранах прокрутка «прыгает»:
+// разницу высот компенсируем нижним отступом.
+function stickySet(on) {
+  const el = stickEl; if (!el) return;
+  el.classList.remove('stuck'); el.style.marginBottom = '';
+  if (!on) return;
+  const full = el.offsetHeight;
+  el.style.marginBottom = full + 'px'; // временно с запасом: страница не должна укорачиваться даже на миг, иначе браузер сдвинет прокрутку
+  el.classList.add('stuck');
+  el.style.marginBottom = Math.max(0, full - el.offsetHeight) + 'px';
+}
+function stickyRefresh() { if (stickEl && stickEl.classList.contains('stuck')) stickySet(true); }
 function stickyCompact(el) {
   if (stickObs) { stickObs.disconnect(); stickObs = null; }
+  stickEl = el || null;
   if (!el || !('IntersectionObserver' in window)) return;
   const s = document.createElement('div'); s.className = 'stick-sent'; el.before(s);
   const top = ($('#top').offsetHeight || 56) + 8;
-  stickObs = new IntersectionObserver(([e]) => el.classList.toggle('stuck', !e.isIntersecting && e.boundingClientRect.top < top), { rootMargin: `-${top}px 0px 0px 0px` });
+  stickObs = new IntersectionObserver(([e]) => stickySet(!e.isIntersecting && e.boundingClientRect.top < top), { rootMargin: `-${top}px 0px 0px 0px` });
   stickObs.observe(s);
 }
 
@@ -671,6 +684,7 @@ function calcPage(id) {
       t.hidden = false;
       t.innerHTML = `<h2>${svg('bulb', 'style="color:var(--accent);width:20px;height:20px"')}Что ещё сделать</h2><ol>${r.tips.map((x, n) => `<li><span>${n + 1}</span><div>${esc(x.t)}<small>${esc(x.s)}</small>${x.calc ? `<a class="lnk" href="#calc/${x.calc}">${esc(CALCS[x.calc].t)} ›</a>` : ''}${x.ref ? `<a class="lnk" href="#ref/${x.ref}">${esc(REF[x.ref].title)} ›</a>` : ''}${x.kr && BRIEF.docs[x.kr] ? `<a class="lnk" href="#kr/${x.kr}">${esc(BRIEF.docs[x.kr].name)} ›</a>` : ''}</div></li>`).join('')}</ol>`;
     } else t.hidden = true;
+    stickyRefresh();
   };
   bindInputs(c, st, render);
   render();
@@ -980,6 +994,7 @@ function poakPage(R) {
     $('#rh').textContent = R.bleeding_risk[st.risk];
     $('#bres').style.setProperty('--tone', T[b[0]]);
     $('#bres').innerHTML = `<div class="verdict"><div><span class="v1">${esc(b[1])}</span><span class="v2">${esc(b[2])}</span></div></div>`;
+    stickyRefresh();
   };
   const E = R.bridging_exceptions;
   view.innerHTML = `<div class="wrap">
@@ -1009,6 +1024,7 @@ function daptPage(R) {
     else { big = '≥ ' + s.days; unit = s.days === 3 ? 'дня до операции' : 'дней до операции'; tone = 'bad'; v1 = 'Отменить ' + n.toLowerCase() + ' не менее чем за ' + s.days + (s.days === 3 ? ' дня' : ' дней'); v2 = R.aspirin.continue + ' ' + R.aspirin.stop; v3 = 'После операции: АСК — ' + R.resume.aspirin + ', ' + n.toLowerCase() + ' — ' + R.resume.p2y12 + ' (' + R.resume.src + ').'; src = s.src; }
     $('#dres').style.setProperty('--tone', T[tone]);
     $('#dres').innerHTML = `<div class="num"><span class="big" style="color:${T[tone]}">${esc(big)}</span><span class="unit">${esc(unit)}</span></div><div class="verdict"><div><span class="v1">${esc(v1)}</span><span class="v2">${esc(v2)}</span><span class="v2">${esc(v3)}</span><span class="grade">${esc(src)}</span></div></div>`;
+    stickyRefresh();
   };
   const steps = [
     { t: 'Оценить риск кровотечения и срок после ОКС или ЧКВ', d: 'Досрочное прекращение ДАТТ увеличивает частоту коронарных осложнений. Узнать дату ОКС, ЧКВ и тип стентов.', src: 'КР154_4, КР157_5, разд. 3' },

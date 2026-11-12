@@ -281,3 +281,5 @@ nav.jump button { flex: none; border: 1px solid var(--line); background: var(--s
 #apkban .ab-t small { font-size: 12px; color: var(--muted); line-height: 1.25; }
 #apkban .ab-b { flex: none; background: var(--accent); color: #fff; text-decoration: none; font-weight: 700; font-size: 13.5px; padding: 9px 12px; border-radius: 10px; }
 #apkban .ab-x { flex: none; border: 0; background: none; color: var(--muted); font-size: 22px; line-height: 1; padding: 4px; cursor: pointer; }
+/* без «якорной» прокрутки: иначе сжатие плашки сдвигает страницу */
+html, body { overflow-anchor: none; }
