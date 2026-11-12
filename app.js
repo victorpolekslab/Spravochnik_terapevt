@@ -1140,12 +1140,34 @@ function about() {
       <span class="meta">${N ? `Обновления данных загружаются в фоне раз в сутки при наличии интернета и применяются при следующем запуске. Последняя проверка: ${esc(ago)}.` : 'Обновления данных загружаются при открытии справочника, когда есть интернет; применить — кнопкой в баннере вверху.'}</span>
       ${N || SW.reg ? '<button id="chk" class="lnk" style="border:0;cursor:pointer">Проверить обновления сейчас</button><span id="upd" class="meta"></span>' : ''}</div>
     ${!N ? `<div class="card"><b>${IOS ? 'На iPhone' : 'Как приложение'}</b><span>${STANDALONE ? 'Справочник установлен на экран «Домой» и работает без интернета. Новые данные загружаются при открытии, когда есть сеть.' : IOS ? 'Откройте в Safari → кнопка «Поделиться» → «На экран „Домой“». Справочник откроется как приложение и будет работать без интернета.' : 'В меню браузера выберите «Установить приложение» или «Добавить на главный экран». Для Android есть APK — на странице скачивания.'}</span><a class="lnk" href="${SITE}download/">Страница скачивания ›</a></div>` : ''}
+    ${shareCard()}
     <div class="card"><b>Источники</b><span>Клинические рекомендации — рубрикатор cr.minzdrav.gov.ru (снимок ${dt(META.kr_built)}). Приказ Минздрава № 168н (диспансерное наблюдение). Дозы, которых нет в КР, — инструкции к препаратам, источник указан в строке. Обзоры Cochrane — через PubMed, по запросу.</span></div>
     <div class="card" style="background:var(--warn-soft)"><b>Черновик для проверки врачом</b><span>Справочник не заменяет инструкцию к препарату и решение врача. Внешние и составленные фрагменты помечены.</span></div></div>`;
+  bindShare();
   const b = $('#chk'); if (b) b.onclick = () => {
     $('#upd').textContent = 'Проверяю…';
     if (N) N.checkUpdates();
     else SW.reg.update().then(() => { const r = SW.reg; $('#upd').textContent = (r.installing || r.waiting) ? 'Обновление загружается — появится баннер вверху' : 'Новых обновлений нет'; if (r.waiting) swBanner(r.waiting); }).catch(() => { $('#upd').textContent = 'Нет связи с сервером'; });
+  };
+}
+/* Поделиться: ссылка на веб-версию — на Android она сама предложит APK, на iPhone откроется в Safari */
+const SHARE_TXT = 'Справочник врача-терапевта: калькуляторы и шкалы, краткие КР Минздрава, инструкции и взаимодействия препаратов. Работает в браузере и на iPhone, для Android есть приложение.';
+function shareCard() {
+  const u = encodeURIComponent(SITE), t = encodeURIComponent(SHARE_TXT), ut = encodeURIComponent(SHARE_TXT + '\n' + SITE);
+  const L = [['Telegram', `https://t.me/share/url?url=${u}&text=${t}`, '#2AABEE'], ['WhatsApp', `https://wa.me/?text=${ut}`, '#25D366'],
+    ['ВКонтакте', `https://vk.com/share.php?url=${u}&title=${t}`, '#0077FF'], ['Одноклассники', `https://connect.ok.ru/offer?url=${u}&title=${t}`, '#EE8208']];
+  return `<div class="card share"><b>Поделиться с коллегами</b><span class="meta">Ссылка открывает справочник в браузере. На Android будет предложено скачать приложение, на iPhone — добавить на экран «Домой».</span>
+    <div class="shr">${L.map(x => `<a class="shb" href="${x[1]}" style="--sc:${x[2]}"><i></i>${x[0]}</a>`).join('')}</div>
+    <div class="shr">${navigator.share ? '<button class="shb" id="shn" style="--sc:var(--accent)"><i></i>Другие приложения…</button>' : ''}<button class="shb" id="shc" style="--sc:var(--muted)"><i></i>Скопировать ссылку</button></div>
+    <span class="meta shu">${esc(SITE)}</span></div>`;
+}
+function bindShare() {
+  const n = $('#shn'); if (n) n.onclick = () => navigator.share({ title: 'Справочник терапевта', text: SHARE_TXT, url: SITE }).catch(() => {});
+  const c = $('#shc'); if (!c) return;
+  c.onclick = () => {
+    const done = () => { c.lastChild.textContent = 'Ссылка скопирована'; setTimeout(() => { c.lastChild.textContent = 'Скопировать ссылку'; }, 2000); };
+    const old = () => { const ta = document.createElement('textarea'); ta.value = SITE; ta.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (e) {} ta.remove(); };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(SITE).then(done, old); else old();
   };
 }
 function appUpdateCheck() {
