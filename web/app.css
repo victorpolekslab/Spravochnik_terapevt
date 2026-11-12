@@ -252,3 +252,10 @@ nav.jump button { flex: none; border: 1px solid var(--line); background: var(--s
 .opts button small { color: var(--muted); font-size: 12px; font-weight: 700; }
 .opts button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
 .opts button.on small { color: rgba(255,255,255,.8); }
+.ccalc { flex-direction: row; align-items: center; gap: 12px; text-decoration: none; color: var(--fg); }
+.ccalc .cic { flex: none; width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+.ccalc .cl { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ccalc .cl b { font-size: 15.5px; }
+.ccalc .cl small { font-size: 13px; color: var(--muted); }
+.ccell .cbig { font-size: 18px; white-space: nowrap; }
+.ccell .cgo, .ctile .cgo { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
