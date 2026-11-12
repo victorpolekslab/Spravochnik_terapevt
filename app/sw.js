@@ -1,6 +1,6 @@
 /* Справочник терапевта — офлайн-кэш веб-версии. Версия меняется при любом изменении файлов. */
-const VERSION = '202611120454-dd25c2a741';
-const FILES = ["./", "app.css?h=a6580f7a89", "app.js?h=1a46fd1bb8", "data_brief.js?h=81ccccfeeb", "data_meta.js?h=aec3be9542", "data_mkb.js?h=d622a23a8f", "data_ref.js?h=70620ad1ec", "data_terms.js?h=d50ec20475", "icon-180.png?h=7e09a70b6e", "icon-192.png?h=ce7392dc4a", "icon-512.png?h=3c87e994ac", "icon-maskable-512.png?h=490c4d9679", "index.html?h=2d7ad7de08", "manifest.webmanifest?h=077e009353"];
+const VERSION = '202611120507-2a915d89d7';
+const FILES = ["./", "app.css?h=80c3db1b3b", "app.js?h=ec3086b919", "data_brief.js?h=81ccccfeeb", "data_meta.js?h=3e578add55", "data_mkb.js?h=d622a23a8f", "data_ref.js?h=70620ad1ec", "data_terms.js?h=d50ec20475", "icon-180.png?h=7e09a70b6e", "icon-192.png?h=ce7392dc4a", "icon-512.png?h=3c87e994ac", "icon-maskable-512.png?h=490c4d9679", "index.html?h=2d7ad7de08", "manifest.webmanifest?h=077e009353"];
 const CACHE = 'terapevt-' + VERSION;
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => Promise.all(FILES.map(u => fetch(u, { cache: 'reload' }).then(r => {
