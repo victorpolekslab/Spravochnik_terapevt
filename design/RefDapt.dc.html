@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>ДАТТ перед плановой операцией</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#A8322F}a:hover{color:#7F2422}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 2080px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F7F9; color: #1B1F24; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+<header style="background: #A8322F; color: #FFFFFF; height: 56px; display: flex; align-items: center; gap: 4px; padding: 0 12px 0 4px; box-sizing: border-box; flex: none">
+<a href="RefList.dc.html" aria-label="Назад" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #FFFFFF"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></a>
+<h1 style="margin: 0; font-size: 18px; font-weight: 600; flex-grow: 1; line-height: 1.2">ДАТТ перед плановой операцией</h1>
+</header>
+
+<main style="flex-grow: 1; padding: 12px 12px 8px; display: flex; flex-direction: column; gap: 12px">
+<section style="padding: 14px; background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 14px; display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 17px; font-weight: 800; line-height: 1.3">НМГ не заменяют антиагреганты</div>
+<div style="font-size: 14.5px; line-height: 1.45">Переводить с ДАТТ на НМГ перед операцией КР не предлагают: НМГ действуют на свёртывание, а не на тромбоциты, и от тромбоза стента не защищают. АСК по возможности продолжают, отменяют только ингибитор P2Y12 — за нужное число дней.</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px"><span style="font-size: 11.5px; font-weight: 700; color: #1F5FA8; background: #E3EEFB; border-radius: 6px; padding: 2px 7px">КР154_4 · КР157_5 · раздел 3</span><span style="font-size: 11.5px; font-weight: 700; color: #1F5FA8; background: #E3EEFB; border-radius: 6px; padding: 2px 7px">КР940_1 · 5.4.10</span></div>
+</section>
+<h2 style="margin: 10px 2px 0; font-size: 13px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: #5E6873">Подготовка к операции</h2>
+<section aria-live="polite" style="padding: 14px 16px; background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,.06); display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: baseline; gap: 8px"><span style="font-size: 40px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; color: {{tone}}">{{big}}</span><span style="font-size: 15px; font-weight: 600; color: #5E6873">{{unit}}</span></div>
+<div style="font-size: 15.5px; font-weight: 700; line-height: 1.3">{{verdict}}</div>
+<div style="font-size: 13.5px; line-height: 1.45; color: #3D4651">{{asa}}</div>
+<div style="font-size: 13.5px; line-height: 1.45; color: #5E6873">{{resume}}</div>
+<div style="font-size: 12px; font-weight: 600; color: #22643C">{{src}}</div>
+</section>
+<div role="group" aria-label="Ингибитор P2Y12">
+<div style="font-size: 12.5px; font-weight: 700; color: #5E6873; margin: 0 2px 6px">Ингибитор P2Y12</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; padding: 3px; background: #EEF1F4; border-radius: 12px">
+<sc-for list="{{drugs}}" as="it" hint-placeholder-count="3"><button aria-pressed="{{it.pressed}}" onClick="{{it.pick}}" style="{{it.style}}">{{it.label}}</button></sc-for>
+</div></div>
+<div role="group" aria-label="Риск кровотечения операции">
+<div style="font-size: 12.5px; font-weight: 700; color: #5E6873; margin: 0 2px 6px">Риск кровотечения операции</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px; padding: 3px; background: #EEF1F4; border-radius: 12px">
+<sc-for list="{{risks}}" as="it" hint-placeholder-count="2"><button aria-pressed="{{it.pressed}}" onClick="{{it.pick}}" style="{{it.style}}">{{it.label}}</button></sc-for>
+</div></div>
+<div style="margin: -4px 2px 0; font-size: 12.5px; line-height: 1.4; color: #5E6873">{{riskHint}}</div>
+<h2 style="margin: 10px 2px 0; font-size: 13px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: #5E6873">Порядок действий</h2>
+<ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="6">
+<li style="display: flex; gap: 10px; padding: 12px 14px; background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 14px">
+<span style="flex: none; width: 24px; height: 24px; border-radius: 12px; background: #A8322F; color: #FFFFFF; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center">{{s.n}}</span>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14.5px; font-weight: 700; line-height: 1.3">{{s.t}}</span><span style="font-size: 13.5px; line-height: 1.45; color: #3D4651">{{s.d}}</span><span style="font-size: 11.5px; font-weight: 600; color: #22643C">{{s.src}}</span></div>
+</li>
+</sc-for>
+</ol>
+<details style="background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 14px">
+<summary style="padding: 13px 14px; font-size: 15px; font-weight: 700; cursor: pointer">Чего в КР нет</summary>
+<div style="padding: 0 14px 14px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.45">
+<div>Сроков, на которые плановую операцию откладывают после ОКС или стентирования, в действующих КР нет. Решение — консилиумом с кардиологом.</div>
+<div>«Мост» антиагрегантами внутривенно (ингибиторы ГП IIb/IIIa) в КР рекомендован только как спасительное средство во время ЧКВ, для периоперационного «моста» — нет.</div>
+</div>
+</details>
+<p style="margin: 4px 2px 0; font-size: 12px; line-height: 1.45; color: #5E6873">Экстренные операции здесь не рассматриваются: при них ингибитор P2Y12 прекращают и возобновляют при первой возможности, при операциях на опорно-двигательном аппарате КР940_1 допускает трансфузию тромбоконцентрата. База КР от 03.11.2026.</p>
+</main>
+<nav aria-label="Разделы приложения" style="flex: none; position: sticky; bottom: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: #FFFFFF; border-top: 1px solid #DDE2E7">
+<a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 58px; text-decoration: none; color: #5E6873; font-size: 12px; font-weight: 500"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"></path></svg>Калькуляторы</a>
+<a href="RefList.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 58px; text-decoration: none; color: #A8322F; font-size: 12px; font-weight: 700"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21V5M8 7h7M8 11h7"></path></svg>Справочник</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":2080}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { drug: 'clopi', risk: 'high' }; }
+  renderVals() {
+    const st = this.state;
+    const seg = (on) => 'border: none; border-radius: 9px; min-height: 44px; padding: 6px 2px; font: inherit; font-size: 14px; font-weight: 600; line-height: 1.2; cursor: pointer; ' +
+      (on ? 'background: #FFFFFF; color: #1B1F24; box-shadow: 0 1px 3px rgba(0,0,0,.14)' : 'background: transparent; color: #5E6873');
+    const D = { clopi: ['Клопидогрел', 5, 'КР154_4, КР157_5: не менее 5 дней · КР940_1: 5 дней'],
+                tica: ['Тикагрелор', 3, 'КР154_4: не менее 3 дней · КР157_5: 3–5 дней · КР940_1 (операции на ОДА): 5 дней'],
+                pras: ['Прасугрел', 7, 'КР154_4, КР157_5, КР940_1: не менее 7 дней'] };
+    const d = D[st.drug];
+    let big, unit, verdict, asa, resume, tone, src;
+    if (st.risk === 'low') {
+      big = '0'; unit = 'дней'; tone = '#2E9150';
+      verdict = 'ДАТТ досрочно не прерывать';
+      asa = 'Операцию выполняют на фоне АСК и ' + d[0].toLowerCase() + 'а.';
+      resume = 'При операциях на опорно-двигательном аппарате с низким и умеренным риском кровотечения АСК не прерывают (КР940_1: УУР C · УДД 5).';
+      src = 'КР154_4, КР157_5, раздел 3';
+    } else {
+      big = '≥ ' + d[1]; unit = d[1] === 3 ? 'дня до операции' : 'дней до операции'; tone = '#A8322F';
+      verdict = 'Отменить ' + d[0].toLowerCase() + ' не менее чем за ' + d[1] + (d[1] === 3 ? ' дня' : ' дней');
+      asa = 'АСК по возможности продолжить: отмена обоих препаратов ещё сильнее повышает риск коронарного тромбоза. Отменить АСК за 3 дня — только при очень высоком риске кровотечения (нейрохирургия, КР940_1).';
+      resume = 'После операции: АСК — сразу по достижении гемостаза, ' + d[0].toLowerCase() + ' — через 24–48 ч (КР940_1: УУР C · УДД 5).';
+      src = d[2];
+    }
+    const RH = { low: 'Малые вмешательства, при которых трансфузия обычно не нужна.', high: 'Большие операции; плановые вмешательства, где кровотечение опасно или трудно остановить. Классификации операций по риску в этих КР нет — ориентир: табл. П5 КР382_2.' };
+    const steps = [
+      { t: 'Оценить риск кровотечения и срок после ОКС или ЧКВ', d: 'Досрочное прекращение ДАТТ увеличивает частоту коронарных осложнений. Узнать дату ОКС, ЧКВ и тип стентов.', src: 'КР154_4, КР157_5, раздел 3' },
+      { t: 'Низкий риск кровотечения — не прерывать ДАТТ', d: 'Операцию выполняют на фоне двойной терапии.', src: 'КР154_4, КР157_5' },
+      { t: 'Высокий риск — отменить только ингибитор P2Y12', d: 'Тикагрелор — не менее чем за 3 дня, клопидогрел — за 5, прасугрел — за 7. АСК по возможности продолжить.', src: 'КР154_4, КР157_5 · КР940_1: УУР C · УДД 5' },
+      { t: 'Не выдержать сроки — консилиум', d: 'Кардиолог, хирург, анестезиолог оценивают риск кровотечения и отмены ДАТТ, тип операции, поражение КА, время от ОКС и ЧКВ, стенты. Операцию лучше проводить в многопрофильном стационаре с возможностью ЧКВ.', src: 'КР154_4, КР157_5' },
+      { t: 'Профилактика ВТЭО — отдельно', d: 'НМГ в профилактических дозах назначают по риску ВТЭО операции, а не вместо антиагрегантов. Сочетание с антиагрегантами повышает риск кровотечения.', src: 'КР940_1, разд. 5 · УУР C · УДД 5' },
+      { t: 'Возобновить', d: 'АСК — сразу по достижении гемостаза, ингибитор P2Y12 — через 24–48 ч. После КШ ДАТТ возобновляют не менее чем на 12 месяцев.', src: 'КР940_1: УУР C · УДД 5 · КР154_4: ЕОК IC · УУР C · УДД 5' }
+    ];
+    return {
+      big, unit, verdict, asa, resume, tone, src, riskHint: RH[st.risk],
+      steps: steps.map((s, i) => Object.assign({ n: i + 1 }, s)),
+      drugs: Object.keys(D).map((k) => ({ label: D[k][0], pressed: String(st.drug === k), style: seg(st.drug === k), pick: () => this.setState({ drug: k }) })),
+      risks: [['low', 'Низкий'], ['high', 'Высокий']].map(([k, l]) => ({ label: l, pressed: String(st.risk === k), style: seg(st.risk === k), pick: () => this.setState({ risk: k }) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

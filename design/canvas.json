@@ -81,6 +81,14 @@
    "h": 2140,
    "title": "10 · ПОАК перед операцией",
    "is_interactive": true
+  },
+  "RefDapt.dc.html": {
+   "x": 3290,
+   "y": 0,
+   "w": 390,
+   "h": 2080,
+   "title": "11 · ДАТТ перед операцией",
+   "is_interactive": true
   }
  },
  "order": [
@@ -93,7 +101,8 @@
   "KrChoose.dc.html",
   "KrBrief.dc.html",
   "RefList.dc.html",
-  "RefPoak.dc.html"
+  "RefPoak.dc.html",
+  "RefDapt.dc.html"
  ],
  "notes": {
   "t": {
@@ -122,7 +131,7 @@
    "y": -300,
    "text": "Справочник: вторая закладка",
    "kind": "title1",
-   "maxW": 860
+   "maxW": 1330
   }
  },
  "designSystems": []

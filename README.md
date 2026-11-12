@@ -7,7 +7,7 @@
 ## Что здесь
 | Папка | Что |
 |---|---|
-| `data/reference/` | Справочник (вторая закладка): алгоритмы в JSON. Сейчас — `poak_periop.json`, ПОАК перед плановой операцией |
+| `data/reference/` | Справочник (вторая закладка): алгоритмы в JSON. Сейчас — `poak_periop.json` (ПОАК перед плановой операцией) и `dapt_periop.json` (ДАТТ перед плановой операцией) |
 | `data/brief/` | Краткие КР: 40 документов (`kr/<ID>.json`), оглавление `index.json`, всё одним файлом `brief_kr.json.gz` |
 | `tools/` | Сборка: `fetch_kr.sh` (свежая база КР), `build.py`, `pack.py`, `page.py`, `build_all.sh`; ручные дополнения `extras.json`, `r168.json`; `audit.py` |
 | `docs/` | `BRIEF_KR.md` — структура документа КР; `calculators.md` — калькуляторы и экран; `kr_audit.csv` — какие разделы есть в 597 взрослых КР |
