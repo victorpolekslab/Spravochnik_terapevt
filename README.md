@@ -28,3 +28,7 @@
 ```
 sh tools/build_all.sh   # скачает свежую базу КР в .cache/ и пересоберёт data/brief и review/
 ```
+
+## Приложение
+
+Android-приложение — `android/`, интерфейс — `web/`, сборка — `tools/build_app.py`, публикация и фоновое обновление данных — `tools/release.sh`. Подробно: [docs/RELEASE.md](docs/RELEASE.md).

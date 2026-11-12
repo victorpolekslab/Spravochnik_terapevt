@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <!-- стетоскоп + сетка калькулятора -->
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="5" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"
+        android:pathData="M38,32 L38,50 A14,14 0 0 0 66,50 L66,32 M52,64 L52,70 A10,10 0 0 0 72,70 L72,64" />
+    <path android:fillColor="#FFFFFF" android:pathData="M72,57 m-6,0 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M35,28 h6 v6 h-6z M63,28 h6 v6 h-6z" />
+</vector>
