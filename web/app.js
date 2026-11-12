@@ -610,17 +610,17 @@ function bindMkb(live) {
 function debounce(f, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => f(...a), ms); }; }
 function tile(id, edit) {
   const c = CALCS[id], s = SYSM[c.sys];
-  const inner = `${svg(s[3], 'class="ti"')}<span class="tx"><b>${esc(c.tt || c.t)}</b>${c.m ? `<span class="tm">${esc(c.m)}</span>` : ''}${c.w ? `<small>${esc(c.w)}</small>` : ''}</span>`;
+  const inner = `${svg(s[3], 'class="ti"')}<span class="tx"><b>${esc(c.tt || c.t)}${c.m ? `<span class="tm">${esc(c.m)}</span>` : ''}</b>${c.w ? `<small>${esc(c.w)}</small>` : ''}</span>`;
   if (!edit) return `<a class="tile sys" href="#calc/${id}" style="${sysVars(s)}">${inner}</a>`;
-  return `<div class="tile sys" style="${sysVars(s)};outline:1.5px dashed #9AA3AC;outline-offset:2px">${inner}<button class="rm" data-rm="${id}" aria-label="Убрать «${esc(c.t)}» из избранного">${svg('minus')}</button><button class="mv" data-mv="${id}" aria-label="Переместить «${esc(c.t)}» левее">${svg('left')}</button></div>`;
+  return `<div class="tile sys ed" style="${sysVars(s)};outline:1.5px dashed #9AA3AC;outline-offset:2px">${inner}<button class="rm" data-rm="${id}" aria-label="Убрать «${esc(c.t)}» из избранного">${svg('minus')}</button><button class="mv" data-mv="${id}" aria-label="Переместить «${esc(c.t)}» выше">${svg('left')}</button></div>`;
 }
 function home(edit) {
   setTitle('Избранное', false, edit ? '<button id="done">Готово</button>' : '<button id="ed">Изменить</button>');
   const f = favs();
   view.innerHTML = (edit ? '' : mkbBar()) + `<div class="shell"><div class="main">
-    <div class="grid">${f.map(id => tile(id, edit)).join('')}${!edit && f.length < 18 ? `<a class="tile add" href="#sys/heart">${svg('plus', 'style="width:28px;height:28px"')}<b>Добавить</b></a>` : ''}</div>
+    <div class="grid">${f.map(id => tile(id, edit)).join('')}${!edit && f.length < 18 ? `<a class="tile add" href="#sys/heart">${svg('plus', 'style="width:28px;height:28px"')}<b>Добавить калькулятор</b></a>` : ''}</div>
     ${!f.length ? '<div class="empty">Избранное пустое. Откройте систему справа и нажмите ★ рядом с калькулятором.</div>' : ''}
-    <p class="hint">${edit ? '«−» убирает калькулятор с первой страницы, стрелка — сдвигает левее.' : 'Системы — справа. ★ в разделе добавляет калькулятор сюда, до 18 плиток.'}</p>
+    <p class="hint">${edit ? '«−» убирает калькулятор с первой страницы, стрелка — сдвигает выше.' : 'Системы — справа. ★ в разделе добавляет калькулятор сюда, до 18 плиток.'}</p>
     </div>${rail('fav')}</div>`;
   if (edit) {
     $('#done').onclick = () => go('#home');
