@@ -8,7 +8,7 @@
 Данные: data/brief/kr/*.json, data/reference/*.json, data/cochrane/terms.json, база КР (--db, по умолчанию /home/claude/kr/kr_full.db).
 Подпись OTA: закрытый ключ ECDSA P-256 (--key или $OTA_KEY), openssl dgst -sha256 -sign.
 """
-import argparse, base64, datetime, glob, hashlib, json, os, re, shutil, sqlite3, subprocess, sys
+import argparse, base64, html as html_mod, datetime, glob, hashlib, json, os, re, shutil, sqlite3, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(ROOT, 'web')
@@ -49,6 +49,39 @@ def js(name, obj):
     return f'var {name}=' + json.dumps(obj, ensure_ascii=False, separators=(',', ':')) + ';\n'
 
 
+def plain(h):
+    return re.sub(r'\s+', ' ', html_mod.unescape(re.sub(r'<[^>]+>', ' ', h or ''))).strip()
+
+
+def resolve_cls(doc, cls, report):
+    """Классификация-инфографика: связать пункты с рекомендациями по лечению (по регулярным выражениям из cls/<ID>.json)."""
+    tr = [(plain(r['html']), r.get('h', '')) for r in doc['treatment']]
+    sp = [(plain(r['html']), r.get('h', '')) for r in doc.get('treatment_special') or []]
+
+    def match(go, lst):
+        out = []
+        for i, (t, h) in enumerate(lst):
+            if any(re.search(x, t, re.I) for x in go.get('rx', [])) or any(re.search(x, h) for x in go.get('h', [])):
+                out.append(i)
+        return out
+
+    def walk(o, path):
+        if isinstance(o, dict):
+            if 'go' in o:
+                g = o['go']
+                g['ti'], g['si'] = match(g, tr), match(g, sp)
+                report.append((doc['id'], path + ' ' + (o.get('label') or o.get('big') or ''), len(g['ti']), len(g['si'])))
+                g.pop('rx', None); g.pop('h', None)
+            for k, v in o.items():
+                walk(v, path)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v, path)
+    for b in cls['blocks']:
+        walk(b, b.get('title', ''))
+    return cls
+
+
 def build_data(db, version):
     docs = {}
     for f in sorted(glob.glob(os.path.join(ROOT, 'data', 'brief', 'kr', '*.json'))):
@@ -56,6 +89,14 @@ def build_data(db, version):
         for k in ('dropped', 'stats', 'review'):
             d.pop(k, None)
         docs[d['id']] = d
+    report = []
+    for f in sorted(glob.glob(os.path.join(ROOT, 'data', 'brief', 'cls', '*.json'))):
+        c = json.load(open(f, encoding='utf-8'))
+        if c['id'] in docs:
+            docs[c['id']]['cls_ui'] = resolve_cls(docs[c['id']], c, report)
+    for r in report:
+        if not (r[2] or r[3]) or os.environ.get('CLS_REPORT'):
+            print(('  ' if r[2] or r[3] else '! нет рекомендаций: ') + f'КР{r[0]} · {r[1]} → {r[2]} + {r[3]}')
     idx = json.load(open(os.path.join(ROOT, 'data', 'brief', 'index.json'), encoding='utf-8'))
     built = idx['meta'].get('built') or next(iter(docs.values()))['built']
 
