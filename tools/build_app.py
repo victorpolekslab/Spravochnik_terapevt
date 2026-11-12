@@ -105,6 +105,28 @@ def build_data(db, version):
         r = json.load(open(f, encoding='utf-8'))
         ref[r['id']] = r
 
+    intl = {}
+    for f in sorted(glob.glob(os.path.join(ROOT, 'data', 'intl', '*.json'))):
+        g = json.load(open(f, encoding='utf-8'))
+        groups = {x['id']: len(x['items']) for x in g['treatment']}
+
+        def walk(o):
+            if isinstance(o, dict):
+                if 'go' in o and 'g' in o['go']:
+                    bad = [x for x in o['go']['g'] if x not in groups]
+                    if bad:
+                        print(f'! intl {g["id"]}: нет групп {bad}')
+                    o['go']['n'] = sum(groups.get(x, 0) for x in o['go']['g'])
+                for v in o.values():
+                    walk(v)
+            elif isinstance(o, list):
+                for v in o:
+                    walk(v)
+        walk(g.get('classification', {}))
+        if g['id'] not in docs:
+            print(f'! intl {g["id"]}: нет краткой КР')
+        intl[g['id']] = g
+
     t = json.load(open(os.path.join(ROOT, 'data', 'cochrane', 'terms.json'), encoding='utf-8'))
     terms = [{'id': x['id'], 'kind': x['kind'], 'ru': x['ru'], 'en': x['en'], 'jsrx': py2js(x['rx'])} for x in t['terms']]
 
@@ -136,6 +158,7 @@ def build_data(db, version):
         'data_ref.js': js('REF', ref),
         'data_terms.js': js('TERMS', {'terms': terms, 'conditions': t['conditions']}),
         'data_mkb.js': js('MKB', mkb),
+        'data_intl.js': js('INTL', intl),
     }
 
 
