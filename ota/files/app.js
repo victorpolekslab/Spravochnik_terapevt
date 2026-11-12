@@ -747,7 +747,7 @@ function codePage(code) {
   setTitle(code + ' — МКБ-10', true);
   const kids = []; for (let j = i + 1; j < MKB.n.length && MKB.n[j][2] > r[2]; j++) if (MKB.n[j][2] === r[2] + 1) kids.push(MKB.n[j]);
   const krList = ks.map(k => { const b = BRIEF.docs[k], m = MKB.cr[k] || ['КР' + k, 1];
-    return b ? `<li><a href="#kr/${k}/${encodeURIComponent(code)}"><span style="flex:1"><div class="tt">${esc(b.name)}</div><div class="ts">КР${esc(k)} · краткая КР${b.mode === 'brief' ? ' (сокращённая)' : ''}</div></span>${svg('chev', 'class="chev"')}</a></li>`
+    return b ? `<li><a href="#kr/${k}/${encodeURIComponent(code)}"><span style="flex:1"><div class="tt">${esc(b.name)}</div><div class="ts">КР${esc(k)} · краткая КР${b.mode === 'brief' ? ' (сокращённая)' : ''}${(window.INTL || {})[k] ? ' · есть международная версия (' + esc(INTL[k].org) + ' ' + INTL[k].year + ')' : ''}</div></span>${svg('chev', 'class="chev"')}</a></li>`
       : `<li><a href="https://cr.minzdrav.gov.ru/preview-cr/${k}"><span style="flex:1"><div class="tt">${esc(m[0])}</div><div class="ts">КР${esc(k)} · нет в справочнике терапевта — открыть на cr.minzdrav.gov.ru</div></span>${svg('chev', 'class="chev"')}</a></li>`; }).join('');
   view.innerHTML = `<div class="krhead"><div style="font-size:26px;font-weight:800;color:var(--accent)">${esc(code)}</div><div style="font-size:17px;font-weight:600">${esc(r[1])}</div></div>
     ${refs.length ? `<h2 class="sec-h">Справка</h2><ul class="list">${refs.map(r => `<li><a href="#ref/${r.id}"><span style="flex:1"><div class="tt">${esc(r.title)}</div><div class="ts">${esc(r.badge || '')}</div></span>${svg('chev', 'class="chev"')}</a></li>`).join('')}</ul>` : ''}
@@ -772,9 +772,10 @@ function markTerms(html) {
 }
 /* ---- классификация: тезисы и инфографика (data/brief/cls), пункты ведут к лечению */
 const md = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
-function goBtn(g, short) { const n = g.ti.length + g.si.length; return n ? `<span class="cgo">${short ? 'лечение' : 'лечение · ' + n} ›</span>` : ''; }
+const goN = g => g.n != null ? g.n : g.ti.length + g.si.length;
+function goBtn(g, short) { const n = goN(g); return n ? `<span class="cgo">${short ? 'лечение' : 'лечение · ' + n} ›</span>` : ''; }
 function clsHtml(c, GO) {
-  const reg = (o) => { if (o.go && (o.go.ti.length + o.go.si.length)) { GO.push(o.go); return `data-go="${GO.length - 1}"`; } if (o.jump) return `data-cj="${o.jump}"`; if (o.calc) return `data-calc="${o.calc}"`; return ''; };
+  const reg = (o) => { if (o.go && goN(o.go)) { GO.push(o.go); return `data-go="${GO.length - 1}"`; } if (o.jump) return `data-cj="${o.jump}"`; if (o.calc) return `data-calc="${o.calc}"`; return ''; };
   const head = b => `<div class="ch"><b>${esc(b.title)}</b>${b.sub ? `<span>${esc(b.sub)}</span>` : ''}</div>`;
   const tag = (o, inner, cls) => { const a = reg(o); return a ? `<button class="${cls} act" ${a}>${inner}</button>` : `<div class="${cls}">${inner}</div>`; };
   let h = '';
@@ -799,8 +800,15 @@ function showTx(d, g) {
   box.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 const wrapT = h => (h || '').replace(/<table>/g, '<div class="tbl"><table>').replace(/<\/table>/g, '</table></div>');
+const INTLX = window.INTL || {};
+function modeSwitch(id, mode) {
+  if (!INTLX[id]) return '';
+  return `<div class="seg kmode" data-kmode="1"><button data-m="kr" class="${mode === 'kr' ? 'on' : ''}" aria-pressed="${mode === 'kr'}">КР Минздрава</button><button data-m="intl" class="${mode === 'intl' ? 'on' : ''}" aria-pressed="${mode === 'intl'}">Международные</button></div>`;
+}
+function bindMode(id, hlCode) { $$('[data-kmode] button').forEach(b => b.onclick = () => { LS.set('krmode', b.dataset.m); krPage(id, hlCode); window.scrollTo(0, 0); }); }
 function krPage(id, hlCode) {
   const d = BRIEF.docs[id]; if (!d) { view.innerHTML = '<div class="empty">КР не найдена.</div>'; return; }
+  if (INTLX[id] && LS.get('krmode', 'kr') === 'intl') return intlPage(d, INTLX[id], hlCode);
   setTitle('КР' + d.id, true);
   const S = (n, sid, title, src, body) => `<section class="ks" id="${sid}"><h3><span class="n">${n}</span><span>${title}</span><span class="src">${esc(src)}</span></h3>${body}</section>`;
   const GO = [];
@@ -826,18 +834,55 @@ function krPage(id, hlCode) {
   const dn = (d.dispensary.order.length ? d.dispensary.order.map(r => `<div class="card"><div class="chips"><span class="chip ok">168н, строка ${r.row} · ${esc(r.codes)}</span><span class="chip">${esc(r.freq)}</span><span class="chip">${esc(r.dur)}</span></div><b>${esc(r.name)}</b>${r.ind.length ? `<ul style="margin:0;padding-left:20px">${r.ind.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}<span class="meta">${esc(r.note)}</span></div>`).join('<div style="height:8px"></div>') : '<div class="empty">Кодов этой КР нет в приложении 1 приказа 168н.</div>')
     + (d.dispensary.kr.length ? `<div style="height:8px"></div><details class="fold"><summary>Диспансерное наблюдение в тексте КР<span class="meta">${d.dispensary.kr.length}</span></summary><div>${d.dispensary.kr.map(r => `<div class="rec kr">${r.html}${r.grade ? `<span class="grade">${esc(r.grade)}</span>` : ''}</div>`).join('')}</div></details>` : '');
   view.innerHTML = `<div class="krhead"><h2>${esc(d.name)}</h2><div class="meta">КР${esc(d.id)} · ${d.age === 3 ? 'взрослые и дети' : 'взрослые'} · утверждена ${dt(d.pub)}${d.mode === 'brief' ? ' · сокращённый вид' : ''}</div>
-    <div class="chips">${d.mkb.map(c => `<span class="chip ${c === hlCode ? 'hl' : ''}">${esc(c)}</span>`).join('')}</div></div>
+    <div class="chips">${d.mkb.map(c => `<span class="chip ${c === hlCode ? 'hl' : ''}">${esc(c)}</span>`).join('')}</div>${modeSwitch(d.id, 'kr')}</div>
     <nav class="jump" aria-label="Разделы">${[['s1', 'Классификация'], ['s2', 'Диагноз'], ['s3', 'Лечение'], ['s4', 'Обследование'], ['s5', 'Наблюдение']].map(x => `<button data-j="${x[0]}">${x[1]}</button>`).join('')}</nav>
     ${S(1, 's1', 'Классификация', d.cls_ui ? 'тезисы · раздел 1.5' : 'раздел 1.5', cls)}${S(2, 's2', 'Формулировка диагноза', '', form)}${S(3, 's3', 'Лечение', 'разд. 3, 7, прил. А3, Б', '<div id="txsel" class="card txsel" hidden></div>' + treat)}${S(4, 's4', 'Обязательное обследование', d.exam.src, exam)}${S(5, 's5', 'Диспансерное наблюдение', 'приказ 168н', dn)}
     <a class="bigbtn" href="${esc(d.url)}">Полный текст на cr.minzdrav.gov.ru</a>
     <p class="foot">Фрагменты — из текста КР${esc(d.id)}, база КР от ${dt(d.built)}. Черновик, требует проверки врачом. Подсвеченные препараты и методы открывают обзоры Cochrane. ${esc(d.dispensary.order_note)}</p>`;
   $$('[data-j]').forEach(b => b.onclick = () => { const s = $('#' + b.dataset.j); if (s) s.scrollIntoView({ behavior: 'smooth' }); });
+  bindMode(d.id, hlCode);
   view.onclick = e => {
     const b = e.target.closest('.term'); if (b) { cochraneSheet(TERM_BY[b.dataset.term], d.id); return; }
     const g = e.target.closest('[data-go]'); if (g) { showTx(d, GO[+g.dataset.go]); return; }
     const j = e.target.closest('[data-cj]'); if (j) { const t = j.dataset.cj === 'top' ? $('#s1') : $('#cj_' + j.dataset.cj); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     const c = e.target.closest('[data-calc]'); if (c) go('#calc/' + c.dataset.calc);
   };
+}
+
+/* ---------------------------------------------------------------- международная версия краткой КР */
+const ulist = a => `<div class="card"><ul class="ilist">${a.map(x => `<li>${md(x)}</li>`).join('')}</ul></div>`;
+const itemH = it => `<div class="rec"><div>${markTerms(md(it.t))}</div>${it.dose ? `<div class="idose">${svg('pill', 'style="width:15px;height:15px;flex:none"')}<span>${markTerms(esc(it.dose))}</span></div>` : ''}${it.cls ? `<span class="grade">Класс ${esc(it.cls)}</span>` : ''}</div>`;
+function intlPage(d, I, hlCode) {
+  setTitle(I.org + ' ' + I.year, true);
+  const GO = [];
+  const S = (n, sid, title, body) => `<section class="ks" id="${sid}"><h3><span class="n">${n}</span><span>${title}</span></h3>${body}</section>`;
+  const tx = I.treatment.map((g, i) => `<details class="fold" ${i === 0 ? 'open' : ''} id="g_${g.id}"><summary>${esc(g.h)}<span class="meta">${g.items.length}${g.items.some(x => x.dose) ? ' · дозы' : ''}</span></summary><div>${g.items.map(itemH).join('')}</div></details>`).join('');
+  view.innerHTML = `<div class="krhead"><h2>${esc(d.name)}</h2><div class="meta">${esc(I.guideline)}</div>
+    <div class="chips">${d.mkb.map(c => `<span class="chip ${c === hlCode ? 'hl' : ''}">${esc(c)}</span>`).join('')}</div>${modeSwitch(d.id, 'intl')}</div>
+    <nav class="jump" aria-label="Разделы">${[['s0', 'Отличия'], ['s1', 'Классификация'], ['s2', 'Диагноз'], ['s3', 'Лечение'], ['s4', 'Обследование'], ['s5', 'Наблюдение']].map(x => `<button data-j="${x[0]}">${x[1]}</button>`).join('')}</nav>
+    ${S('≠', 's0', 'Отличия от КР Минздрава', `<div class="card idiff"><ul class="ilist">${I.diffs.map(x => `<li>${md(x)}</li>`).join('')}</ul></div>`)}
+    ${S(1, 's1', 'Классификация', `<div class="cwrap">${clsHtml(I.classification, GO)}</div>`)}
+    ${S(2, 's2', 'Диагноз', ulist(I.diagnosis))}
+    ${S(3, 's3', 'Лечение', '<div id="txsel" class="card txsel" hidden></div><div style="display:flex;flex-direction:column;gap:8px">' + tx + '</div>')}
+    ${S(4, 's4', 'Обследование', ulist(I.exam))}
+    ${S(5, 's5', 'Наблюдение', ulist(I.followup))}
+    <a class="bigbtn" href="${esc(I.url)}">Оригинал: ${esc(I.org)} ${I.year}</a>
+    <p class="foot">Краткий пересказ на русском по ${esc(I.guideline)}. Сокращён и не заменяет оригинал; дозы — типичные из guideline, уточняйте по инструкции. Черновик, требует проверки врачом. Класс — класс рекомендации (и уровень доказательств) в терминах guideline.</p>`;
+  $$('[data-j]').forEach(b => b.onclick = () => { const s = $('#' + b.dataset.j); if (s) s.scrollIntoView({ behavior: 'smooth' }); });
+  bindMode(d.id, hlCode);
+  view.onclick = e => {
+    const b = e.target.closest('.term'); if (b) { cochraneSheet(TERM_BY[b.dataset.term], d.id); return; }
+    const g = e.target.closest('[data-go]'); if (g) { const go = GO[+g.dataset.go]; showTxBox(go.title, go.note, go.g.flatMap(id => (I.treatment.find(x => x.id === id) || { items: [] }).items).map(itemH).join('')); return; }
+    const j = e.target.closest('[data-cj]'); if (j) { const t = j.dataset.cj === 'top' ? $('#s1') : $('#cj_' + j.dataset.cj); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    const c = e.target.closest('[data-calc]'); if (c) go('#calc/' + c.dataset.calc);
+  };
+}
+function showTxBox(title, note, html) {
+  const box = $('#txsel'); if (!box) return;
+  box.hidden = false;
+  box.innerHTML = `<div class="txh"><div><span class="meta">Лечение по классификации</span><b>${esc(title)}</b></div><button class="x" aria-label="Закрыть">×</button></div>${note ? `<div class="txn">${esc(note)}</div>` : ''}${html}<button class="lnk" data-cj="top" style="border:0;cursor:pointer;align-self:flex-start">↑ К классификации</button>`;
+  box.querySelector('.x').onclick = () => { box.hidden = true; $('#s1').scrollIntoView({ behavior: 'smooth' }); };
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 /* ---------------------------------------------------------------- Cochrane */
