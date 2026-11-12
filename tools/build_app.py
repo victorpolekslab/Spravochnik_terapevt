@@ -103,8 +103,9 @@ def build_www(a):
     www = os.path.join(OUT, 'www')
     shutil.rmtree(www, ignore_errors=True)
     os.makedirs(www)
-    for f in ('index.html', 'app.css', 'app.js'):
-        shutil.copy(os.path.join(WEB, f), www)
+    for f in sorted(os.listdir(WEB)):
+        if os.path.isfile(os.path.join(WEB, f)):
+            shutil.copy(os.path.join(WEB, f), www)
     for name, text in build_data(a.db, version).items():
         open(os.path.join(www, name), 'w', encoding='utf-8').write(text)
     open(os.path.join(www, 'ota_version.txt'), 'w').write(str(version))
@@ -144,6 +145,15 @@ def build_site(a):
     if a.pub:
         subprocess.run(['openssl', 'dgst', '-sha256', '-verify', a.pub, '-signature', '/dev/stdin', mp], input=sig, check=True, capture_output=True)
 
+    # веб-версия для iPhone и браузеров: тот же интерфейс + service worker (офлайн, обновление при открытии)
+    app = os.path.join(site, 'app')
+    os.makedirs(app)
+    for f in files:
+        shutil.copy(os.path.join(www, f[0]), app)
+    tag = hashlib.sha256(json.dumps(files).encode()).hexdigest()[:10]
+    sw = SW_JS.replace('__VERSION__', f'{v}-{tag}').replace('__FILES__', json.dumps(['./'] + [f'{f[0]}?h={f[1][:10]}' for f in files]))
+    open(os.path.join(app, 'sw.js'), 'w', encoding='utf-8').write(sw)
+
     meta = json.loads(open(os.path.join(www, 'data_meta.js'), encoding='utf-8').read()[len('var META='):-2])
     apk_info = {}
     if a.apk:
@@ -162,11 +172,14 @@ def build_site(a):
 <title>Справочник терапевта — скачать</title><style>
 body{{font:16px/1.5 system-ui,-apple-system,Roboto,sans-serif;margin:0;background:#F6F4F1;color:#1E2328}}main{{max-width:560px;margin:0 auto;padding:28px 18px 40px}}
 h1{{font-size:26px;margin:0 0 4px}}.m{{color:#5C6670;font-size:14px}}.b{{display:block;text-align:center;background:#A8322F;color:#fff;text-decoration:none;font-weight:700;padding:16px;border-radius:14px;margin:22px 0 8px;font-size:18px}}
-.c{{background:#fff;border-radius:14px;padding:14px 16px;margin:14px 0;box-shadow:0 1px 2px rgba(0,0,0,.06)}}ol{{padding-left:20px;margin:6px 0}}code{{font-size:12px;word-break:break-all}}a{{color:#A8322F}}
+.ios .b{{display:none}}.w{{display:block;text-align:center;border:2px solid #A8322F;color:#A8322F;text-decoration:none;font-weight:700;padding:14px;border-radius:14px;margin:10px 0}}.ios .w{{background:#A8322F;color:#fff}}
+.c{{background:#fff;border-radius:14px;padding:14px 16px;margin:14px 0;box-shadow:0 1px 2px rgba(0,0,0,.06)}}ol{{padding-left:20px;margin:6px 0}}ol a{{word-break:break-all}}code{{font-size:12px;word-break:break-all}}a{{color:#A8322F}}
 </style></head><body><main>
-<h1>Справочник терапевта</h1><div class="m">Калькуляторы, краткие клинические рекомендации Минздрава по МКБ-10, алгоритмы. Android 8.0 и новее.</div>
+<h1>Справочник терапевта</h1><script>if(/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))document.documentElement.classList.add('ios')</script><div class="m">Калькуляторы, краткие клинические рекомендации Минздрава по МКБ-10, алгоритмы. Android 8.0 и новее, iPhone — через Safari.</div>
+<a class="w" href="app/">Открыть веб-версию (iPhone, любой браузер)</a>
 {f'<a class="b" href="download/SpravochnikTerapevt.apk">Скачать APK · {mb} МБ</a><div class="m">Версия {apk_info["versionName"]}</div>' if apk_info else ''}
-<div class="c"><b>Установка</b><ol><li>Скачайте файл и откройте его из уведомления или «Загрузок».</li><li>Разрешите установку из этого источника, если телефон спросит.</li><li>Новые данные приложение загрузит само: раз в сутки в фоне, при наличии интернета.</li></ol></div>
+<div class="c"><b>iPhone и iPad</b><ol><li>Откройте в <b>Safari</b>: <a href="app/">victorpolekslab.github.io/Spravochnik_terapevt/app/</a></li><li>Кнопка «Поделиться» → «На экран „Домой“».</li><li>Справочник откроется как приложение и будет работать без интернета. Новые данные загружаются при открытии, когда есть сеть.</li></ol></div>
+<div class="c"><b>Android — установка APK</b><ol><li>Скачайте файл и откройте его из уведомления или «Загрузок».</li><li>Разрешите установку из этого источника, если телефон спросит.</li><li>Новые данные приложение загрузит само: раз в сутки в фоне, при наличии интернета.</li></ol></div>
 <div class="c"><b>Сейчас в справочнике</b><div>{meta['ndocs']} кратких КР · база КР от {'.'.join(reversed(meta['kr_built'].split('-')))} · данные {v}</div>
 <div class="m">Черновик для проверки врачом. Не заменяет инструкцию к препарату и решение врача.</div></div>
 {f'<div class="m">SHA-256 APK: <code>{apk_info["sha256"]}</code></div>' if apk_info else ''}
@@ -174,6 +187,28 @@ h1{{font-size:26px;margin:0 0 4px}}.m{{color:#5C6670;font-size:14px}}.b{{display
     open(os.path.join(site, 'index.html'), 'w', encoding='utf-8').write(html)
     open(os.path.join(site, '.nojekyll'), 'w').close()
     print('site', site, 'ota v', v, 'files', len(files))
+
+
+SW_JS = r'''/* Справочник терапевта — офлайн-кэш веб-версии. Версия меняется при любом изменении файлов. */
+const VERSION = '__VERSION__';
+const FILES = __FILES__;
+const CACHE = 'terapevt-' + VERSION;
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => Promise.all(FILES.map(u => fetch(u, { cache: 'reload' }).then(r => {
+    if (!r.ok) throw new Error(u + ' ' + r.status);
+    return c.put(u.split('?')[0], r);
+  }))))); // первая установка активируется сразу; обновление ждёт кнопки «Применить» (message 'skip')
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith('terapevt-') && k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+});
+self.addEventListener('message', e => { if (e.data === 'skip') self.skipWaiting(); });
+self.addEventListener('fetch', e => {
+  const u = new URL(e.request.url);
+  if (e.request.method !== 'GET' || u.origin !== location.origin) return;
+  e.respondWith(caches.open(CACHE).then(c => c.match(u.pathname.endsWith('/') ? './' : e.request, { ignoreSearch: true }).then(r => r || fetch(e.request))));
+});
+'''
 
 
 if __name__ == '__main__':

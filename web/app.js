@@ -573,20 +573,51 @@ function about() {
     <div class="card"><b style="font-size:17px">Справочник врача-терапевта</b><span class="meta">Калькуляторы и шкалы, краткие клинические рекомендации Минздрава, алгоритмы.</span>
       <span>Версия приложения: <b>${esc(i.versionName || 'веб-версия')}</b></span>
       <span>Данные: <b>${esc(META.v)}</b> · база КР от <b>${dt(META.kr_built)}</b>${i.running && i.running !== i.bundled ? ' · загружены обновлением' : ''}</span>
-      <span class="meta">Обновления данных загружаются в фоне раз в сутки при наличии интернета и применяются при следующем запуске. Последняя проверка: ${esc(ago)}.</span>
-      ${N ? '<button id="chk" class="lnk" style="border:0;cursor:pointer">Проверить обновления сейчас</button><span id="upd" class="meta"></span>' : ''}</div>
+      <span class="meta">${N ? `Обновления данных загружаются в фоне раз в сутки при наличии интернета и применяются при следующем запуске. Последняя проверка: ${esc(ago)}.` : 'Обновления данных загружаются при открытии справочника, когда есть интернет; применить — кнопкой в баннере вверху.'}</span>
+      ${N || SW.reg ? '<button id="chk" class="lnk" style="border:0;cursor:pointer">Проверить обновления сейчас</button><span id="upd" class="meta"></span>' : ''}</div>
+    ${!N ? `<div class="card"><b>${IOS ? 'На iPhone' : 'Как приложение'}</b><span>${STANDALONE ? 'Справочник установлен на экран «Домой» и работает без интернета. Новые данные загружаются при открытии, когда есть сеть.' : IOS ? 'Откройте в Safari → кнопка «Поделиться» → «На экран „Домой“». Справочник откроется как приложение и будет работать без интернета.' : 'В меню браузера выберите «Установить приложение» или «Добавить на главный экран». Для Android есть APK — на странице скачивания.'}</span><a class="lnk" href="../">Страница скачивания ›</a></div>` : ''}
     <div class="card"><b>Источники</b><span>Клинические рекомендации — рубрикатор cr.minzdrav.gov.ru (снимок ${dt(META.kr_built)}). Приказ Минздрава № 168н (диспансерное наблюдение). Дозы, которых нет в КР, — инструкции к препаратам, источник указан в строке. Обзоры Cochrane — через PubMed, по запросу.</span></div>
     <div class="card" style="background:var(--warn-soft)"><b>Черновик для проверки врачом</b><span>Справочник не заменяет инструкцию к препарату и решение врача. Внешние и составленные фрагменты помечены.</span></div></div>`;
-  const b = $('#chk'); if (b) b.onclick = () => { $('#upd').textContent = 'Проверяю…'; N.checkUpdates(); };
+  const b = $('#chk'); if (b) b.onclick = () => {
+    $('#upd').textContent = 'Проверяю…';
+    if (N) N.checkUpdates();
+    else SW.reg.update().then(() => { const r = SW.reg; $('#upd').textContent = (r.installing || r.waiting) ? 'Обновление загружается — появится баннер вверху' : 'Новых обновлений нет'; if (r.waiting) swBanner(r.waiting); }).catch(() => { $('#upd').textContent = 'Нет связи с сервером'; });
+  };
 }
 function appUpdateCheck() {
   const i = info(); if (!i.site || !i.versionCode) return;
   nfetch(i.site + 'android.json?t=' + Date.now()).then(x => { const j = JSON.parse(x); if (j.versionCode > i.versionCode) banner('Новая версия приложения ' + j.versionName, 'Скачать', () => openUrl(j.url)); }).catch(() => {});
 }
 
+/* ---------------------------------------------------------------- веб-версия (iPhone и браузер): офлайн и обновления через service worker */
+const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const STANDALONE = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+const SW = { reg: null };
+function swBanner(w) { banner('Загружено обновление справочника', 'Применить', () => w.postMessage('skip')); }
+function swInit() {
+  if (N || !('serviceWorker' in navigator) || (location.protocol !== 'https:' && location.hostname !== 'localhost')) return;
+  let reloading = false; const had = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !reloading) { reloading = true; location.reload(); } });
+  navigator.serviceWorker.register('sw.js').then(reg => {
+    SW.reg = reg;
+    if (reg.waiting && navigator.serviceWorker.controller) swBanner(reg.waiting);
+    reg.addEventListener('updatefound', () => {
+      const w = reg.installing; if (!w) return;
+      w.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) swBanner(w); });
+    });
+    // приложение на iPhone может неделями оставаться открытым в фоне — проверяем при каждом возвращении
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); });
+  }).catch(() => {});
+}
+if (!N) document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="http"]');
+  if (a && a.origin !== location.origin) { e.preventDefault(); window.open(a.href, '_blank', 'noopener'); }
+});
+
 /* ---------------------------------------------------------------- старт */
 (function start() {
   const i = info(); if (i.pending) App.otaReady();
   route();
-  setTimeout(appUpdateCheck, 3000);
+  swInit();
+  if (N) setTimeout(appUpdateCheck, 3000);
 })();
