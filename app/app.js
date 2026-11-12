@@ -561,6 +561,8 @@ function setTitle(t, back, actions) {
   $('#hact').innerHTML = actions || '';
 }
 $('#back').onclick = () => history.back();
+$('#hshare').onclick = () => go('#share');
+$('#hinfo').onclick = () => go('#about');
 // Препараты: поиск по инструкциям и проверка взаимодействий (drugs.js, данные — ветка drugs репозитория Spravochnik_nmp)
 const DM = window.DrugsModule ? window.DrugsModule({ view, go, setTitle: (t, back) => setTitle(t, back), fetchText: nfetch }) : null;
 if (DM) setTimeout(() => DM.preload(), 1500);
@@ -570,7 +572,8 @@ function route() {
   const h = decodeURIComponent(raw.split('?')[0]);
   const [p, a, b, c] = h.split('/');
   closeSheet(true); stickyCompact(null);
-  curTab = ['ref'].includes(p) ? 'ref' : p === 'about' ? 'about' : ['drugs', 'drug', 'ix'].includes(p) ? 'drugs' : 'home';
+  curTab = ['ref', 'duty', 'dtab'].includes(p) ? 'ref' : ['about', 'share'].includes(p) ? '' : ['drugs', 'drug', 'ix'].includes(p) ? 'drugs' : 'home';
+  $('#hshare').classList.toggle('on', p === 'share'); $('#hinfo').classList.toggle('on', p === 'about');
   $$('#tabs a').forEach(x => x.classList.toggle('on', x.dataset.tab === curTab));
   window.scrollTo(0, 0);
   try {
@@ -584,6 +587,9 @@ function route() {
     else if (p === 'mref') { refPage(a); setTitle(REF[a] ? REF[a].title : 'Справка', true); }
     else if (p === 'ref') a ? refPage(a) : refList();
     else if (p === 'about') about();
+    else if (p === 'share') sharePage();
+    else if (p === 'duty') dutyPage();
+    else if (p === 'dtab') dutyTable(a, b);
     else if (DM && ['drugs', 'drug', 'ix'].includes(p)) DM.route([p, a, b], new URLSearchParams(qs));
     else home(false);
   } catch (e) { view.innerHTML = `<div class="empty">Ошибка отображения: ${esc(e.message)}</div>`; }
@@ -1026,12 +1032,183 @@ function toggleAbs(el, o) {
   }).catch(e => { ab.innerHTML = `<div class="empty" style="margin:0">Не удалось загрузить абстракт: ${esc(e.message)}</div>` + btns; });
 }
 
+/* ---------------------------------------------------------------- дежурные стационары
+   Мастер «куда везти» и таблицы приказов ДЗ Тюменской области — перенесены из «Справочника НМП»
+   (route_data.js, route_addr.js скачиваются при сборке из его ветки main). */
+const ROUTE_TABLES = ['r_tmn', 'r_onmk', 'r_cardio', 'r_obst', 'r_kids'];
+const FELDID = id => (window.FELD || []).find(x => x.id === id);
+const RW_DAYS = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
+function dutyNow() {
+  const n = new Date(); if (n.getHours() < 8) n.setDate(n.getDate() - 1);
+  return { d: (n.getDay() + 6) % 7, date: n };
+}
+const RW = { st: null };
+const RW_AO = { len: 'Ленинский АО', cen: 'Центральный АО', kal: 'Калининский АО', vos: 'Восточный АО' };
+let ADDR_IX = null;
+function addrIndex() {
+  if (!ADDR_IX) ADDR_IX = (window.TMN_ADDR || []).map(([n, spec]) => {
+    const parts = spec.includes(':') ? spec.split('|').map(x => { const [o, hs] = x.split(':'); return [o, hs.split(',')]; }) : null;
+    return { n, w: rwNorm(n).split(' '), one: parts ? null : spec, parts };
+  });
+  return ADDR_IX;
+}
+const hnum = h => parseInt(h, 10) || 0;
+function addrHouse(st, h) {
+  if (st.one) return { t: st.one };
+  const H = h.toUpperCase().replace(/КОРПУС|КОРП\.?/g, 'К').replace(/СТРОЕНИЕ|СТР\.?/g, 'С').replace(/\s+/g, '');
+  for (const [o, hs] of st.parts) if (hs.includes(H)) return { t: o };
+  const n = hnum(H); if (!n) return null;
+  const same = new Set(); st.parts.forEach(([o, hs]) => hs.forEach(x => { if (hnum(x) === n) same.add(o); }));
+  if (same.size === 1) return { t: [...same][0] };
+  let best = null;
+  st.parts.forEach(([o, hs]) => hs.forEach(x => { const m = hnum(x); if (m && m % 2 === n % 2) { const dd = Math.abs(m - n); if (!best || dd < best.d) best = { d: dd, t: o, h: x }; } }));
+  return best && best.d <= 20 ? { t: best.t, near: best.h } : null;
+}
+function addrSearch(q) {
+  const m = q.trim().match(/^(.*?)[,\s]+(?:д\.?|дом)?\s*(\d+\s*[а-яёa-z]?(?:\s*(?:\/|к|корп\.?|корпус|с|стр\.?)\s*\d+[а-яёa-z]?)?)$/i);
+  const house = m ? m[2] : '';
+  const words = rwNorm(m ? m[1] : q).split(' ').filter(w => w && !['ул', 'улица', 'пр', 'проезд', 'пер', 'переулок', 'д', 'дом', 'г', 'тюмень'].includes(w));
+  if (!words.length) return [];
+  const hits = addrIndex().filter(s => words.every(w => s.w.some(x => x.startsWith(w))))
+    .sort((a, b) => (b.w.some(x => x === words[0]) - a.w.some(x => x === words[0])) || a.n.length - b.n.length).slice(0, 8);
+  return hits.map(s => {
+    if (house) {
+      const r = addrHouse(s, house);
+      if (r) return { s, h: house, t: r.t, sub: r.near ? `по соседнему дому № ${r.near} — проверьте` : '' };
+      return { s, h: house, t: '', sub: 'дом на границе округов не найден — выберите район вручную' };
+    }
+    if (s.one) return { s, h: '', t: s.one, sub: '' };
+    return { s, h: '', t: '', sub: 'улица в нескольких округах (' + s.parts.map(p => RW_AO[p[0]]).join(', ') + ') — введите номер дома' };
+  });
+}
+const rwNorm = t => String(t).toLowerCase().replace(/ё/g, 'е').replace(/[^a-zа-я0-9]+/g, ' ').trim();
+function dutyPage() {
+  const R = window.ROUTE;
+  setTitle('Дежурные стационары', true);
+  if (!RW.st) { const sv = LS.get('route', {}); RW.st = { age: sv.age || 'ad', p: '', t: sv.t || '', x: {}, d: null, open: '' }; }
+  const s = RW.st, now = dutyNow(), d = s.d == null ? now.d : s.d;
+  const dd = dt => String(dt.getDate()).padStart(2, '0') + '.' + String(dt.getMonth() + 1).padStart(2, '0');
+  const nx = new Date(now.date); nx.setDate(nx.getDate() + 1);
+  const label = (list, k) => { for (const g of list) for (const o of g[1]) if (o[0] === k) return o[1]; return ''; };
+  const kid = s.age !== 'ad';
+  const plist = !kid ? R.P_AD : (s.age === 'ch' || s.age === 'kid' ? [...R.P_CH, R.P_GIRL] : R.P_CH);
+  if (s.p && !label(plist, s.p)) s.p = '';
+  const chip = (k, v, on, t, sub) => `<a class="rwc${on ? ' on' : ''}" data-k="${k}" data-v="${esc(v)}">${esc(t)}${sub ? `<small>${esc(sub)}</small>` : ''}</a>`;
+  const q = (n, h, body, done) => `<div class="rwq${done ? ' done' : ''}"><div class="rwh"><span class="rwn">${n}</span>${h}</div>${body}</div>`;
+  const summ = (k, t) => `<a class="rwsum" data-k="open" data-v="${k}"><b>${esc(t)}</b><span>изменить</span></a>`;
+  let h = '';
+  h += q(1, 'Пациент', `<div class="rwab">${chip('age', 'ad', !kid, 'Взрослые')}${chip('age', 'kid', kid, 'Дети')}</div>
+    ${kid ? `<div class="rwsub"><div class="rwsubh">Возраст ребёнка</div><div class="rwcs rwkid">${R.AGES.slice(1).reverse().map(o => chip('age', o[0], s.age === o[0], o[1])).join('')}</div></div>` : ''}`, true);
+  const ddBox = (k, groups, kw, ph) => `<div class="rwdd${s.open === k ? ' open' : ''}" data-dd="${k}"><div class="rwddf"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg>
+      <input class="rwddq" type="search" placeholder="${esc(ph)}" autocomplete="off" spellcheck="false"><span class="rwddar">▾</span></div>
+      <div class="rwlist">${groups.map(g => `<div class="rwgrp"><div class="rwg">${esc(g[0])}</div>${g[1].map(o =>
+        `<a class="rwli${s[k] === o[0] ? ' on' : ''}" data-k="${k}" data-v="${o[0]}" data-s="${esc(rwNorm([o[1], o[2] || '', g[0], kw[o[0]] || ''].join(' ')))}">${esc(o[1])}${o[2] ? `<small>${esc(o[2])}</small>` : ''}</a>`).join('')}</div>`).join('')}
+        <div class="rwnone" hidden>Ничего не найдено — попробуйте другое слово</div></div></div>`;
+  h += q(2, 'Повод', s.p && s.open !== 'p' ? summ('p', label(plist, s.p)) : ddBox('p', plist, R.KW, 'Поиск: инфаркт, инсульт, роды…'), !!s.p);
+  h += q(3, 'Район вызова', s.t && s.open !== 't' ? summ('t', label(R.TER, s.t) + (s.addr && RW_AO[s.t] ? ' · ' + s.addr : '')) :
+    `<div class="rwaddr"><div class="rwddf"><svg viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/></svg>
+      <input id="rwAddr" type="search" placeholder="Адрес в Тюмени: улица и дом" autocomplete="off" spellcheck="false"></div><div class="rwasug"></div></div>
+     <div class="rwor">или район / муниципальный округ</div>` + ddBox('t', R.TER, R.KW_T, 'Поиск: Калининский, Ишим, тракт…'), !!s.t);
+  let res = null;
+  if (s.p && s.t) {
+    res = R.find({ age: s.age, p: s.p, t: s.t, x: s.x, d });
+    Object.keys(s.x).forEach(k => { const l = (s.xl || {})[k]; if (l) h += q('✓', esc(l.q), `<a class="rwsum" data-k="xdel" data-v="${k}"><b>${esc(l.a)}</b><span>изменить</span></a>`, true); });
+    if (res.ask) h += q('?', esc(res.ask.q), `<div class="rwcs">${res.ask.opts.map(o => chip('x:' + res.ask.k, o[0], s.x[res.ask.k] === o[0], o[1])).join('')}</div>`);
+  }
+  const cap = d === now.d ? `Дежурные сутки: ${RW_DAYS[d]} ${dd(now.date)} 08:00 — ${RW_DAYS[(d + 1) % 7]} ${dd(nx)} 08:00`
+    : `Выбран другой день: ${RW_DAYS[d]} 08:00 — ${RW_DAYS[(d + 1) % 7]} 08:00`;
+  h += q(4, 'День', `<div class="rwdays">${RW_DAYS.map((x, i) => `<a class="rwc${i === d ? ' on' : ''}" data-k="d" data-v="${i}">${x}${i === now.d ? '<small>сейчас</small>' : ''}</a>`).join('')}</div>
+    <div class="rwcap">${cap}${res && res.res && !res.ask && !res.day ? ' · <i>на этот повод день не влияет</i>' : ''}</div>`, true);
+  if (res && res.res && !res.ask) {
+    h += `<div class="rwres">${res.res.map(x => { const H = R.H[x.h] || ['?', '']; return `<div class="rwto"><div class="rwk">Везти</div><div class="rwnm">${esc(H[0])}</div>${H[1] ? `<div class="rwad">${esc(H[1])}</div>` : ''}${x.why ? `<div class="rwwhy">${esc(x.why)}</div>` : ''}</div>`; }).join('')}
+      ${(res.warn || []).map(w => `<div class="rwwarn">${esc(w)}</div>`).join('')}
+      ${(res.note || []).length ? `<ul class="rwnote">${res.note.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
+      ${res.phone ? `<div class="rwph">${esc(res.phone)}</div>` : ''}
+      ${res.src ? `<div class="csrc">Основание: ${esc(res.src)}</div>` : ''}</div>`;
+  } else if (res && res.needAge) h += `<div class="rwempty">Укажите возраст ребёнка — от него зависит стационар.</div>`;
+  else if (!res) h += `<div class="rwempty">Выберите повод и район — здесь появится стационар.</div>`;
+  h += `<h2 class="sec-h">Таблицы приказов</h2><ul class="list">${ROUTE_TABLES.map(i => FELDID(i)).filter(Boolean).map(x =>
+    `<li><a href="#dtab/${x.id}"><span style="flex:1;min-width:0"><div class="tt">${esc(x.title)}</div><div class="ts">${esc(x.sub)}</div></span>${svg('chev', 'class="chev"')}</a></li>`).join('')}</ul>
+    <p class="hint">Маршруты — по приказам ДЗ Тюменской области, загруженным в справочник. Округ по адресу — по границам и адресам OpenStreetMap (© участники OpenStreetMap), возможны неточности на границах округов. При расхождении с распоряжением старшего врача или диспетчера — действует распоряжение.</p>`;
+  view.innerHTML = `<div class="rw">${h}</div>`;
+  view.querySelectorAll('.rw [data-k]').forEach(el => el.onclick = () => {
+    const k = el.dataset.k, v = el.dataset.v;
+    if (k === 'open') s.open = v;
+    else if (k === 'age') { s.age = v; }
+    else if (k === 'p') { s.p = v; s.open = ''; s.x = {}; }
+    else if (k === 't') { s.t = v; s.open = ''; s.x = {}; s.addr = ''; }
+    else if (k === 'd') s.d = +v === now.d ? null : +v;
+    else if (k === 'xdel') delete s.x[v];
+    else if (k.startsWith('x:')) { const kk = k.slice(2); s.x[kk] = v; s.xl = s.xl || {}; s.xl[kk] = { q: el.closest('.rwq').querySelector('.rwh').textContent.replace(/^\?/, ''), a: el.textContent }; }
+    LS.set('route', { age: s.age, t: s.t });
+    const y = window.scrollY; dutyPage(); window.scrollTo(0, y);
+    if (k === 'p' || k === 't' || k.startsWith('x:')) { const r = $('.rwres') || $('.rwq:not(.done)'); if (r) r.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+  });
+  const ai = $('#rwAddr');
+  if (ai) {
+    const box = $('.rwasug');
+    const show = () => {
+      const v = ai.value.trim();
+      if (v.length < 2) { box.innerHTML = ''; return; }
+      const L = addrSearch(v);
+      box.innerHTML = L.length ? L.map((x, i) => `<a class="rwas${x.t ? '' : ' no'}" data-i="${i}"><b>${esc(x.s.n)}${x.h ? ', ' + esc(x.h) : ''}</b>${x.t ? `<span class="rwao">${RW_AO[x.t]}</span>` : ''}${x.sub ? `<small>${esc(x.sub)}</small>` : ''}</a>`).join('')
+        : '<div class="rwnone">Улица не найдена — выберите район вручную</div>';
+      box.querySelectorAll('.rwas').forEach(el => el.onclick = () => {
+        const x = L[+el.dataset.i]; if (!x.t) { if (!x.h) { ai.value = x.s.n + ' '; ai.focus(); show(); } return; }
+        s.t = x.t; s.addr = x.s.n + (x.h ? ', ' + x.h : ''); s.open = ''; s.x = {};
+        LS.set('route', { age: s.age, t: s.t }); dutyPage();
+        const r = $('.rwres') || $('.rwq:not(.done)'); if (r) r.scrollIntoView({ block: 'nearest' });
+      });
+    };
+    ai.addEventListener('input', debounce(show, 120));
+  }
+  view.querySelectorAll('.rwdd').forEach(ddEl => {
+    const pq = ddEl.querySelector('.rwddq'), none = ddEl.querySelector('.rwnone');
+    const filt = () => {
+      const ws = rwNorm(pq.value).split(' ').filter(Boolean);
+      let any = false;
+      ddEl.querySelectorAll('.rwgrp').forEach(g => {
+        let n = 0;
+        g.querySelectorAll('.rwli').forEach(li => { const hay = ' ' + li.dataset.s; const ok = ws.every(w => hay.includes(' ' + w)); li.hidden = !ok; if (ok) n++; });
+        g.hidden = !n; if (n) any = true;
+      });
+      none.hidden = any;
+    };
+    pq.addEventListener('focus', () => ddEl.classList.add('open'));
+    pq.addEventListener('input', () => { ddEl.classList.add('open'); filt(); });
+    ddEl.querySelector('.rwddar').onclick = () => ddEl.classList.toggle('open');
+    if (s.open === ddEl.dataset.dd) { s.open = ''; setTimeout(() => pq.focus(), 50); }
+  });
+}
+
+const DOW_L = ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'], DOW_S = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+const isToday = c => { const s = String(c).toLowerCase(), d = new Date().getDay(); return s === DOW_L[d] || s === DOW_S[d]; };
+function dutyBlock(b) {
+  const src = b.src ? `<span class="csrc">Основание: ${esc(b.src)}</span>` : '';
+  if (b.t === 'table') return `<div class="card"><h3>${esc(b.h)}</h3><div class="tbl kr"><table><thead><tr>${b.cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${b.rows.map(r => `<tr${isToday(r[0]) ? ' class="today"' : ''}>${r.map((c, i) => i === 0 ? `<th scope="row">${esc(c)}</th>` : `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>${b.note ? `<div class="bnote">${esc(b.note)}</div>` : ''}${src}</div>`;
+  if (b.t === 'note') return `<div class="card"><span class="bnote">${esc(b.text)}</span>${src}</div>`;
+  if (b.t === 'flags') return `<div class="card flags"><h3>⚠ ${esc(b.h)}</h3><ul>${b.items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>${b.note ? `<div class="bnote">${esc(b.note)}</div>` : ''}${src}</div>`;
+  if (b.t === 'steps') return `<div class="card"><h3>${esc(b.h)}</h3><ol>${b.items.map(i => `<li>${esc(String(i.s || '').replace(/^\d+\.\s*/, ''))}${i.note ? `<div class="bnote">${esc(i.note)}</div>` : ''}</li>`).join('')}</ol>${src}</div>`;
+  return '';
+}
+function dutyTable(id, k) {
+  const d = FELDID(id); if (!d) return dutyPage();
+  setTitle(d.title, true);
+  const i = d.sections[+k] ? +k : 0;
+  view.innerHTML = `<div class="dtab"><span class="meta">${esc(d.sub)}</span>
+    ${d.sections.length > 1 ? `<div class="seg" style="grid-template-columns:repeat(${d.sections.length},1fr)">${d.sections.map((s, j) => `<button data-k="${j}" class="${j === i ? 'on' : ''}" aria-pressed="${j === i}">${esc(s.tab || s.title)}</button>`).join('')}</div>` : ''}
+    ${d.sections[i].blocks.map(dutyBlock).join('')}
+    <p class="hint">Строка текущего дня недели подсвечена. При расхождении с распоряжением старшего врача или диспетчера — действует распоряжение.</p></div>`;
+  $$('.dtab .seg button').forEach(b => b.onclick = () => { history.replaceState(null, '', '#dtab/' + id + '/' + b.dataset.k); dutyTable(id, b.dataset.k); });
+}
+
 /* ---------------------------------------------------------------- справочник */
 function refList() {
   setTitle('Справочник', false);
   const items = Object.values(REF);
   const secs = [...new Set(items.map(x => x.section))];
-  view.innerHTML = secs.map(s => `<h2 class="sec-h">${esc(s)}</h2><ul class="list">${items.filter(x => x.section === s).map(x => `<li><a href="#ref/${x.id}"><span style="flex:1;min-width:0"><div class="tt">${esc(x.title)}</div><div class="ts">${esc(x.subtitle)}</div><span class="krb" style="display:inline-block;margin-top:4px">${esc(x.badge || x.kr.map(k => 'КР' + k).join(' · '))}</span></span>${svg('chev', 'class="chev"')}</a></li>`).join('')}</ul>`).join('')
+  const duty = window.ROUTE ? `<a class="card dutycard" href="#duty"><svg viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><path d="M12 7v6M9 10h6"/></svg><span style="flex:1;min-width:0"><div class="tt">Дежурные стационары</div><div class="ts">куда везти: повод, район или адрес · Тюменская область</div></span>${svg('chev', 'class="chev"')}</a>` : '';
+  view.innerHTML = duty + secs.map(s => `<h2 class="sec-h">${esc(s)}</h2><ul class="list">${items.filter(x => x.section === s).map(x => `<li><a href="#ref/${x.id}"><span style="flex:1;min-width:0"><div class="tt">${esc(x.title)}</div><div class="ts">${esc(x.subtitle)}</div><span class="krb" style="display:inline-block;margin-top:4px">${esc(x.badge || x.kr.map(k => 'КР' + k).join(' · '))}</span></span>${svg('chev', 'class="chev"')}</a></li>`).join('')}</ul>`).join('')
     + '<p class="hint">Алгоритмы, которые не укладываются в калькулятор или краткую КР. Каждый пункт — со ссылками на разделы КР и уровнями доказательности.</p>';
 }
 function refPage(id) {
@@ -1130,7 +1307,7 @@ function daptPage(R) {
 
 /* ---------------------------------------------------------------- о программе и обновления */
 function about() {
-  setTitle('О программе', false);
+  setTitle('О программе', true);
   const i = info();
   const ago = i.checked ? new Date(i.checked).toLocaleString('ru-RU') : 'ещё не проверялось';
   view.innerHTML = `<div class="wrap">
@@ -1162,6 +1339,7 @@ function shareCard() {
     <div class="shr">${navigator.share ? '<button class="shb" id="shn" style="--sc:var(--accent)"><i></i>Другие приложения…</button>' : ''}<button class="shb" id="shc" style="--sc:var(--muted)"><i></i>Скопировать ссылку</button></div>
     <span class="meta shu">${esc(SITE)}</span></div>`;
 }
+function sharePage() { setTitle('Поделиться', true); view.innerHTML = `<div class="wrap">${shareCard()}</div>`; bindShare(); }
 function bindShare() {
   const n = $('#shn'); if (n) n.onclick = () => navigator.share({ title: 'Справочник терапевта', text: SHARE_TXT, url: SITE }).catch(() => {});
   const c = $('#shc'); if (!c) return;

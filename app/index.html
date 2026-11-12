@@ -16,14 +16,13 @@
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
-<header id="top"><button id="back" class="hbtn" aria-label="Назад" hidden><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><h1 id="title">Справочник терапевта</h1><div id="hact"></div></header>
+<header id="top"><button id="back" class="hbtn" aria-label="Назад" hidden><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><h1 id="title">Справочник терапевта</h1><div id="hact"></div><button id="hshare" class="hbtn hic" aria-label="Поделиться приложением"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg></button><button id="hinfo" class="hbtn hic" aria-label="О программе"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></button></header>
 <div id="banner" hidden></div>
 <main id="view"></main>
 <nav id="tabs" aria-label="Разделы приложения">
 <a href="#home" data-tab="home"><svg viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg><span>Калькуляторы</span></a>
 <a href="#ref" data-tab="ref"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21V5M8 7h7M8 11h7"/></svg><span>Справочник</span></a>
 <a href="#drugs" data-tab="drugs"><svg viewBox="0 0 24 24"><path d="M10.5 20.5l10-10a4.95 4.95 0 0 0-7-7l-10 10a4.95 4.95 0 0 0 7 7zM8.5 8.5l7 7"/></svg><span>Препараты</span></a>
-<a href="#about" data-tab="about"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 11v6M12 7.5v.01"/></svg><span>О программе</span></a>
 </nav>
 <div id="sheet" hidden><div class="scrim" data-close="1"></div><section class="panel" role="dialog" aria-modal="true"><div class="grip"></div><div id="sheetBody"></div></section></div>
 <script src="data_meta.js"></script>
@@ -32,6 +31,8 @@
 <script src="data_terms.js"></script>
 <script src="data_mkb.js"></script>
 <script src="data_intl.js"></script>
+<script src="route_data.js"></script>
+<script src="route_addr.js"></script>
 <script src="drugs.js"></script>
 <script src="app.js"></script>
 </body>
