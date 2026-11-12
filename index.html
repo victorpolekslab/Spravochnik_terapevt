@@ -1,16 +1,36 @@
-<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Справочник терапевта — скачать</title><style>
-body{font:16px/1.5 system-ui,-apple-system,Roboto,sans-serif;margin:0;background:#F6F4F1;color:#1E2328}main{max-width:560px;margin:0 auto;padding:28px 18px 40px}
-h1{font-size:26px;margin:0 0 4px}.m{color:#5C6670;font-size:14px}.b{display:block;text-align:center;background:#A8322F;color:#fff;text-decoration:none;font-weight:700;padding:16px;border-radius:14px;margin:22px 0 8px;font-size:18px}
-.ios .b{display:none}.w{display:block;text-align:center;border:2px solid #A8322F;color:#A8322F;text-decoration:none;font-weight:700;padding:14px;border-radius:14px;margin:10px 0}.ios .w{background:#A8322F;color:#fff}
-.c{background:#fff;border-radius:14px;padding:14px 16px;margin:14px 0;box-shadow:0 1px 2px rgba(0,0,0,.06)}ol{padding-left:20px;margin:6px 0}ol a{word-break:break-all}code{font-size:12px;word-break:break-all}a{color:#A8322F}
-</style></head><body><main>
-<h1>Справочник терапевта</h1><script>if(/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))document.documentElement.classList.add('ios')</script><div class="m">Калькуляторы, краткие клинические рекомендации Минздрава по МКБ-10, алгоритмы. Android 8.0 и новее, iPhone — через Safari.</div>
-<a class="w" href="app/">Открыть веб-версию (iPhone, любой браузер)</a>
-<a class="b" href="download/SpravochnikTerapevt.apk">Скачать APK · 0.7 МБ</a><div class="m">Версия 1.0 (КР от 03.11.2026)</div>
-<div class="c"><b>iPhone и iPad</b><ol><li>Откройте в <b>Safari</b>: <a href="app/">victorpolekslab.github.io/Spravochnik_terapevt/app/</a></li><li>Кнопка «Поделиться» → «На экран „Домой“».</li><li>Справочник откроется как приложение и будет работать без интернета. Новые данные загружаются при открытии, когда есть сеть.</li></ol></div>
-<div class="c"><b>Android — установка APK</b><ol><li>Скачайте файл и откройте его из уведомления или «Загрузок».</li><li>Разрешите установку из этого источника, если телефон спросит.</li><li>Новые данные приложение загрузит само: раз в сутки в фоне, при наличии интернета.</li></ol></div>
-<div class="c"><b>Сейчас в справочнике</b><div>40 кратких КР · база КР от 03.11.2026 · данные 202611120851</div>
-<div class="m">Черновик для проверки врачом. Не заменяет инструкцию к препарату и решение врача.</div></div>
-<div class="m">SHA-256 APK: <code>3bb846fbda0596ec15888ab5712dff6f9daf8b6a2b7a0a71c3cfc6715bb75d90</code></div>
-</main></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#A8322F">
+<title>Справочник терапевта</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Терапевт">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header id="top"><button id="back" class="hbtn" aria-label="Назад" hidden><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><h1 id="title">Справочник терапевта</h1><div id="hact"></div></header>
+<div id="banner" hidden></div>
+<main id="view"></main>
+<nav id="tabs" aria-label="Разделы приложения">
+<a href="#home" data-tab="home"><svg viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg><span>Калькуляторы</span></a>
+<a href="#ref" data-tab="ref"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21V5M8 7h7M8 11h7"/></svg><span>Справочник</span></a>
+<a href="#about" data-tab="about"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 11v6M12 7.5v.01"/></svg><span>О программе</span></a>
+</nav>
+<div id="sheet" hidden><div class="scrim" data-close="1"></div><section class="panel" role="dialog" aria-modal="true"><div class="grip"></div><div id="sheetBody"></div></section></div>
+<script src="data_meta.js"></script>
+<script src="data_brief.js"></script>
+<script src="data_ref.js"></script>
+<script src="data_terms.js"></script>
+<script src="data_mkb.js"></script>
+<script src="data_intl.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

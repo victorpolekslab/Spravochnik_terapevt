@@ -1042,7 +1042,7 @@ function about() {
       <span>Данные: <b>${esc(META.v)}</b> · база КР от <b>${dt(META.kr_built)}</b>${i.running && i.running !== i.bundled ? ' · загружены обновлением' : ''}</span>
       <span class="meta">${N ? `Обновления данных загружаются в фоне раз в сутки при наличии интернета и применяются при следующем запуске. Последняя проверка: ${esc(ago)}.` : 'Обновления данных загружаются при открытии справочника, когда есть интернет; применить — кнопкой в баннере вверху.'}</span>
       ${N || SW.reg ? '<button id="chk" class="lnk" style="border:0;cursor:pointer">Проверить обновления сейчас</button><span id="upd" class="meta"></span>' : ''}</div>
-    ${!N ? `<div class="card"><b>${IOS ? 'На iPhone' : 'Как приложение'}</b><span>${STANDALONE ? 'Справочник установлен на экран «Домой» и работает без интернета. Новые данные загружаются при открытии, когда есть сеть.' : IOS ? 'Откройте в Safari → кнопка «Поделиться» → «На экран „Домой“». Справочник откроется как приложение и будет работать без интернета.' : 'В меню браузера выберите «Установить приложение» или «Добавить на главный экран». Для Android есть APK — на странице скачивания.'}</span><a class="lnk" href="../">Страница скачивания ›</a></div>` : ''}
+    ${!N ? `<div class="card"><b>${IOS ? 'На iPhone' : 'Как приложение'}</b><span>${STANDALONE ? 'Справочник установлен на экран «Домой» и работает без интернета. Новые данные загружаются при открытии, когда есть сеть.' : IOS ? 'Откройте в Safari → кнопка «Поделиться» → «На экран „Домой“». Справочник откроется как приложение и будет работать без интернета.' : 'В меню браузера выберите «Установить приложение» или «Добавить на главный экран». Для Android есть APK — на странице скачивания.'}</span><a class="lnk" href="${SITE}download/">Страница скачивания ›</a></div>` : ''}
     <div class="card"><b>Источники</b><span>Клинические рекомендации — рубрикатор cr.minzdrav.gov.ru (снимок ${dt(META.kr_built)}). Приказ Минздрава № 168н (диспансерное наблюдение). Дозы, которых нет в КР, — инструкции к препаратам, источник указан в строке. Обзоры Cochrane — через PubMed, по запросу.</span></div>
     <div class="card" style="background:var(--warn-soft)"><b>Черновик для проверки врачом</b><span>Справочник не заменяет инструкцию к препарату и решение врача. Внешние и составленные фрагменты помечены.</span></div></div>`;
   const b = $('#chk'); if (b) b.onclick = () => {
@@ -1060,6 +1060,16 @@ function appUpdateCheck() {
 const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const STANDALONE = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
 const SW = { reg: null };
+const SITE = 'https://victorpolekslab.github.io/Spravochnik_terapevt/';
+const ANDROID = /Android/i.test(navigator.userAgent);
+function apkBanner() {
+  if (N || !ANDROID || LS.get('apkHide', 0) > Date.now()) return;
+  const b = document.createElement('div'); b.id = 'apkban';
+  b.innerHTML = `<span class="ab-i">📱</span><span class="ab-t"><b>Приложение для Android</b><small>Работает без интернета, данные обновляются в фоне</small></span><a class="ab-b" href="${SITE}download/SpravochnikTerapevt.apk">Скачать APK</a><button class="ab-x" aria-label="Скрыть">×</button>`;
+  document.body.appendChild(b);
+  b.querySelector('.ab-x').onclick = () => { LS.set('apkHide', Date.now() + 30 * 864e5); b.remove(); };
+  b.querySelector('.ab-b').onclick = () => { LS.set('apkHide', Date.now() + 7 * 864e5); setTimeout(() => b.remove(), 300); };
+}
 function swBanner(w) { banner('Загружено обновление справочника', 'Применить', () => w.postMessage('skip')); }
 function swInit() {
   if (N || !('serviceWorker' in navigator) || (location.protocol !== 'https:' && location.hostname !== 'localhost')) return;
@@ -1086,5 +1096,6 @@ if (!N) document.addEventListener('click', e => {
   const i = info(); if (i.pending) App.otaReady();
   route();
   swInit();
+  apkBanner();
   if (N) setTimeout(appUpdateCheck, 3000);
 })();
