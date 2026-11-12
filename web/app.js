@@ -213,7 +213,7 @@ $('#back').onclick = () => history.back();
 function route() {
   const h = decodeURIComponent(location.hash.slice(1) || 'home');
   const [p, a, b] = h.split('/');
-  closeSheet(true);
+  closeSheet(true); stickyCompact(null);
   curTab = ['ref'].includes(p) ? 'ref' : p === 'about' ? 'about' : 'home';
   $$('#tabs a').forEach(x => x.classList.toggle('on', x.dataset.tab === curTab));
   window.scrollTo(0, 0);
@@ -283,6 +283,17 @@ function sysPage(sid) {
   $$('[data-star]').forEach(b => b.onclick = () => { const id = b.dataset.star; let a = favs(); a = a.includes(id) ? a.filter(x => x !== id) : [...a, id].slice(0, 18); setFavs(a); sysPage(sid); });
 }
 
+/* Закреплённая плашка результата при прокрутке сжимается до числа и вывода, чтобы не закрывать экран */
+let stickObs = null;
+function stickyCompact(el) {
+  if (stickObs) { stickObs.disconnect(); stickObs = null; }
+  if (!el || !('IntersectionObserver' in window)) return;
+  const s = document.createElement('div'); s.className = 'stick-sent'; el.before(s);
+  const top = ($('#top').offsetHeight || 56) + 8;
+  stickObs = new IntersectionObserver(([e]) => el.classList.toggle('stuck', !e.isIntersecting && e.boundingClientRect.top < top), { rootMargin: `-${top}px 0px 0px 0px` });
+  stickObs.observe(s);
+}
+
 /* ---------------------------------------------------------------- экран калькулятора */
 function calcPage(id) {
   const c = CALCS[id]; if (!c) return home(false);
@@ -314,6 +325,7 @@ function calcPage(id) {
   };
   bindInputs(c, st, render);
   render();
+  stickyCompact($('#res'));
 }
 function inputHtml(i, st) {
   if (i.type === 'seg') return `<div class="glabel">${esc(i.label)}</div><div class="seg" style="grid-template-columns:repeat(${i.options.length},1fr)" data-seg="${i.id}">${i.options.map(o => `<button data-v="${o[0]}" class="${st[i.id] === o[0] ? 'on' : ''}" aria-pressed="${st[i.id] === o[0]}">${esc(o[1])}</button>`).join('')}</div>`;
@@ -531,6 +543,7 @@ function poakPage(R) {
   $$('[data-s] button').forEach(btn => btn.onclick = () => { const k = btn.parentNode.dataset.s; st[k] = k === 'cc' ? +btn.dataset.v : btn.dataset.v; $$('button', btn.parentNode).forEach(x => x.classList.toggle('on', x === btn)); draw(); });
   $$('[data-f]').forEach(btn => btn.onclick = () => { st.f[btn.dataset.f] = !st.f[btn.dataset.f]; btn.classList.toggle('on', st.f[btn.dataset.f]); draw(); });
   draw();
+  stickyCompact($('#pres'));
 }
 function daptPage(R) {
   const st = LS.get('ref_dapt', { drug: 'clopidogrel', risk: 'high' });
@@ -562,6 +575,7 @@ function daptPage(R) {
     <p class="note">${esc(R.emergency_note)} База КР от ${dt(R.kr_built)}. ${esc(R.status)}.</p></div>`;
   $$('[data-s] button').forEach(btn => btn.onclick = () => { st[btn.parentNode.dataset.s] = btn.dataset.v; $$('button', btn.parentNode).forEach(x => x.classList.toggle('on', x === btn)); draw(); });
   draw();
+  stickyCompact($('#dres'));
 }
 
 /* ---------------------------------------------------------------- о программе и обновления */

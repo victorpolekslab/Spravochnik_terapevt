@@ -190,3 +190,12 @@ nav.jump button { flex: none; border: 1px solid var(--line); background: var(--s
 [hidden]{display:none!important}
 .tile b{overflow-wrap:normal;word-break:normal;-webkit-hyphens:auto;hyphens:auto}
 .chk:not(.on) .mark svg{opacity:0}
+/* сжатая закреплённая плашка результата */
+.stick-sent { height: 1px; margin-bottom: -13px; }
+.res.stuck { flex-direction: row; align-items: center; gap: 12px; padding-top: 10px; padding-bottom: 10px; }
+.res.stuck .num { flex: none; flex-wrap: nowrap; max-width: 42%; }
+.res.stuck .big { font-size: 30px; white-space: nowrap; }
+.res.stuck .unit { font-size: 12.5px; }
+.res.stuck .v1 { font-size: 14.5px; }
+.res.stuck .v2, .res.stuck .grade, .res.stuck .krlink, .res.stuck .side { display: none; }
+.res.stuck .verdict { flex: 1; min-width: 0; }
