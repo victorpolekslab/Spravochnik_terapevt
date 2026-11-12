@@ -48,10 +48,18 @@ const PLANNED = {
 
 /* ---------------------------------------------------------------- мост и сеть */
 const CB = {}; let cbn = 0;
+function wfetch(url) { return fetch(url).then(r => r.ok ? r.text() : Promise.reject(new Error('HTTP ' + r.status))); }
+function nativeFetch(url) { return new Promise((res, rej) => { const id = 'r' + (++cbn); CB[id] = { res, rej }; N.fetch(id, url); }); }
 function nfetch(url) {
+  // данные препаратов (несколько МБ, CORS разрешён) — напрямую из WebView, мост — запасной путь
+  if (N && N.fetch && /^https:\/\/raw\.githubusercontent\.com\//.test(url)) return wfetch(url).catch(() => nativeFetch(url));
   return new Promise((res, rej) => {
-    if (N && N.fetch) { const id = 'r' + (++cbn); CB[id] = { res, rej }; N.fetch(id, url); }
-    else fetch(url).then(r => r.ok ? r.text() : Promise.reject(new Error('HTTP ' + r.status))).then(res, rej);
+    if (N && N.fetch) {
+      const id = 'r' + (++cbn);
+      // старые версии APK пропускают только свой список адресов — тогда обычный запрос из WebView
+      CB[id] = { res, rej: e => /не разрешён/.test(e.message) ? wfetch(url).then(res, rej) : rej(e) };
+      N.fetch(id, url);
+    } else wfetch(url).then(res, rej);
   });
 }
 function openUrl(u) { if (N && N.openUrl) N.openUrl(u); else window.open(u, '_blank', 'noopener'); }
