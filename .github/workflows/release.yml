@@ -1,0 +1,43 @@
+name: Публикация данных (OTA)
+
+# После каждого слияния в main: собирает интерфейс и данные, подписывает манифест обновления
+# ключом из секрета OTA_KEY_PEM и публикует в ветку gh-pages (сайт, веб-версия, фоновое обновление Android).
+# Новый APK этим не выпускается — для него по-прежнему tools/release.sh apk на компьютере с keystore.
+on:
+  push:
+    branches: [main]
+    paths: ['web/**', 'data/**', 'tools/**', '.github/workflows/release.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Публикация
+        env:
+          OTA_KEY_PEM: ${{ secrets.OTA_KEY_PEM }}
+        run: |
+          if [ -z "$OTA_KEY_PEM" ]; then
+            echo "::warning::Секрет OTA_KEY_PEM не задан — публикация пропущена (Settings → Secrets and variables → Actions)"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          sh tools/fetch_kr.sh
+          umask 077 && printf '%s\n' "$OTA_KEY_PEM" > "$RUNNER_TEMP/ota.pem"
+          git fetch --depth=1 origin gh-pages:gh-pages
+          OTA_KEY="$RUNNER_TEMP/ota.pem" bash tools/release.sh data
+          rm -f "$RUNNER_TEMP/ota.pem"

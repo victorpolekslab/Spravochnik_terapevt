@@ -284,7 +284,9 @@ self.addEventListener('fetch', e => {
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
     p.add_argument('what', choices=['www', 'site'])
-    p.add_argument('--db', default='/home/claude/kr/kr_full.db')
+    # база КР: $KR_DB, иначе .cache/kr_full.db (tools/fetch_kr.sh), иначе прежний путь
+    cache_db = os.path.join(ROOT, '.cache', 'kr_full.db')
+    p.add_argument('--db', default=os.environ.get('KR_DB') or (cache_db if os.path.exists(cache_db) else '/home/claude/kr/kr_full.db'))
     p.add_argument('--version', type=int)
     p.add_argument('--key'); p.add_argument('--pub')
     p.add_argument('--min-native', type=int, default=1)
