@@ -1,0 +1,1113 @@
+{
+ "meta": {
+  "title": "Краткие клинические рекомендации для врача-терапевта",
+  "kr_built": "2026-11-03",
+  "generated": "2026-11-12",
+  "count": 40,
+  "status": "черновик — требует проверки врачом",
+  "sources": [
+   "База КР Минздрава (ветка kr-data репозитория Spravochnik_nmp)",
+   "Приказ Минздрава № 168н, прил. 1 — пересказ по base.garant.ru, сверить с официальным текстом",
+   "Инструкции к препаратам (medi.ru, vidal.ru) — где доз нет в КР"
+  ]
+ },
+ "items": [
+  {
+   "id": "711_2",
+   "name": "Алкогольная болезнь печени",
+   "age": 1,
+   "pub": "2024-10-30",
+   "mkb": [
+    "K70.0",
+    "K70.1",
+    "K70.2",
+    "K70.3",
+    "K70.4",
+    "K70.9"
+   ],
+   "mode": "full",
+   "r168": [
+    32
+   ],
+   "formulation": "draft",
+   "dose_table": "mixed",
+   "treatment": 10,
+   "special": 0,
+   "exam": 6,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/711_2"
+  },
+  {
+   "id": "62_3",
+   "name": "Артериальная гипертензия у взрослых",
+   "age": 1,
+   "pub": "2024-10-03",
+   "mkb": [
+    "I10",
+    "I11",
+    "I12",
+    "I13",
+    "I15",
+    "I95.2"
+   ],
+   "mode": "full",
+   "r168": [
+    1
+   ],
+   "formulation": "kr",
+   "dose_table": "instructions",
+   "treatment": 38,
+   "special": 9,
+   "exam": 6,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/62_3"
+  },
+  {
+   "id": "359_3",
+   "name": "Бронхиальная астма",
+   "age": 3,
+   "pub": "2024-11-15",
+   "mkb": [
+    "J45",
+    "J45.0",
+    "J45.1",
+    "J45.8",
+    "J45.9",
+    "J46",
+    "Z57.2",
+    "Z57.3",
+    "Z57.4",
+    "Z57.5"
+   ],
+   "mode": "full",
+   "r168": [
+    19
+   ],
+   "formulation": "kr",
+   "dose_table": "kr_tables",
+   "treatment": 14,
+   "special": 3,
+   "exam": 9,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/359_3"
+  },
+  {
+   "id": "654_2",
+   "name": "Внебольничная пневмония у взрослых",
+   "age": 1,
+   "pub": "2024-12-23",
+   "mkb": [
+    "J13",
+    "J14",
+    "J15",
+    "J16",
+    "J18",
+    "J85.1"
+   ],
+   "mode": "full",
+   "r168": [
+    20
+   ],
+   "formulation": "draft",
+   "dose_table": "kr_tables",
+   "treatment": 15,
+   "special": 1,
+   "exam": 16,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/654_2"
+  },
+  {
+   "id": "708_2",
+   "name": "Гастрит и дуоденит",
+   "age": 1,
+   "pub": "2024-07-10",
+   "mkb": [
+    "K29",
+    "K31.8"
+   ],
+   "mode": "full",
+   "r168": [
+    25
+   ],
+   "formulation": "draft",
+   "dose_table": "mixed",
+   "treatment": 8,
+   "special": 0,
+   "exam": 6,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/708_2"
+  },
+  {
+   "id": "617_5",
+   "name": "Когнитивные расстройства у лиц пожилого и старческого возраста",
+   "age": 1,
+   "pub": "2024-10-14",
+   "mkb": [
+    "F00",
+    "F01",
+    "F02",
+    "F03",
+    "F06.7",
+    "G30",
+    "G31",
+    "I67",
+    "I68",
+    "I69"
+   ],
+   "mode": "full",
+   "r168": [
+    9
+   ],
+   "formulation": "draft",
+   "dose_table": "kr_tables",
+   "treatment": 25,
+   "special": 0,
+   "exam": 9,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/617_5"
+  },
+  {
+   "id": "752_1",
+   "name": "Нарушения липидного обмена",
+   "age": 1,
+   "pub": "2023-02-14",
+   "mkb": [
+    "E78.0",
+    "E78.1",
+    "E78.2",
+    "E78.3",
+    "E78.4"
+   ],
+   "mode": "full",
+   "r168": [
+    6
+   ],
+   "formulation": "kr",
+   "dose_table": "kr_tables",
+   "treatment": 31,
+   "special": 15,
+   "exam": 6,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/752_1"
+  },
+  {
+   "id": "87_5",
+   "name": "Остеопороз",
+   "age": 1,
+   "pub": "2025-12-30",
+   "mkb": [
+    "M81.0",
+    "M81.1",
+    "M81.2",
+    "M81.3",
+    "M81.4",
+    "M81.5",
+    "M81.8",
+    "M81.9"
+   ],
+   "mode": "full",
+   "r168": [
+    24
+   ],
+   "formulation": "draft",
+   "dose_table": "mixed",
+   "treatment": 11,
+   "special": 2,
+   "exam": 2,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/87_5"
+  },
+  {
+   "id": "290_2",
+   "name": "Сахарный диабет 2 типа у взрослых",
+   "age": 1,
+   "pub": "2022-07-12",
+   "mkb": [
+    "E11.2",
+    "E11.3",
+    "E11.4",
+    "E11.5",
+    "E11.6",
+    "E11.7",
+    "E11.8",
+    "E11.9",
+    "R73.0",
+    "R73.9"
+   ],
+   "mode": "full",
+   "r168": [
+    7,
+    8
+   ],
+   "formulation": "kr",
+   "dose_table": "kr_tables",
+   "treatment": 43,
+   "special": 8,
+   "exam": 25,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/290_2"
+  },
+  {
+   "id": "155_2",
+   "name": "Стабильная ишемическая болезнь сердца",
+   "age": 1,
+   "pub": "2024-10-04",
+   "mkb": [
+    "I20.0",
+    "I20.1",
+    "I20.8",
+    "I20.9",
+    "I25.0",
+    "I25.1",
+    "I25.2",
+    "I25.3",
+    "I25.4",
+    "I25.5",
+    "I25.6",
+    "I25.8",
+    "I25.9",
+    "Q24.5"
+   ],
+   "mode": "full",
+   "r168": [
+    2
+   ],
+   "formulation": "external",
+   "dose_table": "kr_text",
+   "treatment": 27,
+   "special": 11,
+   "exam": 7,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/155_2"
+  },
+  {
+   "id": "382_2",
+   "name": "Фибрилляция и трепетание предсердий",
+   "age": 1,
+   "pub": "2025-09-26",
+   "mkb": [
+    "I48.0",
+    "I48.1",
+    "I48.2",
+    "I48.3",
+    "I48.4",
+    "I48.9"
+   ],
+   "mode": "full",
+   "r168": [
+    3
+   ],
+   "formulation": "draft",
+   "dose_table": "kr_tables",
+   "treatment": 56,
+   "special": 50,
+   "exam": 9,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/382_2"
+  },
+  {
+   "id": "469_3",
+   "name": "Хроническая болезнь почек (ХБП)",
+   "age": 1,
+   "pub": "2024-11-19",
+   "mkb": [
+    "D63.8",
+    "E21.1",
+    "E43",
+    "E44",
+    "E83.3",
+    "E83.5",
+    "E83.8",
+    "E87.2",
+    "E87.5",
+    "E89.2",
+    "N15.9",
+    "N18.1",
+    "N18.2",
+    "N18.3",
+    "N18.4",
+    "N18.5",
+    "N18.9",
+    "N19",
+    "N25.0",
+    "Z49.0",
+    "Z49.1",
+    "Z49.2"
+   ],
+   "mode": "full",
+   "r168": [
+    22,
+    23
+   ],
+   "formulation": "kr",
+   "dose_table": "kr_tables",
+   "treatment": 26,
+   "special": 18,
+   "exam": 14,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/469_3"
+  },
+  {
+   "id": "603_3",
+   "name": "Хроническая обструктивная болезнь легких",
+   "age": 1,
+   "pub": "2024-12-17",
+   "mkb": [
+    "J44",
+    "Z57.2",
+    "Z57.3",
+    "Z57.4",
+    "Z57.5"
+   ],
+   "mode": "full",
+   "r168": [
+    17
+   ],
+   "formulation": "draft",
+   "dose_table": "mixed",
+   "treatment": 22,
+   "special": 1,
+   "exam": 12,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/603_3"
+  },
+  {
+   "id": "156_2",
+   "name": "Хроническая сердечная недостаточность",
+   "age": 1,
+   "pub": "2024-10-07",
+   "mkb": [
+    "I50.0",
+    "I50.1",
+    "I50.9"
+   ],
+   "mode": "full",
+   "r168": [
+    4
+   ],
+   "formulation": "kr",
+   "dose_table": "kr_tables",
+   "treatment": 82,
+   "special": 20,
+   "exam": 7,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/156_2"
+  },
+  {
+   "id": "655_2",
+   "name": "Хронический бронхит",
+   "age": 1,
+   "pub": "2024-12-28",
+   "mkb": [
+    "J40",
+    "J41",
+    "J42"
+   ],
+   "mode": "full",
+   "r168": [
+    16
+   ],
+   "formulation": "kr",
+   "dose_table": "kr_text",
+   "treatment": 7,
+   "special": 0,
+   "exam": 10,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/655_2"
+  },
+  {
+   "id": "273_5",
+   "name": "Хронический панкреатит",
+   "age": 1,
+   "pub": "2024-12-13",
+   "mkb": [
+    "K86.0",
+    "K86.1",
+    "K86.2",
+    "K86.3",
+    "K86.8",
+    "K90.3"
+   ],
+   "mode": "full",
+   "r168": [
+    15
+   ],
+   "formulation": "draft",
+   "dose_table": "mixed",
+   "treatment": 13,
+   "special": 3,
+   "exam": 8,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/273_5"
+  },
+  {
+   "id": "715_2",
+   "name": "Цирроз и фиброз печени",
+   "age": 1,
+   "pub": "2025-08-15",
+   "mkb": [
+    "K72",
+    "K74.0",
+    "K74.1",
+    "K74.2",
+    "K74.4",
+    "K74.5",
+    "K74.6",
+    "K76.7"
+   ],
+   "mode": "full",
+   "r168": [
+    32
+   ],
+   "formulation": "draft",
+   "dose_table": "mixed",
+   "treatment": 33,
+   "special": 12,
+   "exam": 11,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/715_2"
+  },
+  {
+   "id": "277_2",
+   "name": "Язвенная болезнь",
+   "age": 1,
+   "pub": "2025-01-13",
+   "mkb": [
+    "K25",
+    "K26",
+    "K27.0",
+    "K27.4",
+    "K28.0",
+    "K28.4",
+    "K31.1",
+    "K31.2",
+    "K31.6",
+    "K31.9"
+   ],
+   "mode": "full",
+   "r168": [
+    12,
+    13
+   ],
+   "formulation": "kr",
+   "dose_table": "kr_text",
+   "treatment": 8,
+   "special": 8,
+   "exam": 6,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/277_2"
+  },
+  {
+   "id": "738_2",
+   "name": "Аденоматозный полипозный синдром",
+   "age": 1,
+   "pub": "2025-10-15",
+   "mkb": [
+    "D12"
+   ],
+   "mode": "brief",
+   "r168": [
+    26,
+    28
+   ],
+   "formulation": "none",
+   "dose_table": "kr_text",
+   "treatment": 0,
+   "special": 0,
+   "exam": 5,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/738_2"
+  },
+  {
+   "id": "176_2",
+   "name": "Болезнь Крона",
+   "age": 1,
+   "pub": "2024-07-16",
+   "mkb": [
+    "K50"
+   ],
+   "mode": "brief",
+   "r168": [
+    29
+   ],
+   "formulation": "none",
+   "dose_table": "kr_text",
+   "treatment": 24,
+   "special": 5,
+   "exam": 4,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/176_2"
+  },
+  {
+   "id": "160_2",
+   "name": "Брадиаритмии и нарушения проводимости",
+   "age": 1,
+   "pub": "2025-06-18",
+   "mkb": [
+    "I44",
+    "I44.0",
+    "I44.1",
+    "I44.2",
+    "I44.3",
+    "I44.4",
+    "I44.5",
+    "I44.6",
+    "I44.7",
+    "I45.0",
+    "I45.1",
+    "I45.2",
+    "I45.3",
+    "I45.4",
+    "I45.5",
+    "I45.8",
+    "I45.9",
+    "I46",
+    "I46.0",
+    "I46.1",
+    "I46.9",
+    "I49.5"
+   ],
+   "mode": "brief",
+   "r168": [
+    3
+   ],
+   "formulation": "kr",
+   "dose_table": "kr_tables",
+   "treatment": 20,
+   "special": 29,
+   "exam": 4,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/160_2"
+  },
+  {
+   "id": "838_1",
+   "name": "Вирусные пневмонии",
+   "age": 1,
+   "pub": "2024-12-12",
+   "mkb": [
+    "J12",
+    "J12.0",
+    "J12.1",
+    "J12.2",
+    "J12.3",
+    "J12.8",
+    "J12.9"
+   ],
+   "mode": "brief",
+   "r168": [
+    20
+   ],
+   "formulation": "kr",
+   "dose_table": "kr_tables",
+   "treatment": 7,
+   "special": 0,
+   "exam": 17,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/838_1"
+  },
+  {
+   "id": "783_1",
+   "name": "Гиперчувствительный пневмонит",
+   "age": 1,
+   "pub": "2024-03-20",
+   "mkb": [
+    "J67",
+    "J84.1"
+   ],
+   "mode": "brief",
+   "r168": [
+    21
+   ],
+   "formulation": "kr",
+   "dose_table": "kr_text",
+   "treatment": 1,
+   "special": 0,
+   "exam": 0,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/783_1"
+  },
+  {
+   "id": "894_1",
+   "name": "Гломерулярные болезни:  иммуноглобулин А-нефропатия",
+   "age": 3,
+   "pub": "2024-12-26",
+   "mkb": [
+    "N00.1",
+    "N00.3",
+    "N00.4",
+    "N00.7",
+    "N00.8",
+    "N01.1",
+    "N01.3",
+    "N01.4",
+    "N01.7",
+    "N01.8",
+    "N02.1",
+    "N02.3",
+    "N02.4",
+    "N02.7",
+    "N02.8",
+    "N03.1",
+    "N03.3",
+    "N03.4",
+    "N03.7",
+    "N03.8",
+    "N04.1",
+    "N04.3",
+    "N04.4",
+    "N04.7",
+    "N04.8",
+    "N06.1",
+    "N06.3",
+    "N06.4",
+    "N06.7",
+    "N06.8",
+    "N08.2",
+    "N18.1",
+    "N18.2",
+    "N18.3",
+    "N18.4",
+    "N18.5",
+    "N18.9"
+   ],
+   "mode": "brief",
+   "r168": [
+    22,
+    23
+   ],
+   "formulation": "none",
+   "dose_table": "kr_text",
+   "treatment": 7,
+   "special": 0,
+   "exam": 7,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/894_1"
+  },
+  {
+   "id": "816_1",
+   "name": "Гломерулярные болезни: фокально-сегментарный гломерулосклероз",
+   "age": 1,
+   "pub": "2024-11-21",
+   "mkb": [
+    "N00.1",
+    "N01.1",
+    "N02.1",
+    "N03.1",
+    "N04.1",
+    "N05.1",
+    "N06.1",
+    "N07.1",
+    "N18.1",
+    "N18.2",
+    "N18.3",
+    "N18.4",
+    "N18.5",
+    "N18.9"
+   ],
+   "mode": "brief",
+   "r168": [
+    22,
+    23
+   ],
+   "formulation": "none",
+   "dose_table": "kr_tables",
+   "treatment": 13,
+   "special": 1,
+   "exam": 2,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/816_1"
+  },
+  {
+   "id": "569_2",
+   "name": "Желудочковые нарушения ритма сердца. Внезапная сердечная смерть.",
+   "age": 3,
+   "pub": "2025-10-07",
+   "mkb": [
+    "I46",
+    "I46.0",
+    "I46.1",
+    "I46.9",
+    "I47.0",
+    "I47.2",
+    "I47.9",
+    "I49.0",
+    "I49.3",
+    "I49.4",
+    "I49.8",
+    "I49.9"
+   ],
+   "mode": "brief",
+   "r168": [
+    3
+   ],
+   "formulation": "kr",
+   "dose_table": "kr_tables",
+   "treatment": 62,
+   "special": 118,
+   "exam": 2,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/569_2"
+  },
+  {
+   "id": "677_1",
+   "name": "Идиопатический легочный фиброз",
+   "age": 1,
+   "pub": "2021-09-20",
+   "mkb": [
+    "J84.1"
+   ],
+   "mode": "brief",
+   "r168": [
+    21
+   ],
+   "formulation": "kr",
+   "dose_table": "kr_text",
+   "treatment": 8,
+   "special": 0,
+   "exam": 5,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/677_1"
+  },
+  {
+   "id": "814_1",
+   "name": "Ишемический инсульт и транзиторная ишемическая атака",
+   "age": 3,
+   "pub": "2024-11-20",
+   "mkb": [
+    "G45.0",
+    "G45.1",
+    "G45.2",
+    "G45.3",
+    "G45.4",
+    "G45.8",
+    "G45.9",
+    "G46.0",
+    "G46.1",
+    "G46.2",
+    "G46.3",
+    "G46.4",
+    "G46.5",
+    "G46.6",
+    "G46.7",
+    "G46.8",
+    "I63.0",
+    "I63.1",
+    "I63.2",
+    "I63.3",
+    "I63.4",
+    "I63.5",
+    "I63.6",
+    "I63.8",
+    "I63.9",
+    "I64",
+    "I65.0",
+    "I65.1",
+    "I65.2",
+    "I65.3",
+    "I65.8",
+    "I65.9",
+    "I66.0",
+    "I66.1",
+    "I66.2",
+    "I66.3",
+    "I66.4",
+    "I66.8",
+    "I66.9",
+    "I67.6"
+   ],
+   "mode": "brief",
+   "r168": [
+    5
+   ],
+   "formulation": "none",
+   "dose_table": "kr_text",
+   "treatment": 33,
+   "special": 22,
+   "exam": 3,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/814_1"
+  },
+  {
+   "id": "619_3",
+   "name": "Наджелудочковые тахикардии",
+   "age": 1,
+   "pub": "2025-06-17",
+   "mkb": [
+    "I47.1",
+    "I47.9"
+   ],
+   "mode": "brief",
+   "r168": [
+    3
+   ],
+   "formulation": "none",
+   "dose_table": "kr_tables",
+   "treatment": 31,
+   "special": 39,
+   "exam": 5,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/619_3"
+  },
+  {
+   "id": "893_1",
+   "name": "Опухоли невыявленной первичной локализации",
+   "age": 3,
+   "pub": "2024-12-26",
+   "mkb": [
+    "C76",
+    "C77",
+    "C78",
+    "C79",
+    "C80",
+    "D37",
+    "D38",
+    "D39",
+    "D40",
+    "D41",
+    "D42",
+    "D43",
+    "D44",
+    "D45",
+    "D46",
+    "D47",
+    "D48"
+   ],
+   "mode": "brief",
+   "r168": [
+    34
+   ],
+   "formulation": "none",
+   "dose_table": "kr_tables",
+   "treatment": 6,
+   "special": 0,
+   "exam": 4,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/893_1"
+  },
+  {
+   "id": "157_5",
+   "name": "Острый инфаркт миокарда с подъемом сегмента ST электрокардиограммы",
+   "age": 1,
+   "pub": "2024-11-25",
+   "mkb": [
+    "I21.0",
+    "I21.1",
+    "I21.2",
+    "I21.3",
+    "I21.9",
+    "I22.0",
+    "I22.1",
+    "I22.8",
+    "I22.9",
+    "I24.0",
+    "I24.8",
+    "I24.9"
+   ],
+   "mode": "brief",
+   "r168": [
+    2
+   ],
+   "formulation": "none",
+   "dose_table": "kr_tables",
+   "treatment": 68,
+   "special": 24,
+   "exam": 5,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/157_5"
+  },
+  {
+   "id": "154_4",
+   "name": "Острый коронарный синдром без подъема сегмента ST электрокардиограммы",
+   "age": 1,
+   "pub": "2024-10-23",
+   "mkb": [
+    "I20.0",
+    "I21.0",
+    "I21.1",
+    "I21.2",
+    "I21.3",
+    "I21.4",
+    "I21.9",
+    "I22.0",
+    "I22.1",
+    "I22.8",
+    "I22.9",
+    "I24.8",
+    "I24.9"
+   ],
+   "mode": "brief",
+   "r168": [
+    2
+   ],
+   "formulation": "none",
+   "dose_table": "kr_tables",
+   "treatment": 60,
+   "special": 27,
+   "exam": 5,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/154_4"
+  },
+  {
+   "id": "1033_1",
+   "name": "Первичный билиарный холангит",
+   "age": 1,
+   "pub": "2026-05-14",
+   "mkb": [
+    "K74.3"
+   ],
+   "mode": "brief",
+   "r168": [
+    32
+   ],
+   "formulation": "draft",
+   "dose_table": "kr_text",
+   "treatment": 16,
+   "special": 8,
+   "exam": 7,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/1033_1"
+  },
+  {
+   "id": "949_1",
+   "name": "Полип толстой и прямой кишки",
+   "age": 3,
+   "pub": "2025-10-07",
+   "mkb": [
+    "D12.0",
+    "D12.1",
+    "D12.2",
+    "D12.3",
+    "D12.4",
+    "D12.5",
+    "D12.6",
+    "D12.7",
+    "D12.8",
+    "D37.4",
+    "K62.1",
+    "K63.5"
+   ],
+   "mode": "brief",
+   "r168": [
+    26,
+    28
+   ],
+   "formulation": "none",
+   "dose_table": "kr_text",
+   "treatment": 2,
+   "special": 0,
+   "exam": 0,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/949_1"
+  },
+  {
+   "id": "574_3",
+   "name": "Рак желудка",
+   "age": 1,
+   "pub": "2026-11-02",
+   "mkb": [
+    "C16.1",
+    "C16.2",
+    "C16.3",
+    "C16.4",
+    "C16.5",
+    "C16.6",
+    "C16.8",
+    "C16.9",
+    "D37.1",
+    "K31.7"
+   ],
+   "mode": "brief",
+   "r168": [
+    14
+   ],
+   "formulation": "none",
+   "dose_table": "kr_tables",
+   "treatment": 12,
+   "special": 5,
+   "exam": 7,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/574_3"
+  },
+  {
+   "id": "1_4",
+   "name": "Рак печени (гепатоцеллюлярный)",
+   "age": 1,
+   "pub": "2025-07-09",
+   "mkb": [
+    "C22.0",
+    "D37.6"
+   ],
+   "mode": "brief",
+   "r168": [
+    34
+   ],
+   "formulation": "none",
+   "dose_table": "kr_tables",
+   "treatment": 11,
+   "special": 3,
+   "exam": 5,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/1_4"
+  },
+  {
+   "id": "115_3",
+   "name": "Сахарный диабет: ретинопатия диабетическая, макулярный отек диабетический",
+   "age": 1,
+   "pub": "2026-09-17",
+   "mkb": [
+    "E10.3",
+    "E11.3",
+    "H36.0"
+   ],
+   "mode": "brief",
+   "r168": [
+    8
+   ],
+   "formulation": "none",
+   "dose_table": "kr_text",
+   "treatment": 2,
+   "special": 3,
+   "exam": 4,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/115_3"
+  },
+  {
+   "id": "795_1",
+   "name": "Трансплантация легкого  (легких), трансплантация  легочно – сердечного комплекса, наличие трансплантированного легкого, наличие трансплантированного  легочно – сердечного комплекса , отмирание и отторжение трансплантата легкого, отмирание и отторжение  легочно – сердечного трансплантата",
+   "age": 3,
+   "pub": "2024-09-24",
+   "mkb": [
+    "E84.0",
+    "E84.9",
+    "I27.0",
+    "I27.8",
+    "I27.9",
+    "I28",
+    "J43.9",
+    "J44.9",
+    "J47",
+    "J84",
+    "J98",
+    "J98.4",
+    "J99.1",
+    "T86.3",
+    "T86.8",
+    "Z94.2",
+    "Z94.3"
+   ],
+   "mode": "brief",
+   "r168": [
+    17,
+    18,
+    21
+   ],
+   "formulation": "none",
+   "dose_table": "kr_text",
+   "treatment": 14,
+   "special": 0,
+   "exam": 15,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/795_1"
+  },
+  {
+   "id": "1000_1",
+   "name": "Эозинофильный эзофагит",
+   "age": 3,
+   "pub": "2025-12-25",
+   "mkb": [
+    "K20"
+   ],
+   "mode": "brief",
+   "r168": [
+    10
+   ],
+   "formulation": "none",
+   "dose_table": "kr_text",
+   "treatment": 8,
+   "special": 0,
+   "exam": 2,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/1000_1"
+  },
+  {
+   "id": "193_2",
+   "name": "Язвенный колит",
+   "age": 1,
+   "pub": "2024-05-29",
+   "mkb": [
+    "K51"
+   ],
+   "mode": "brief",
+   "r168": [
+    29
+   ],
+   "formulation": "none",
+   "dose_table": "kr_text",
+   "treatment": 42,
+   "special": 13,
+   "exam": 4,
+   "url": "https://cr.minzdrav.gov.ru/preview-cr/193_2"
+  }
+ ]
+}

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>CHA₂DS₂-VASc</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#A8322F}a:hover{color:#7F2422}
+</style>
+</helmet>
+<div style="width: 390px; height: 1320px; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; background: #F6F7F9; color: #1B1F24; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+<header style="background: #A8322F; color: #FFFFFF; height: 56px; display: flex; align-items: center; gap: 4px; padding: 0 4px; box-sizing: border-box; flex: none">
+<a href="Main.dc.html" aria-label="Назад" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #FFFFFF"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></a>
+<h1 style="margin: 0; font-size: 19px; font-weight: 600; flex-grow: 1">CHA₂DS₂-VASc</h1>
+<button aria-label="Убрать из избранного" aria-pressed="true" style="width: 44px; height: 44px; border: none; background: transparent; display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"></path></svg></button>
+</header>
+
+<section aria-live="polite" style="margin: 12px; padding: 14px 16px 12px; background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,.06)">
+<div style="display: flex; align-items: baseline; gap: 10px">
+<span style="font-size: 52px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; color: {{tone}}">{{score}}</span>
+<span style="font-size: 15px; font-weight: 600; color: #5E6873">{{scoreWord}}</span>
+<span style="margin-left: auto; text-align: right; font-size: 13px; line-height: 1.3; color: #5E6873">риск инсульта<br><b style="font-size: 17px; color: #1B1F24">≈ {{risk}} в год</b></span>
+</div>
+<div style="margin-top: 12px; display: flex; gap: 10px; align-items: flex-start">
+<span style="flex: none; width: 4px; align-self: stretch; border-radius: 2px; background: {{tone}}"></span>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px">
+<div style="font-size: 16px; font-weight: 700; line-height: 1.3">{{verdict}}</div>
+<div style="font-size: 13.5px; line-height: 1.4; color: #5E6873">{{rule}}</div>
+<span style="align-self: flex-start; font-size: 11.5px; font-weight: 700; color: #1F5FA8; background: #E3EEFB; border-radius: 6px; padding: 2px 7px">{{grade}}</span>
+</div>
+</div>
+<a href="KrBrief.dc.html" style="margin-top: 12px; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 2px; border-top: 1px solid #DDE2E7; text-decoration: none">
+<span style="font-size: 12px; font-weight: 700; color: #22643C; background: #E6F1EA; border-radius: 6px; padding: 3px 7px">КР382_2</span>
+<span style="flex-grow: 1; font-size: 14px; font-weight: 600; line-height: 1.3">Фибрилляция и трепетание предсердий — раздел 3.1.1</span>
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A8322F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+</a>
+</section>
+
+<section aria-label="Что ещё сделать" style="margin: 0 12px 14px; padding: 12px 14px 4px; background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 16px">
+<h2 style="margin: 0 0 4px; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A8322F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"></path></svg>Что ещё сделать</h2>
+<ol style="list-style: none; margin: 0; padding: 0">
+<sc-for list="{{tips}}" as="t" hint-placeholder-count="4">
+<li style="display: flex; gap: 10px; padding: 10px 0; border-top: 1px solid #EEF1F4">
+<span style="flex: none; width: 22px; height: 22px; border-radius: 11px; background: #F6E4E3; color: #A8322F; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-top: 1px">{{t.n}}</span>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 5px">
+<span style="font-size: 14.5px; line-height: 1.4">{{t.text}}</span>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+<span style="font-size: 11.5px; font-weight: 600; color: #5E6873">{{t.src}}</span>
+<sc-if value="{{t.hasLink}}" hint-placeholder-val="{{ false }}"><a href="#" style="font-size: 12.5px; font-weight: 700; text-decoration: none; background: #FBE7E6; color: #8E2A27; border-radius: 8px; padding: 4px 9px">{{t.link}} ›</a></sc-if>
+</div>
+</div>
+</li>
+</sc-for>
+</ol>
+</section>
+
+<div style="padding: 4px 12px 0; display: flex; flex-direction: column; gap: 14px">
+<div role="group" aria-label="Пол">
+<div style="font-size: 12.5px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: #5E6873; margin: 0 2px 6px">Пол</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px; padding: 3px; background: #EEF1F4; border-radius: 12px">
+<sc-for list="{{sexes}}" as="it" hint-placeholder-count="2">
+<button aria-pressed="{{it.pressed}}" onClick="{{it.pick}}" style="{{it.style}}">{{it.label}}</button>
+</sc-for>
+</div>
+</div>
+<div role="group" aria-label="Возраст">
+<div style="font-size: 12.5px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: #5E6873; margin: 0 2px 6px">Возраст</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; padding: 3px; background: #EEF1F4; border-radius: 12px">
+<sc-for list="{{ages}}" as="it" hint-placeholder-count="3">
+<button aria-pressed="{{it.pressed}}" onClick="{{it.pick}}" style="{{it.style}}">{{it.label}}<span style="display: block; font-size: 11.5px; font-weight: 600; opacity: 0.75; margin-top: 2px">{{it.pts}}</span></button>
+</sc-for>
+</div>
+</div>
+<div role="group" aria-label="Факторы риска">
+<div style="font-size: 12.5px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: #5E6873; margin: 0 2px 6px">Есть у пациента</div>
+<div style="background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 14px; overflow: hidden">
+<sc-for list="{{factors}}" as="f" hint-placeholder-count="5">
+<button aria-pressed="{{f.pressed}}" onClick="{{f.toggle}}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 58px; padding: 10px 14px; border: none; border-bottom: 1px solid #DDE2E7; background: #FFFFFF; font: inherit; color: #1B1F24; text-align: left; cursor: pointer">
+<span style="{{f.box}}"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600; line-height: 1.25">{{f.label}}</span><span style="font-size: 12.5px; color: #5E6873; line-height: 1.3">{{f.hint}}</span></span>
+<span style="flex: none; font-size: 13px; font-weight: 700; color: #5E6873">{{f.pts}}</span>
+</button>
+</sc-for>
+</div>
+</div>
+<p style="margin: 0 2px; font-size: 12px; line-height: 1.45; color: #5E6873">Шкала и ожидаемая частота инсульта — таблица П3 приложения Г1 КР382_2. Не применяется при умеренном и тяжёлом митральном стенозе и механических протезах клапанов; при ГКМП и амилоидозе антикоагулянты показаны независимо от баллов.</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1320}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sex: 'f', age: 1, on: { chf: false, htn: true, dm: true, stroke: false, vasc: false } };
+  }
+  renderVals() {
+    const st = this.state;
+    const seg = (on) => 'border: none; border-radius: 9px; min-height: 44px; padding: 8px 4px; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; ' +
+      (on ? 'background: #FFFFFF; color: #1B1F24; box-shadow: 0 1px 3px rgba(0,0,0,.14)' : 'background: transparent; color: #5E6873');
+    const F = [
+      { k: 'chf', label: 'ХСН / дисфункция ЛЖ', hint: 'C', p: 1 },
+      { k: 'htn', label: 'Артериальная гипертония', hint: 'H', p: 1 },
+      { k: 'dm', label: 'Сахарный диабет', hint: 'D', p: 1 },
+      { k: 'stroke', label: 'Инсульт, ТИА или системная эмболия', hint: 'S₂ · в анамнезе', p: 2 },
+      { k: 'vasc', label: 'Сосудистое заболевание', hint: 'V · ИМ, атеросклероз артерий ног, бляшка в аорте', p: 1 }
+    ];
+    const agePts = [0, 1, 2][st.age];
+    let score = agePts + (st.sex === 'f' ? 1 : 0);
+    F.forEach((f) => { if (st.on[f.k]) score += f.p; });
+    const RISK = ['0%', '1,3%', '2,2%', '3,2%', '4,0%', '6,7%', '9,8%', '9,6%', '12,5%', '15,2%'];
+    const hi = st.sex === 'm' ? 2 : 3;
+    let verdict, rule, grade, tone;
+    if (score >= hi) {
+      verdict = 'Показаны пероральные антикоагулянты постоянно';
+      rule = st.sex === 'm' ? 'Мужчины: CHA₂DS₂-VASc ≥2' : 'Женщины: CHA₂DS₂-VASc ≥3';
+      grade = 'УУР B · УДД 2'; tone = '#C0392B';
+    } else if (score === hi - 1) {
+      verdict = 'Рассмотреть антикоагулянты';
+      rule = (st.sex === 'm' ? 'Мужчины: 1 балл' : 'Женщины: 2 балла') + ' — с учётом риска кровотечений и предпочтений пациента';
+      grade = 'УУР B · УДД 2'; tone = '#A07800';
+    } else {
+      verdict = 'Антикоагулянты и антиагреганты не рекомендованы';
+      rule = 'Нет факторов риска тромбоэмболических осложнений';
+      grade = 'УУР C · УДД 4'; tone = '#2E9150';
+    }
+    const word = score === 1 ? 'балл' : (score >= 2 && score <= 4 ? 'балла' : 'баллов');
+    const metab = st.on.htn || st.on.dm;
+    let tips;
+    if (score >= hi - 1) {
+      tips = [
+        { text: 'До назначения оцените риск кровотечения и активно ищите модифицируемые факторы риска кровотечений', src: 'КР382_2 · разд. 3', link: 'HAS-BLED' },
+        { text: 'Рассчитайте клиренс креатинина по Кокрофту–Голту — нужен до назначения ПОАК и для обоснования дозы', src: 'КР382_2 · критерии качества', link: 'Клиренс креатинина' },
+        { text: 'Обсудите отказ от алкоголя: на фоне антикоагулянтов он значительно повышает риск внутричерепного кровоизлияния', src: 'КР382_2 · разд. 3', link: '' }
+      ];
+    } else {
+      tips = [
+        { text: 'Баллы растут с возрастом и новыми диагнозами: в 65 лет +1, при АГ, СД или ХСН +1 — пересчитайте при изменениях', src: 'КР382_2 · табл. П3 прил. Г1', link: '' }
+      ];
+    }
+    if (metab) tips.push({ text: 'АД, ЛПНП и гликемия — до целевых значений; спросите о храпе и остановках дыхания во сне: апноэ при АГ и СД поддерживает ФП', src: 'КР382_2 · разд. 3, 1.2', link: '' });
+    else tips.push({ text: 'Для прогноза и самочувствия: снижение веса, отказ от курения и алкоголя, умеренная физическая активность, лечение апноэ сна', src: 'КР382_2 · разд. 5, 7', link: '' });
+    tips = tips.map((t, i) => Object.assign({}, t, { n: i + 1, hasLink: !!t.link }));
+    return {
+      tips,
+      score, scoreWord: word, risk: RISK[Math.min(score, 9)], verdict, rule, grade, tone,
+      sexes: [['m', 'Мужчина'], ['f', 'Женщина · +1']].map(([k, l]) => ({ label: l, pressed: String(st.sex === k), style: seg(st.sex === k), pick: () => this.setState({ sex: k }) })),
+      ages: [['до 65', '0'], ['65–74', '+1'], ['≥75', '+2']].map(([l, p], i) => ({ label: l, pts: p, pressed: String(st.age === i), style: seg(st.age === i), pick: () => this.setState({ age: i }) })),
+      factors: F.map((f) => {
+        const on = !!st.on[f.k];
+        return {
+          label: f.label, hint: f.hint, pts: '+' + f.p, pressed: String(on),
+          box: 'flex: none; width: 26px; height: 26px; box-sizing: border-box; border-radius: 8px; display: flex; align-items: center; justify-content: center; ' + (on ? 'background: #A8322F; border: 2px solid #A8322F' : 'background: #FFFFFF; border: 2px solid #9AA3AC'),
+          toggle: () => this.setState({ on: Object.assign({}, st.on, { [f.k]: !on }) })
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>
