@@ -128,7 +128,7 @@ def build_data(db, version):
         if s:
             kr[code] = sorted(s, key=lambda x: (x not in docs, x))
     used = set(x for v in kr.values() for x in v)
-    mkb = {'n': nodes, 'kr': kr, 'cr': {k: v for k, v in adult.items() if k in used}}
+    mkb = {'n': nodes, 'kr': kr, 'cr': adult}
     meta = {'v': str(version), 'kr_built': built, 'built': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d'), 'ndocs': len(docs)}
     return {
         'data_meta.js': js('META', meta),
