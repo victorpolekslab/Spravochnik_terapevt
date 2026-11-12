@@ -89,6 +89,14 @@
    "h": 2080,
    "title": "11 · ДАТТ перед операцией",
    "is_interactive": true
+  },
+  "CalcKhorana.dc.html": {
+   "x": 1880,
+   "y": 1440,
+   "w": 390,
+   "h": 1460,
+   "title": "12 · Калькулятор: шкала Хорана",
+   "is_interactive": true
   }
  },
  "order": [
@@ -102,7 +110,8 @@
   "KrBrief.dc.html",
   "RefList.dc.html",
   "RefPoak.dc.html",
-  "RefDapt.dc.html"
+  "RefDapt.dc.html",
+  "CalcKhorana.dc.html"
  ],
  "notes": {
   "t": {

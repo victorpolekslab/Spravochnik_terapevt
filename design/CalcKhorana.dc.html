@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Шкала Хорана (Khorana)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#A8322F}a:hover{color:#7F2422}
+</style>
+</helmet>
+<div style="width: 390px; height: 1460px; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; background: #F6F7F9; color: #1B1F24; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+<header style="background: #A8322F; color: #FFFFFF; height: 56px; display: flex; align-items: center; gap: 4px; padding: 0 4px; box-sizing: border-box; flex: none">
+<a href="Main.dc.html" aria-label="Назад" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #FFFFFF"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></a>
+<h1 style="margin: 0; font-size: 19px; font-weight: 600; flex-grow: 1">Шкала Хорана</h1>
+<button aria-label="Добавить в избранное" aria-pressed="false" style="width: 44px; height: 44px; border: none; background: transparent; display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"></path></svg></button>
+</header>
+
+<section aria-live="polite" style="margin: 12px; padding: 14px 16px 12px; background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,.06)">
+<div style="display: flex; align-items: baseline; gap: 10px">
+<span style="font-size: 52px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; color: {{tone}}">{{score}}</span>
+<span style="font-size: 15px; font-weight: 600; color: #5E6873">{{scoreWord}}</span>
+<span style="margin-left: auto; text-align: right; font-size: 13px; line-height: 1.3; color: #5E6873">риск ВТЭО<br><b style="font-size: 17px; color: #1B1F24">≈ {{risk}}</b></span>
+</div>
+<div style="margin-top: 12px; display: flex; gap: 10px; align-items: flex-start">
+<span style="flex: none; width: 4px; align-self: stretch; border-radius: 2px; background: {{tone}}"></span>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px">
+<div style="font-size: 16px; font-weight: 700; line-height: 1.3">{{verdict}}</div>
+<div style="font-size: 13.5px; line-height: 1.4; color: #5E6873">{{rule}}</div>
+<span style="align-self: flex-start; font-size: 11.5px; font-weight: 700; color: #1F5FA8; background: #E3EEFB; border-radius: 6px; padding: 2px 7px">{{grade}}</span>
+</div>
+</div>
+<a href="KrBrief.dc.html" style="margin-top: 12px; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 2px; border-top: 1px solid #DDE2E7; text-decoration: none">
+<span style="font-size: 12px; font-weight: 700; color: #22643C; background: #E6F1EA; border-radius: 6px; padding: 3px 7px">КР960_1</span>
+<span style="flex-grow: 1; font-size: 14px; font-weight: 600; line-height: 1.3">Тромбоз глубоких вен — разделы 2.5 и 5.2.4.1</span>
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A8322F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+</a>
+</section>
+
+<section aria-label="Что ещё сделать" style="margin: 0 12px 14px; padding: 12px 14px 4px; background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 16px">
+<h2 style="margin: 0 0 4px; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A8322F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"></path></svg>Что ещё сделать</h2>
+<ol style="list-style: none; margin: 0; padding: 0">
+<sc-for list="{{tips}}" as="t" hint-placeholder-count="4">
+<li style="display: flex; gap: 10px; padding: 10px 0; border-top: 1px solid #EEF1F4">
+<span style="flex: none; width: 22px; height: 22px; border-radius: 11px; background: #F6E4E3; color: #A8322F; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-top: 1px">{{t.n}}</span>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 5px">
+<span style="font-size: 14.5px; line-height: 1.4">{{t.text}}</span>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+<span style="font-size: 11.5px; font-weight: 600; color: #5E6873">{{t.src}}</span>
+<sc-if value="{{t.hasLink}}" hint-placeholder-val="{{ false }}"><a href="#" style="font-size: 12.5px; font-weight: 700; text-decoration: none; background: #FBE7E6; color: #8E2A27; border-radius: 8px; padding: 4px 9px">{{t.link}} ›</a></sc-if>
+</div>
+</div>
+</li>
+</sc-for>
+</ol>
+</section>
+
+<div style="padding: 4px 12px 0; display: flex; flex-direction: column; gap: 14px">
+<div role="group" aria-label="Локализация опухоли">
+<div style="font-size: 12.5px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: #5E6873; margin: 0 2px 6px">Первичная опухоль</div>
+<div style="background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 14px; overflow: hidden">
+<sc-for list="{{sites}}" as="it" hint-placeholder-count="3">
+<button aria-pressed="{{it.pressed}}" onClick="{{it.pick}}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 58px; padding: 10px 14px; border: none; border-bottom: 1px solid #DDE2E7; background: #FFFFFF; font: inherit; color: #1B1F24; text-align: left; cursor: pointer">
+<span style="{{it.dot}}"></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600; line-height: 1.25">{{it.label}}</span><span style="font-size: 12.5px; color: #5E6873; line-height: 1.3">{{it.hint}}</span></span>
+<span style="flex: none; font-size: 13px; font-weight: 700; color: #5E6873">{{it.pts}}</span>
+</button>
+</sc-for>
+</div>
+</div>
+<div role="group" aria-label="Перед началом химиотерапии">
+<div style="font-size: 12.5px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: #5E6873; margin: 0 2px 6px">Перед началом химиотерапии</div>
+<div style="background: #FFFFFF; border: 1px solid #DDE2E7; border-radius: 14px; overflow: hidden">
+<sc-for list="{{factors}}" as="f" hint-placeholder-count="4">
+<button aria-pressed="{{f.pressed}}" onClick="{{f.toggle}}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 58px; padding: 10px 14px; border: none; border-bottom: 1px solid #DDE2E7; background: #FFFFFF; font: inherit; color: #1B1F24; text-align: left; cursor: pointer">
+<span style="{{f.box}}"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"></path></svg></span>
+<span style="flex-grow: 1; font-size: 15px; font-weight: 600; line-height: 1.25">{{f.label}}</span>
+<span style="flex: none; font-size: 13px; font-weight: 700; color: #5E6873">+1</span>
+</button>
+</sc-for>
+</div>
+</div>
+<p style="margin: 0 2px; font-size: 12px; line-height: 1.45; color: #5E6873">Для амбулаторных пациентов, получающих химиотерапию. Шкала — приложение Г8 КР960_1 (УУР B · УДД 1). Баллы за локализацию — по оригиналу (Khorana, 2008): в таблице КР они записаны неоднозначно. Другие локализации (молочная железа, кишечник, простата и др.) — 0 баллов.</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1460}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { site: 0, on: { plt: true, hb: false, wbc: false, bmi: false } };
+  }
+  renderVals() {
+    const st = this.state;
+    const S = [['Желудок, поджелудочная железа', 'очень высокий риск', 2], ['Лёгкие, лимфома, гинекологические, мочевой пузырь, яичко', 'высокий риск', 1], ['Другая локализация', 'молочная железа, толстая кишка, простата и др.', 0]];
+    const F = [['plt', 'Тромбоциты ≥ 350 × 10⁹/л'], ['hb', 'Гемоглобин < 100 г/л или эпоэтин бета'], ['wbc', 'Лейкоциты > 11 × 10⁹/л'], ['bmi', 'ИМТ ≥ 35 кг/м²']];
+    let score = S[st.site][2];
+    F.forEach(([k]) => { if (st.on[k]) score += 1; });
+    let verdict, rule, grade, tone, risk;
+    if (score >= 3) {
+      risk = '6,7–7%'; tone = '#C0392B';
+      verdict = 'Высокий риск — рассмотреть профилактику ВТЭО';
+      rule = '≥ 3 баллов. Решение — с учётом риска кровотечения; препараты: НМГ, апиксабан или ривароксабан.';
+      grade = 'УУР A · УДД 2 (выбор препарата)';
+    } else if (score >= 1) {
+      risk = '1,8–2%'; tone = '#A07800';
+      verdict = 'Умеренный риск — рутинная профилактика не показана';
+      rule = '1–2 балла. Учесть другие факторы высокого риска ВТЭО (ниже).';
+      grade = 'УУР B · УДД 1';
+    } else {
+      risk = '0,3–0,8%'; tone = '#2E9150';
+      verdict = 'Низкий риск — профилактика не показана';
+      rule = '0 баллов.';
+      grade = 'УУР B · УДД 1';
+    }
+    const word = score === 1 ? 'балл' : (score >= 2 && score <= 4 ? 'балла' : 'баллов');
+    let tips = [
+      { text: 'Высокий риск ВТЭО независимо от баллов: ограничение мобильности, активная инфекция, сдавление опухолью крупных вен, ВТЭО в анамнезе, местно-распространённый или метастатический рак поджелудочной железы или лёгких, миелома на иммуномодуляторах, герминогенная опухоль яичка с забрюшинными метастазами > 3,5 см', src: 'КР960_1, разд. 5.2.4.1', link: '' }
+    ];
+    if (score >= 3) {
+      tips.unshift({ text: 'При высоком риске кровотечения предпочесть НМГ: опухоли верхних отделов ЖКТ и мочеполовой системы, нефростома, центральный венозный катетер, эрозии и язвы ЖКТ, болезни печени, тромбоцитопения, СКФ 15–29', src: 'КР960_1, разд. 5.2.4.1', link: '' });
+      tips.push({ text: 'ПОАК осторожно с иматинибом, кризотинибом, абиратероном, циклоспорином, такролимусом, паклитакселом, вемурафенибом, дазатинибом — меняется фармакокинетика. Дозы для профилактики в КР не указаны — по инструкции', src: 'КР960_1, разд. 5.2.4.1', link: '' });
+    }
+    tips.push({ text: 'Пересчитать перед каждым новым курсом: баллы считают по анализам до начала химиотерапии', src: 'КР960_1, прил. Г8', link: '' });
+    tips = tips.map((t, i) => Object.assign({}, t, { n: i + 1, hasLink: !!t.link }));
+    return {
+      tips, score, scoreWord: word, risk, verdict, rule, grade, tone,
+      sites: S.map(([l, h, p], i) => {
+        const on = st.site === i;
+        return { label: l, hint: h, pts: '+' + p, pressed: String(on), pick: () => this.setState({ site: i }),
+          dot: 'flex: none; width: 24px; height: 24px; box-sizing: border-box; border-radius: 12px; ' + (on ? 'border: 7px solid #A8322F; background: #FFFFFF' : 'border: 2px solid #9AA3AC; background: #FFFFFF') };
+      }),
+      factors: F.map(([k, l]) => {
+        const on = !!st.on[k];
+        return { label: l, pressed: String(on),
+          box: 'flex: none; width: 26px; height: 26px; box-sizing: border-box; border-radius: 8px; display: flex; align-items: center; justify-content: center; ' + (on ? 'background: #A8322F; border: 2px solid #A8322F' : 'background: #FFFFFF; border: 2px solid #9AA3AC'),
+          toggle: () => this.setState({ on: Object.assign({}, st.on, { [k]: !on }) }) };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>
