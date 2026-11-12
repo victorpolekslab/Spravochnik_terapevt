@@ -715,7 +715,7 @@ function mkbIdx() { if (!MKBIDX) MKBIDX = MKB.n.map(r => r[1].toLowerCase().repl
 function krFor(code) { return (MKB.kr[code] || []); }
 function mkbRow(r) {
   const ks = krFor(r[0]), nb = ks.filter(k => BRIEF.docs[k]).length;
-  const badge = ks.length ? `<span class="badge ${nb ? '' : 'out'}">КР ${ks.length}</span>` : '';
+  const badge = ks.length ? `<span class="badge ${nb ? '' : 'out'}">КР ${ks.length}</span>` : refsFor(r[0]).length ? '<span class="badge">справка</span>' : '';
   return `<li><a href="#code/${encodeURIComponent(r[0])}"><span class="code">${esc(r[0])}</span><span style="flex:1;min-width:0">${esc(r[1])}</span>${badge}${svg('chev', 'class="chev" style="width:18px;height:18px"')}</a></li>`;
 }
 function mkbPage(q) {
@@ -741,14 +741,16 @@ function mkbResults(q) {
 function codePage(code) {
   const i = MKB.n.findIndex(r => r[0] === code); if (i < 0) return mkbPage(code);
   const r = MKB.n[i];
-  const ks = krFor(code), brief = ks.filter(k => BRIEF.docs[k]);
-  if (ks.length === 1 && brief.length === 1) { location.replace('#kr/' + ks[0] + '/' + encodeURIComponent(code)); return; }
+  const ks = krFor(code), brief = ks.filter(k => BRIEF.docs[k]), refs = refsFor(code);
+  if (!ks.length && refs.length === 1) { location.replace('#ref/' + refs[0].id); return; }
+  if (ks.length === 1 && brief.length === 1 && !refs.length) { location.replace('#kr/' + ks[0] + '/' + encodeURIComponent(code)); return; }
   setTitle(code + ' — МКБ-10', true);
   const kids = []; for (let j = i + 1; j < MKB.n.length && MKB.n[j][2] > r[2]; j++) if (MKB.n[j][2] === r[2] + 1) kids.push(MKB.n[j]);
   const krList = ks.map(k => { const b = BRIEF.docs[k], m = MKB.cr[k] || ['КР' + k, 1];
     return b ? `<li><a href="#kr/${k}/${encodeURIComponent(code)}"><span style="flex:1"><div class="tt">${esc(b.name)}</div><div class="ts">КР${esc(k)} · краткая КР${b.mode === 'brief' ? ' (сокращённая)' : ''}</div></span>${svg('chev', 'class="chev"')}</a></li>`
       : `<li><a href="https://cr.minzdrav.gov.ru/preview-cr/${k}"><span style="flex:1"><div class="tt">${esc(m[0])}</div><div class="ts">КР${esc(k)} · нет в справочнике терапевта — открыть на cr.minzdrav.gov.ru</div></span>${svg('chev', 'class="chev"')}</a></li>`; }).join('');
   view.innerHTML = `<div class="krhead"><div style="font-size:26px;font-weight:800;color:var(--accent)">${esc(code)}</div><div style="font-size:17px;font-weight:600">${esc(r[1])}</div></div>
+    ${refs.length ? `<h2 class="sec-h">Справка</h2><ul class="list">${refs.map(r => `<li><a href="#ref/${r.id}"><span style="flex:1"><div class="tt">${esc(r.title)}</div><div class="ts">${esc(r.badge || '')}</div></span>${svg('chev', 'class="chev"')}</a></li>`).join('')}</ul>` : ''}
     <h2 class="sec-h">${ks.length ? 'Клинические рекомендации: ' + ks.length : 'Клинические рекомендации'}</h2>${ks.length ? `<ul class="list">${krList}</ul>` : '<div class="empty">Действующих КР для взрослых с этим кодом нет.</div>'}
     ${kids.length ? `<h2 class="sec-h">Входящие коды: ${kids.length}</h2><ul class="list">${kids.map(mkbRow).join('')}</ul>` : ''}`;
 }
@@ -887,7 +889,7 @@ function refList() {
   setTitle('Справочник', false);
   const items = Object.values(REF);
   const secs = [...new Set(items.map(x => x.section))];
-  view.innerHTML = secs.map(s => `<h2 class="sec-h">${esc(s)}</h2><ul class="list">${items.filter(x => x.section === s).map(x => `<li><a href="#ref/${x.id}"><span style="flex:1;min-width:0"><div class="tt">${esc(x.title)}</div><div class="ts">${esc(x.subtitle)}</div><span class="krb" style="display:inline-block;margin-top:4px">${x.kr.map(k => 'КР' + k).join(' · ')}</span></span>${svg('chev', 'class="chev"')}</a></li>`).join('')}</ul>`).join('')
+  view.innerHTML = secs.map(s => `<h2 class="sec-h">${esc(s)}</h2><ul class="list">${items.filter(x => x.section === s).map(x => `<li><a href="#ref/${x.id}"><span style="flex:1;min-width:0"><div class="tt">${esc(x.title)}</div><div class="ts">${esc(x.subtitle)}</div><span class="krb" style="display:inline-block;margin-top:4px">${esc(x.badge || x.kr.map(k => 'КР' + k).join(' · '))}</span></span>${svg('chev', 'class="chev"')}</a></li>`).join('')}</ul>`).join('')
     + '<p class="hint">Алгоритмы, которые не укладываются в калькулятор или краткую КР. Каждый пункт — со ссылками на разделы КР и уровнями доказательности.</p>';
 }
 function refPage(id) {
@@ -895,10 +897,21 @@ function refPage(id) {
   setTitle(R.title, true);
   if (id === 'poak_periop') return poakPage(R);
   if (id === 'dapt_periop') return daptPage(R);
+  if (R.blocks) return blocksRef(R);
   view.innerHTML = '<div class="empty">Раздел готовится.</div>';
 }
 const segH = (key, opts, cur) => `<div class="seg" style="grid-template-columns:repeat(${opts.length},1fr)" data-s="${key}">${opts.map(o => `<button data-v="${o[0]}" class="${o[0] === cur ? 'on' : ''}" aria-pressed="${o[0] === cur}">${esc(o[1])}</button>`).join('')}</div>`;
 const stepsH = st => `<ol class="steps">${st.map((s, i) => `<li><span>${i + 1}</span><div><b>${esc(s.t)}</b><p>${esc(s.d)}</p><small>${esc(s.src)}</small></div></li>`).join('')}</ol>`;
+function blocksRef(R) {
+  const GO = [];
+  view.innerHTML = `<div class="wrap">${R.note_kr ? `<div class="card" style="background:var(--warn-soft)">${esc(R.note_kr)}</div>` : ''}
+    <div class="cwrap">${clsHtml({ theses: R.theses, blocks: R.blocks }, GO)}</div>
+    ${R.steps ? `<div class="glabel">Что делать</div>${stepsH(R.steps)}` : ''}
+    ${R.sources ? `<div class="card"><b>Источники</b>${R.sources.map(x => `<a class="lnk" href="${esc(x[1])}" style="font-weight:500">${esc(x[0])}</a>`).join('')}</div>` : ''}
+    <p class="note">${esc(R.status || '')}</p></div>`;
+  view.onclick = e => { const j = e.target.closest('[data-cj]'); if (j) { const t = $('#cj_' + j.dataset.cj); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); } };
+}
+function refsFor(code) { return Object.values(REF).filter(r => (r.mkb || []).some(c => code === c || code.startsWith(c + '.'))); }
 function poakPage(R) {
   const st = LS.get('ref_poak', { drug: 'xa', risk: 'high', cc: 0, f: {} });
   const T7 = R.stop_table;
