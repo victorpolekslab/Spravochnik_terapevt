@@ -22,6 +22,21 @@
 .dg-tag.lv{background:#FDF0D9;color:#7A4A00}.dg-tag.ocr{background:#E3EEFB;color:#1F5FA8}\
 .dg-add{flex:none;width:36px;height:36px;border-radius:18px;border:1px solid var(--line);background:var(--surface);color:var(--accent);font-size:22px;line-height:1;cursor:pointer}\
 .dg-add.on{background:var(--accent);border-color:var(--accent);color:#fff}\
+.dg-r2{flex-direction:column;align-items:stretch;gap:7px}\
+.dg-r2 .dg-tag{margin:0 0 0 6px;vertical-align:1px}\
+.dg-r2 .dg-t{color:inherit;text-decoration:none}\
+.dg-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}\
+.dg-act{display:flex;align-items:center;justify-content:center;gap:6px;min-height:36px;border:1px solid var(--accent);border-radius:10px;background:var(--surface);color:var(--accent);font:inherit;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;padding:0 8px;text-align:center;line-height:1.2}\
+.dg-act svg{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}\
+.dg-act.on{background:var(--accent);color:#fff}\
+.dg-act.off{border-color:var(--line);color:var(--muted)}\
+.dg-pick{width:100%;border:0;border-top:1px solid var(--line);background:none;font:inherit;text-align:left;cursor:pointer}\
+.dg-pick:first-child{border-top:0}\
+.dg-pick .dg-add{pointer-events:none;display:flex;align-items:center;justify-content:center}\
+.dg-ixbar{position:fixed;left:12px;right:12px;max-width:796px;margin:0 auto;bottom:calc(68px + var(--sab, 0px));z-index:15;display:flex;align-items:center;gap:10px;background:var(--accent);color:#fff;border-radius:14px;padding:10px 12px;text-decoration:none;box-shadow:0 6px 20px rgba(0,0,0,.22)}\
+.dg-ixbar .dg-ixn{flex:none;min-width:28px;height:28px;border-radius:14px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-weight:700}\
+.dg-ixbar .dg-ixl{flex:1;min-width:0;font-size:14px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\
+.dg-ixbar b{flex:none;font-weight:700}\
 .dg-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}\
 .dg-card h2{font-size:19px;margin:0;line-height:1.25}\
 .dg-meta{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:2px}\
@@ -182,15 +197,26 @@
       if (at >= 0) l.splice(at, 1); else l.push({ r: i, d: d, tn: r[0], inn: r[1], route: r[3] });
       lsSet('ix', l); return at < 0;
     }
-    function rowH(o, addBtn) {
-      var r = D.rows[o.i], d = r[6] >= 0 ? D.docs[r[6]] : null;
+    var IC_DOC = '<svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg>';
+    var IC_IX = '<svg viewBox="0 0 24 24"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>';
+    function addLbl(on) { return on ? '✓ В списке' : IC_IX + 'Взаимодействия'; }
+    // mode: 'pick' — строка целиком добавляет препарат (экран взаимодействий); иначе две кнопки: инструкция и сравнение
+    function rowH(o, mode) {
+      var r = D.rows[o.i], d = r[6] >= 0 ? D.docs[r[6]] : null, on = inList(o.i);
       var tags = '<span class="dg-tag">' + esc(r[3]) + '</span>' + (d ? (d[1] === 'lv' ? '<span class="dg-tag lv">листок-вкладыш</span>' : '') : '<span class="dg-tag">нет инструкции</span>');
-      return '<a class="dg-row" href="#drug/' + o.i + '"><div class="dg-t"><b>' + esc(r[0]) + '</b><div class="dg-sub">' + esc(r[1] || '—') + ' · ' + esc(r[2]) + '</div>' + tags + '</div>' +
-        (addBtn ? '<button class="dg-add' + (inList(o.i) ? ' on' : '') + '" data-add="' + o.i + '" aria-label="Добавить к проверке взаимодействий" title="К проверке взаимодействий">' + (inList(o.i) ? '✓' : '+') + '</button>' : '') + '</a>';
+      var info = '<b>' + esc(r[0]) + '</b><div class="dg-sub">' + esc(r[1] || '—') + ' · ' + esc(r[2]) + (mode === 'pick' ? '' : tags) + '</div>' + (mode === 'pick' ? tags : '');
+      if (mode === 'pick') return '<button class="dg-row dg-pick" data-add="' + o.i + '"><div class="dg-t">' + info + '</div><span class="dg-add' + (on ? ' on' : '') + '" aria-hidden="true">' + (on ? '✓' : '+') + '</span></button>';
+      return '<div class="dg-row dg-r2"><a class="dg-t" href="#drug/' + o.i + '">' + info + '</a><div class="dg-acts">' +
+        '<a class="dg-act' + (d ? '' : ' off') + '" href="#drug/' + o.i + '">' + IC_DOC + (d ? 'Инструкция' : 'Нет инструкции') + '</a>' +
+        '<button class="dg-act' + (on ? ' on' : '') + '" data-add="' + o.i + '" aria-pressed="' + on + '">' + addLbl(on) + '</button></div></div>';
     }
     function bindAdd(root, after) {
       root.querySelectorAll('[data-add]').forEach(function (b) {
-        b.onclick = function (e) { e.preventDefault(); e.stopPropagation(); var on = toggle(+b.dataset.add); b.classList.toggle('on', on); b.textContent = on ? '✓' : '+'; if (after) after(); };
+        b.onclick = function (e) {
+          e.preventDefault(); e.stopPropagation(); var on = toggle(+b.dataset.add);
+          if (b.classList.contains('dg-act')) { b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); b.innerHTML = addLbl(on); }
+          if (after) after();
+        };
       });
     }
     function searchPage(q0) {
@@ -198,12 +224,13 @@
       var q = q0 != null ? q0 : lsGet('q', '');
       view.innerHTML = '<div class="dg-wrap"><div class="dg-field"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg>' +
         '<input id="dgq" type="search" placeholder="Торговое название или МНН" autocomplete="off" spellcheck="false" value="' + esc(q) + '"><button id="dgclr" aria-label="Очистить"' + (q ? '' : ' hidden') + '>×</button></div>' +
-        '<div id="dgix"></div><div id="dgres"></div>' +
-        '<p class="dg-disc">Инструкции: ОХЛП из Единого реестра ЕАЭС и инструкции из ГРЛС. Не заменяют инструкцию к конкретной упаковке. Кнопка «+» добавляет препарат к проверке взаимодействий.</p></div>';
+        '<div id="dgres"></div><div id="dgix"></div>' +
+        '<p class="dg-disc">Инструкции: ОХЛП из Единого реестра ЕАЭС и инструкции из ГРЛС. Не заменяют инструкцию к конкретной упаковке. «К взаимодействиям» собирает препараты в список: проверка — кнопкой внизу.</p></div>';
       var inp = document.getElementById('dgq'), clr = document.getElementById('dgclr'), t = null;
       function ixBar() {
-        var n = list().length;
-        document.getElementById('dgix').innerHTML = n ? '<a class="dg-btn p" href="#ix" style="display:block;text-align:center">Проверить взаимодействия: ' + n + ' ' + (n === 1 ? 'препарат' : n < 5 ? 'препарата' : 'препаратов') + '</a>' : '';
+        var l = list(), n = l.length;
+        var w = view.querySelector('.dg-wrap'); if (w) w.style.paddingBottom = n ? '76px' : '';
+        document.getElementById('dgix').innerHTML = n ? '<a class="dg-ixbar" href="#ix"><span class="dg-ixn">' + n + '</span><span class="dg-ixl">' + esc(l.map(function (x) { return x.tn; }).join(', ')) + '</span><b>' + (n > 1 ? 'Проверить ›' : 'Добавьте ещё ›') + '</b></a>' : '';
       }
       function run() {
         lsSet('q', inp.value); clr.hidden = !inp.value;
@@ -211,7 +238,7 @@
         if (!res.length && /[a-z]/i.test(inp.value)) { var rl = relayout(inp.value); res = search(rl); if (res.length) alt = rl; }
         var box = document.getElementById('dgres');
         if (!inp.value.trim()) { box.innerHTML = recent(); bindAdd(box, ixBar); return; }
-        box.innerHTML = res.length ? (alt ? '<div class="dg-disc">Показаны результаты для «' + esc(alt) + '»</div>' : '') + '<div class="dg-list">' + res.map(function (o) { return rowH(o, true); }).join('') + '</div>'
+        box.innerHTML = res.length ? (alt ? '<div class="dg-disc">Показаны результаты для «' + esc(alt) + '»</div>' : '') + '<div class="dg-list">' + res.map(function (o) { return rowH(o); }).join('') + '</div>'
           : '<div class="dg-empty">Ничего не найдено. Попробуйте МНН или начало торгового названия.</div>';
         bindAdd(box, ixBar);
       }
@@ -221,7 +248,7 @@
     }
     function recent() {
       var r = lsGet('recent', []).filter(function (i) { return D.rows[i]; });
-      return r.length ? '<div class="dg-from">Недавно открытые</div><div class="dg-list">' + r.map(function (i) { return rowH({ i: i }, true); }).join('') + '</div>' : '<div class="dg-empty">Начните вводить название препарата.</div>';
+      return r.length ? '<div class="dg-from">Недавно открытые</div><div class="dg-list">' + r.map(function (i) { return rowH({ i: i }); }).join('') + '</div>' : '<div class="dg-empty">Начните вводить название препарата.</div>';
     }
 
     // ---------- карточка
@@ -316,7 +343,7 @@
         clearTimeout(t); t = setTimeout(function () {
           var box = document.getElementById('dgadd2');
           var res = inp.value.trim() ? search(inp.value, 8) : [];
-          box.innerHTML = res.length ? '<div class="dg-list">' + res.map(function (o) { return rowH(o, true); }).join('') + '</div>' : '';
+          box.innerHTML = res.length ? '<div class="dg-list">' + res.map(function (o) { return rowH(o, 'pick'); }).join('') + '</div>' : '';
           bindAdd(box, function () { ixPage(); });
         }, 120);
       });

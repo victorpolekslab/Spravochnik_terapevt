@@ -84,7 +84,7 @@ const KRL = (id, sec) => ({ id, sec });
 const T = { ok: 'var(--t-ok)', warn: 'var(--t-warn)', bad: 'var(--t-bad)' };
 const CALCS = {
   ckdepi: {
-    t: 'СКФ (CKD-EPI)', s: 'расчётная СКФ и стадия ХБП', sys: 'kidney', kr: KRL('469_3', 'Приложение А3, табл. 6 разд. 1.5'),
+    w: 'функция почек и стадия ХБП', tt: 'СКФ', m: 'CKD-EPI', t: 'СКФ (CKD-EPI)', s: 'формула CKD-EPI · стадия ХБП', sys: 'kidney', kr: KRL('469_3', 'Приложение А3, табл. 6 разд. 1.5'),
     inputs: [
       { id: 'sex', type: 'seg', label: 'Пол', options: [['m', 'Мужчина'], ['f', 'Женщина']], def: 'm' },
       { id: 'age', type: 'num', label: 'Возраст', unit: 'лет', min: 18, max: 110 },
@@ -105,7 +105,7 @@ const CALCS = {
     }
   },
   crcl: {
-    t: 'Клиренс креатинина', s: 'Кокрофт–Голт · дозы ПОАК', sys: 'kidney', kr: KRL('382_2', 'разд. 2.5, табл. П7'),
+    w: 'для доз ПОАК и других препаратов', tt: 'Клиренс креатинина', m: 'Кокрофт–Голт', t: 'Клиренс креатинина (Кокрофт–Голт)', s: 'дозы ПОАК и других препаратов', sys: 'kidney', kr: KRL('382_2', 'разд. 2.5, табл. П7'),
     inputs: [
       { id: 'sex', type: 'seg', label: 'Пол', options: [['m', 'Мужчина'], ['f', 'Женщина']], def: 'm' },
       { id: 'age', type: 'num', label: 'Возраст', unit: 'лет', min: 18, max: 110 },
@@ -129,7 +129,7 @@ const CALCS = {
     }
   },
   bmi: {
-    t: 'ИМТ', s: 'индекс массы тела, степень ожирения', sys: 'drop', kr: KRL('28_3', 'разд. 1.5, табл. 1'),
+    w: 'степень ожирения', t: 'ИМТ', s: 'индекс массы тела, степень ожирения', sys: 'drop', kr: KRL('28_3', 'разд. 1.5, табл. 1'),
     inputs: [{ id: 'wt', type: 'num', label: 'Масса тела', unit: 'кг', min: 20, max: 350 }, { id: 'ht', type: 'num', label: 'Рост', unit: 'см', min: 100, max: 230 }],
     calc(v) {
       const w = +v.wt, h = +v.ht / 100; if (!(w > 0 && h > 1)) return null;
@@ -142,7 +142,7 @@ const CALCS = {
     }
   },
   chads: {
-    t: 'CHA₂DS₂-VASc', s: 'риск инсульта при ФП', sys: 'heart', kr: KRL('382_2', 'разд. 3.1.1, табл. П3 прил. Г1'),
+    w: 'нужны ли антикоагулянты при ФП', t: 'CHA₂DS₂-VASc', s: 'риск инсульта при ФП', sys: 'heart', kr: KRL('382_2', 'разд. 3.1.1, табл. П3 прил. Г1'),
     inputs: [
       { id: 'sex', type: 'seg', label: 'Пол', options: [['m', 'Мужчина'], ['f', 'Женщина · +1']], def: 'm' },
       { id: 'age', type: 'seg', label: 'Возраст', options: [['0', 'до 65'], ['1', '65–74 · +1'], ['2', '≥ 75 · +2']], def: '0' },
@@ -168,7 +168,7 @@ const CALCS = {
     }
   },
   hasbled: {
-    t: 'HAS-BLED', s: 'риск кровотечения на антикоагулянтах', sys: 'heart', kr: KRL('382_2', 'табл. П4 прил. Г1'),
+    w: 'риск кровотечения на антикоагулянтах', t: 'HAS-BLED', s: 'риск кровотечения на антикоагулянтах', sys: 'heart', kr: KRL('382_2', 'табл. П4 прил. Г1'),
     inputs: [{ id: 'f', type: 'bools', items: [
       ['h', 'Гипертония', 'H · систолическое АД > 160 мм рт. ст.', 1], ['ar', 'Нарушение функции почек', 'A · диализ, трансплантация почки, креатинин ≥ 200 мкмоль/л', 1],
       ['al', 'Нарушение функции печени', 'A · цирроз или билирубин > 2 норм с АСТ/АЛТ/ЩФ > 3 норм', 1], ['s', 'Инсульт в анамнезе', 'S', 1],
@@ -186,7 +186,7 @@ const CALCS = {
     }
   },
   khorana: {
-    t: 'Шкала Хорана', s: 'риск ВТЭО на химиотерапии', sys: 'heart', kr: KRL('960_1', 'разд. 2.5, прил. Г8, разд. 5.2.4.1'),
+    w: 'профилактика ВТЭО при химиотерапии', t: 'Шкала Хорана', s: 'риск ВТЭО на химиотерапии', sys: 'heart', kr: KRL('960_1', 'разд. 2.5, прил. Г8, разд. 5.2.4.1'),
     inputs: [
       { id: 'site', type: 'radio', label: 'Первичная опухоль', options: [['2', 'Желудок, поджелудочная железа', 'очень высокий риск', 2], ['1', 'Лёгкие, лимфома, гинекологические, мочевой пузырь, яичко', 'высокий риск', 1], ['0', 'Другая локализация', 'молочная железа, толстая кишка, простата и др.', 0]], def: '0' },
       { id: 'f', type: 'bools', label: 'Перед началом химиотерапии', items: [['p', 'Тромбоциты ≥ 350 × 10⁹/л', '', 1], ['h', 'Гемоглобин < 100 г/л или эпоэтин бета', '', 1], ['w', 'Лейкоциты > 11 × 10⁹/л', '', 1], ['b', 'ИМТ ≥ 35 кг/м²', '', 1]] }
@@ -217,7 +217,7 @@ const qv = (v, id, n) => { const x = (v[id] || {})[n]; return x == null ? 0 : +S
 const YN = [['0', 'Нет'], ['1', 'Да']];
 Object.assign(CALCS, {
   score2: {
-    t: 'SCORE2', s: '10-летний риск ССЗ, 40–69 лет', sys: 'heart', kr: KRL('752_1', 'разд. 2.5, прил. Г2; КР62_3, прил. Г1'),
+    w: '10-летний риск ССЗ', t: 'SCORE2', s: '10-летний риск ССЗ, 40–69 лет', sys: 'heart', kr: KRL('752_1', 'разд. 2.5, прил. Г2; КР62_3, прил. Г1'),
     inputs: [
       { id: 'sex', type: 'seg', label: 'Пол', options: [['m', 'Мужчина'], ['f', 'Женщина']], def: 'm' },
       { id: 'age', type: 'num', label: 'Возраст', unit: 'лет', min: 40, max: 89 },
@@ -247,7 +247,7 @@ Object.assign(CALCS, {
     }
   },
   wellsdvt: {
-    t: 'Уэллс: ТГВ', s: 'вероятность тромбоза глубоких вен', sys: 'heart', kr: KRL('960_1', 'прил. Г1, разд. 2'),
+    w: 'вероятность ТГВ: D-димер или УЗИ', t: 'Уэллс: ТГВ', s: 'вероятность тромбоза глубоких вен', sys: 'heart', kr: KRL('960_1', 'прил. Г1, разд. 2'),
     inputs: [{ id: 'f', type: 'bools', items: [
       ['ca', 'Активный рак', 'лечение сейчас или в последние 6 мес, паллиатив', 1], ['par', 'Паралич, парез или гипсовая иммобилизация ноги', '', 1],
       ['bed', 'Постельный режим ≥ 3 дней или большая операция', 'за последние 12 недель', 1], ['tend', 'Болезненность по ходу глубоких вен', '', 1],
@@ -263,7 +263,7 @@ Object.assign(CALCS, {
     }
   },
   wellspe: {
-    t: 'Уэллс: ТЭЛА', s: 'клиническая вероятность ТЭЛА', sys: 'heart', kr: KRL('960_1', 'прил. Г2'),
+    w: 'вероятность ТЭЛА: D-димер или КТ', t: 'Уэллс: ТЭЛА', s: 'клиническая вероятность ТЭЛА', sys: 'heart', kr: KRL('960_1', 'прил. Г2'),
     inputs: [{ id: 'f', type: 'bools', items: [
       ['prev', 'ТГВ или ТЭЛА в анамнезе', '', 1.5], ['op', 'Операция или иммобилизация за последние 4 недели', '', 1.5], ['ca', 'Активный рак', '', 1],
       ['hem', 'Кровохарканье', '', 1], ['hr', 'ЧСС ≥ 100 в минуту', '', 1.5], ['dvt', 'Клинические признаки ТГВ', '', 3], ['alt', 'Другой диагноз менее вероятен, чем ТЭЛА', '', 3]] }],
@@ -277,7 +277,7 @@ Object.assign(CALCS, {
     }
   },
   walk6: {
-    t: '6-минутная ходьба', s: 'функциональный класс ХСН', sys: 'heart', kr: KRL('156_2', 'прил. Г2, табл. П6'),
+    w: 'функциональный класс ХСН', t: '6-минутная ходьба', s: 'функциональный класс ХСН', sys: 'heart', kr: KRL('156_2', 'прил. Г2, табл. П6'),
     inputs: [{ id: 'd', type: 'num', label: 'Пройденная дистанция', unit: 'м', min: 0, max: 1000 }],
     calc(v) {
       const d = num(v.d); if (!(d >= 0) || v.d === '' || v.d == null) return null;
@@ -288,7 +288,7 @@ Object.assign(CALCS, {
     }
   },
   shoks: {
-    t: 'ШОКС', s: 'клиническое состояние при ХСН', sys: 'heart', kr: KRL('156_2', 'прил. Г1'),
+    w: 'тяжесть ХСН', t: 'ШОКС', s: 'клиническое состояние при ХСН', sys: 'heart', kr: KRL('156_2', 'прил. Г1'),
     inputs: [
       { id: 'q', type: 'qs', items: [
         ['Одышка', [['0', 'нет'], ['1', 'при нагрузке'], ['2', 'в покое']]],
@@ -308,7 +308,7 @@ Object.assign(CALCS, {
     }
   },
   abi: {
-    t: 'ЛПИ', s: 'лодыжечно-плечевой индекс', sys: 'heart', kr: KRL('958_1', 'разд. 2.4'),
+    w: 'атеросклероз артерий ног', t: 'ЛПИ', s: 'лодыжечно-плечевой индекс', sys: 'heart', kr: KRL('958_1', 'разд. 2.4'),
     inputs: [
       { id: 'a', type: 'num', label: 'САД на лодыжке (большее из двух артерий)', unit: 'мм рт. ст.', min: 0, max: 300 },
       { id: 'b', type: 'num', label: 'САД на плече (большее из двух рук)', unit: 'мм рт. ст.', min: 50, max: 300 }],
@@ -322,7 +322,7 @@ Object.assign(CALCS, {
     }
   },
   mmrc: {
-    t: 'mMRC', s: 'одышка по шкале mMRC', sys: 'lung', kr: KRL('603_3', 'прил. Г1'),
+    w: 'одышка, группа ХОБЛ', t: 'mMRC', s: 'одышка по шкале mMRC', sys: 'lung', kr: KRL('603_3', 'прил. Г1'),
     inputs: [{ id: 'g', type: 'radio', label: 'Какое утверждение ближе пациенту', options: [
       ['0', 'Одышка только при сильной нагрузке', '0 — нет', 0], ['1', 'Задыхается при быстрой ходьбе по ровной местности или подъёме на пологий холм', '1 — лёгкая', 1],
       ['2', 'Из-за одышки ходит медленнее сверстников или останавливается при ходьбе в своём темпе', '2 — средняя', 2], ['3', 'Задыхается, пройдя около 100 м или через несколько минут ходьбы', '3 — тяжёлая', 3],
@@ -333,7 +333,7 @@ Object.assign(CALCS, {
     }
   },
   cat: {
-    t: 'CAT', s: 'влияние ХОБЛ на жизнь', sys: 'lung', kr: KRL('603_3', 'прил. Г2'),
+    w: 'симптомы ХОБЛ, выбор терапии', t: 'CAT', s: 'влияние ХОБЛ на жизнь', sys: 'lung', kr: KRL('603_3', 'прил. Г2'),
     inputs: [{ id: 'q', type: 'likert', note: 'Каждый пункт — от 0 (нет проблемы) до 5 (максимально выражена); формулировки — в бланке теста.', opts: [['0', '0'], ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5']], items: ['Кашель', 'Мокрота', 'Стеснение в груди', 'Одышка при подъёме', 'Ограничение активности дома', 'Неуверенность, выходя из дома', 'Сон', 'Энергия'] }],
     calc(v) {
       const { s, all } = qsum(v, 'q', 8); if (!all) return null;
@@ -342,7 +342,7 @@ Object.assign(CALCS, {
     }
   },
   packyears: {
-    t: 'Индекс пачка-лет', s: 'стаж курения', sys: 'lung', kr: KRL('603_3', 'прил. Г3'),
+    w: 'риск ХОБЛ, скрининг рака лёгкого', t: 'Индекс пачка-лет', s: 'стаж курения', sys: 'lung', kr: KRL('603_3', 'прил. Г3'),
     inputs: [{ id: 'n', type: 'num', label: 'Сигарет в день', unit: 'шт.', min: 0, max: 100 }, { id: 'y', type: 'num', label: 'Стаж курения', unit: 'лет', min: 0, max: 80 }],
     calc(v) {
       const n = num(v.n), y = num(v.y); if (!(n >= 0 && y >= 0) || v.n === '' || v.y === '' || v.n == null || v.y == null) return null;
@@ -351,7 +351,7 @@ Object.assign(CALCS, {
     }
   },
   copdq: {
-    t: 'Вопросник ХОБЛ', s: 'вероятность диагноза ХОБЛ', sys: 'lung', kr: KRL('603_3', 'прил. Г3'),
+    w: 'нужна ли спирометрия', t: 'Вопросник ХОБЛ', s: 'вероятность диагноза ХОБЛ', sys: 'lung', kr: KRL('603_3', 'прил. Г3'),
     inputs: [{ id: 'q', type: 'qs', items: [
       ['Возраст', [['0', '40–49'], ['4', '50–59'], ['8', '60–69'], ['10', '≥ 70']]],
       ['Пачка-лет', [['0', '0–14'], ['2', '15–24'], ['3', '25–49'], ['7', '≥ 50']]],
@@ -367,7 +367,7 @@ Object.assign(CALCS, {
     }
   },
   crb65: {
-    t: 'CRB-65', s: 'тяжесть пневмонии, место лечения', sys: 'lung', kr: KRL('654_2', 'прил. Г2'),
+    w: 'лечить дома или в стационаре', t: 'CRB-65', s: 'тяжесть пневмонии, место лечения', sys: 'lung', kr: KRL('654_2', 'прил. Г2'),
     inputs: [{ id: 'f', type: 'bools', items: [['c', 'Нарушение сознания из-за пневмонии', 'C', 1], ['r', 'ЧДД ≥ 30 в минуту', 'R', 1], ['b', 'САД < 90 или ДАД ≤ 60 мм рт. ст.', 'B', 1], ['a', 'Возраст ≥ 65 лет', '65', 1]] }],
     calc(v) {
       const sc = sumBools(v, 'f', this.inputs[0].items);
@@ -378,7 +378,7 @@ Object.assign(CALCS, {
     }
   },
   centor: {
-    t: 'Центор/МакАйзек', s: 'стрептококковый тонзиллофарингит', sys: 'lung', kr: KRL('306_3', 'прил. Г1'),
+    w: 'нужен ли антибиотик при ангине', t: 'Центор/МакАйзек', s: 'стрептококковый тонзиллофарингит', sys: 'lung', kr: KRL('306_3', 'прил. Г1'),
     inputs: [
       { id: 'f', type: 'bools', items: [['t', 'Температура > 38 °C', '', 1], ['ton', 'Отёк и гиперемия миндалин, налёты', '', 1], ['nc', 'Нет кашля и катаральных явлений', '', 1], ['ln', 'Увеличенные болезненные переднешейные/подчелюстные лимфоузлы', '', 1]] },
       { id: 'age', type: 'seg', label: 'Возраст', options: [['1', '3–14 лет · +1'], ['0', '15–44 · 0'], ['-1', '≥ 45 · −1']], def: '0' }],
@@ -391,7 +391,7 @@ Object.assign(CALCS, {
     }
   },
   findrisc: {
-    t: 'FINDRISC', s: 'риск предиабета и СД 2 типа', sys: 'drop', kr: KRL('290_2', 'прил. Г1'),
+    w: 'риск СД 2 типа за 10 лет', t: 'FINDRISC', s: 'риск предиабета и СД 2 типа', sys: 'drop', kr: KRL('290_2', 'прил. Г1'),
     inputs: [{ id: 'q', type: 'qs', items: [
       ['Возраст', [['0', '< 45'], ['2', '45–54'], ['3', '55–64'], ['4', '> 65']]],
       ['ИМТ', [['0', '< 25'], ['1', '25–30'], ['3', '> 30']]],
@@ -408,7 +408,7 @@ Object.assign(CALCS, {
     }
   },
   fib4: {
-    t: 'FIB-4', s: 'фиброз печени при НАЖБП', sys: 'gut', kr: KRL('748_2', 'прил. Г3'),
+    w: 'фиброз печени: нужна ли эластография', t: 'FIB-4', s: 'фиброз печени при НАЖБП', sys: 'gut', kr: KRL('748_2', 'прил. Г3'),
     inputs: [{ id: 'age', type: 'num', label: 'Возраст', unit: 'лет', min: 18, max: 100 }, { id: 'ast', type: 'num', label: 'АСТ', unit: 'Ед/л', min: 1, max: 5000 }, { id: 'alt', type: 'num', label: 'АЛТ', unit: 'Ед/л', min: 1, max: 5000 }, { id: 'plt', type: 'num', label: 'Тромбоциты', unit: '× 10⁹/л', min: 1, max: 2000 }],
     calc(v) {
       const a = num(v.age), s = num(v.ast), l = num(v.alt), p = num(v.plt); if (!(a > 0 && s > 0 && l > 0 && p > 0)) return null;
@@ -418,7 +418,7 @@ Object.assign(CALCS, {
     }
   },
   childpugh: {
-    t: 'Чайлд–Пью', s: 'класс тяжести цирроза', sys: 'gut', kr: KRL('715_2', 'прил. Г1'),
+    w: 'тяжесть цирроза', t: 'Чайлд–Пью', s: 'класс тяжести цирроза', sys: 'gut', kr: KRL('715_2', 'прил. Г1'),
     inputs: [{ id: 'q', type: 'qs', items: [
       ['Асцит', [['1', 'нет'], ['2', 'небольшой'], ['3', 'умеренный/большой']]],
       ['Энцефалопатия', [['1', 'нет'], ['2', 'небольшая/умеренная'], ['3', 'умеренная/выраженная']]],
@@ -432,7 +432,7 @@ Object.assign(CALCS, {
     }
   },
   meld: {
-    t: 'MELD', s: 'прогноз при заболеваниях печени', sys: 'gut', kr: KRL('715_2', 'прил. Г2'),
+    w: 'прогноз при циррозе', t: 'MELD', s: 'прогноз при заболеваниях печени', sys: 'gut', kr: KRL('715_2', 'прил. Г2'),
     inputs: [{ id: 'cr', type: 'num', label: 'Креатинин', unit: 'мкмоль/л', min: 10, max: 2000 }, { id: 'bil', type: 'num', label: 'Общий билирубин', unit: 'мкмоль/л', min: 1, max: 1000 }, { id: 'inr', type: 'num', label: 'МНО', unit: '', min: 0.5, max: 10 },
       { id: 'f', type: 'bools', items: [['hd', 'Диализ ≥ 2 раз за последнюю неделю', 'креатинин принимают за 4 мг/дл', 0]] }],
     calc(v) {
@@ -446,7 +446,7 @@ Object.assign(CALCS, {
     }
   },
   audit: {
-    t: 'AUDIT', s: 'употребление алкоголя', sys: 'gut', kr: KRL('711_2', 'прил. Г1'),
+    w: 'вредное употребление алкоголя', t: 'AUDIT', s: 'употребление алкоголя', sys: 'gut', kr: KRL('711_2', 'прил. Г1'),
     inputs: [{ id: 'q', type: 'qs', items: [
       ['Как часто употребляет спиртное', [['0', 'никогда'], ['1', '≤ 1 раза в месяц'], ['2', '2–4 раза в месяц'], ['3', '2–3 раза в неделю'], ['4', '≥ 4 раз в неделю']]],
       ['Сколько обычно в день (водка 40%)', [['0', '30–60 мл'], ['1', '90–120 мл'], ['2', '150–180 мл'], ['3', '210–240 мл'], ['4', '> 300 мл']]],
@@ -463,7 +463,7 @@ Object.assign(CALCS, {
     }
   },
   act: {
-    t: 'ACT', s: 'контроль бронхиальной астмы', sys: 'lung', kr: KRL('359_3', 'прил. Г1'),
+    w: 'контроль астмы', t: 'ACT', s: 'контроль бронхиальной астмы', sys: 'lung', kr: KRL('359_3', 'прил. Г1'),
     inputs: [{ id: 'q', type: 'likert', note: 'Ответы пациента по бланку теста за последние 4 недели: 1 — худший вариант, 5 — лучший.', opts: [['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5']], items: ['Астма мешала делам на работе, учёбе, дома', 'Одышка', 'Ночные или ранние утренние пробуждения из-за симптомов', 'Ингалятор быстрого действия', 'Собственная оценка контроля астмы'] }],
     calc(v) {
       const { s, all } = qsum(v, 'q', 5); if (!all) return null;
@@ -474,7 +474,7 @@ Object.assign(CALCS, {
     }
   },
   hads: {
-    t: 'HADS', s: 'тревога и депрессия', sys: 'brain', kr: KRL('617_5', 'прил. Г'),
+    w: 'тревога и депрессия', t: 'HADS', s: 'тревога и депрессия', sys: 'brain', kr: KRL('617_5', 'прил. Г'),
     inputs: [{ id: 'a', type: 'num', label: 'Подшкала тревоги (Т), сумма', unit: '0–21', min: 0, max: 21 }, { id: 'd', type: 'num', label: 'Подшкала депрессии (Д), сумма', unit: '0–21', min: 0, max: 21 }],
     calc(v) {
       const a = num(v.a), d = num(v.d); const ok = x => x >= 0 && x <= 21;
@@ -488,7 +488,7 @@ Object.assign(CALCS, {
     }
   },
   frax: {
-    t: 'FRAX', s: '10-летняя вероятность переломов', sys: 'bone', kr: KRL('87_5', 'разд. 2, прил. Г1'),
+    w: 'риск переломов, нужно ли лечение', t: 'FRAX', s: '10-летняя вероятность переломов', sys: 'bone', kr: KRL('87_5', 'разд. 2, прил. Г1'),
     link: 'https://frax.shef.ac.uk/FRAX/tool.aspx?lang=rs',
     info: ['Алгоритм FRAX закрыт и считается только на официальном сайте — кнопка ниже откроет его (версия для России).',
       'Скрининг FRAX рекомендован всем женщинам в постменопаузе и мужчинам старше 50 лет (УУР A · УДД 1).',
@@ -497,7 +497,7 @@ Object.assign(CALCS, {
     inputs: [], calc() { return null; }
   },
   phq9: {
-    t: 'PHQ-9', s: 'скрининг депрессии', sys: 'brain', kr: KRL('613_2', 'прил. Г10'),
+    w: 'выраженность депрессии', t: 'PHQ-9', s: 'скрининг депрессии', sys: 'brain', kr: KRL('613_2', 'прил. Г10'),
     inputs: [{ id: 'q', type: 'likert', note: 'Как часто за последние 2 недели беспокоило:', opts: LIK4, items: ['Мало интересовали дела, ничто не радовало', 'Подавленность, депрессия, безнадёжность', 'Проблемы со сном: трудно заснуть, плохой сон или слишком много сна', 'Усталость, недостаток энергии', 'Плохой аппетит или переедание', 'Недовольство собой, мысли, что подводит себя или семью', 'Трудно сосредоточиться', 'Заторможенность или, наоборот, беспокойство, непоседливость', 'Мысли, что лучше умереть, или о самоповреждении'] }],
     calc(v) {
       const { s, all } = qsum(v, 'q', 9); const p2 = qv(v, 'q', 0) + qv(v, 'q', 1);
@@ -510,7 +510,7 @@ Object.assign(CALCS, {
     }
   },
   gad7: {
-    t: 'GAD-7', s: 'скрининг тревожного расстройства', sys: 'brain', kr: KRL('741_1', 'прил. Г2'),
+    w: 'тревожное расстройство', t: 'GAD-7', s: 'скрининг тревожного расстройства', sys: 'brain', kr: KRL('741_1', 'прил. Г2'),
     inputs: [{ id: 'q', type: 'likert', note: 'Как часто за последние 2 недели беспокоило:', opts: LIK4, items: ['Нервная возбудимость, беспокойство, раздражительность', 'Не может справиться с волнением', 'Чрезмерное беспокойство по разным поводам', 'Не может расслабиться', 'Крайнее беспокойство, «не может найти себе места»', 'Легко поддаётся беспокойству или раздражительности', 'Опасение чего-то страшного'] }],
     calc(v) {
       const { s, all } = qsum(v, 'q', 7); if (!all) return null;
@@ -519,7 +519,7 @@ Object.assign(CALCS, {
     }
   },
   vnp: {
-    t: '«Возраст не помеха»', s: 'скрининг старческой астении', sys: 'old', kr: KRL('613_2', 'прил. Г1'),
+    w: 'скрининг старческой астении', t: '«Возраст не помеха»', s: 'скрининг старческой астении', sys: 'old', kr: KRL('613_2', 'прил. Г1'),
     inputs: [{ id: 'f', type: 'bools', label: 'Ответы «да»', items: [
       ['w', 'Похудел на ≥ 5 кг за 6 месяцев', 'непреднамеренно', 1], ['vh', 'Ограничения в жизни из-за зрения или слуха', '', 1], ['fall', 'Падения или травмы от падения за последний год', '', 1],
       ['dep', 'Подавленность, грусть, тревога несколько недель', '', 1], ['mem', 'Проблемы с памятью, ориентацией, планированием', '', 1], ['inc', 'Недержание мочи', '', 1], ['mob', 'Трудно пройти 100 м или подняться на 1 пролёт', '', 1]] }],
@@ -535,7 +535,7 @@ Object.assign(CALCS, {
     }
   },
   minicog: {
-    t: 'Мини-Ког', s: 'скрининг когнитивных нарушений', sys: 'old', kr: KRL('613_2', 'прил. Г2'),
+    w: 'скрининг деменции', t: 'Мини-Ког', s: 'скрининг когнитивных нарушений', sys: 'old', kr: KRL('613_2', 'прил. Г2'),
     inputs: [
       { id: 'w', type: 'seg', label: 'Слов вспомнил без подсказки (лимон, ключ, шар)', options: [['0', '0'], ['1', '1'], ['2', '2'], ['3', '3']] },
       { id: 'f', type: 'bools', label: 'Рисунок часов (13:45)', items: [['n', 'Все цифры по порядку и на своих местах', '', 1], ['h', 'Стрелки показывают правильное время', 'длина стрелок не оценивается', 1]] }],
@@ -610,7 +610,7 @@ function bindMkb(live) {
 function debounce(f, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => f(...a), ms); }; }
 function tile(id, edit) {
   const c = CALCS[id], s = SYSM[c.sys];
-  const inner = `${svg(s[3], 'class="ti"')}<b>${esc(c.t)}</b>`;
+  const inner = `${svg(s[3], 'class="ti"')}<span class="tx"><b>${esc(c.tt || c.t)}</b>${c.m ? `<span class="tm">${esc(c.m)}</span>` : ''}${c.w ? `<small>${esc(c.w)}</small>` : ''}</span>`;
   if (!edit) return `<a class="tile sys" href="#calc/${id}" style="${sysVars(s)}">${inner}</a>`;
   return `<div class="tile sys" style="${sysVars(s)};outline:1.5px dashed #9AA3AC;outline-offset:2px">${inner}<button class="rm" data-rm="${id}" aria-label="Убрать «${esc(c.t)}» из избранного">${svg('minus')}</button><button class="mv" data-mv="${id}" aria-label="Переместить «${esc(c.t)}» левее">${svg('left')}</button></div>`;
 }
@@ -742,12 +742,18 @@ function asCodes(q) {
   return null;
 }
 let MKBIDX = null, KRIDX = null;
+const INTLX = window.INTL || {};
+// «Не КР»: справки по международным консенсусам там, где действующей КР Минздрава нет (ГЭРБ)
+const PSEUDO = Object.values(INTLX).filter(x => x.pseudo);
+const pseudoFor = code => PSEUDO.filter(x => x.mkb.some(c => code === c || code.startsWith(c + '.')));
+const docName = id => (BRIEF.docs[id] || INTLX[id] || {}).name || '';
+const krTag = id => BRIEF.docs[id] ? 'КР' + id : 'не КР';
 const plainT = h => String(h || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\s+/g, ' ').trim();
 const norm = t => t.toLowerCase().replace(/ё/g, 'е');
 function krIdx() {
   if (KRIDX) return KRIDX;
   KRIDX = [];
-  const add = (id, tgt, sec, text) => { if (text) KRIDX.push({ id, tgt, sec, text, low: norm(text) }); };
+  const add = (id, tgt, sec, text) => { text = (text || '').replace(/\*\*/g, ''); if (text) KRIDX.push({ id, tgt, sec, text, low: norm(text) }); };
   Object.values(BRIEF.docs).forEach(d => {
     add(d.id, 's1', 'Классификация', plainT(d.classification.html));
     d.treatment.forEach((r, i) => add(d.id, 't' + i, 'Лечение' + (r.h ? ' · ' + r.h.replace(/^[\d.]+\s*/, '') : ''), plainT(r.html) + ' ' + (r.comment_doses || []).join(' ')));
@@ -755,6 +761,13 @@ function krIdx() {
     if (d.referral) add(d.id, 's3', 'Направление и госпитализация', plainT(d.referral));
     add(d.id, 's4', 'Обследование', d.exam.items.concat(d.exam.other).join('. '));
     add(d.id, 's5', 'Диспансерное наблюдение', d.dispensary.order.map(r => r.name + ' ' + r.ind.join(' ')).join('. ') + ' ' + d.dispensary.kr.map(r => plainT(r.html)).join(' '));
+  });
+  PSEUDO.forEach(I => {
+    add(I.id, 's1', 'Классификация', (I.classification.theses || []).join(' ') + ' ' + JSON.stringify(I.classification.blocks).replace(/"[a-z]+":|[{}\[\]",]/g, ' '));
+    add(I.id, 's2', 'Диагноз', I.diagnosis.join(' '));
+    I.treatment.forEach(g => add(I.id, 'g_' + g.id, 'Лечение · ' + g.h, g.items.map(x => x.t + ' ' + (x.dose || '')).join(' ')));
+    add(I.id, 's4', 'Обследование', I.exam.join(' '));
+    add(I.id, 's5', 'Наблюдение', I.followup.join(' '));
   });
   return KRIDX;
 }
@@ -774,15 +787,15 @@ function searchKR(q) {
     const score = ws.reduce((a, w) => a + e.low.split(w).length - 1, 0) + (e.tgt[0] === 't' ? 2 : 0);
     (by[e.id] = by[e.id] || []).push({ e, score });
   });
-  return Object.entries(by).map(([id, hits]) => ({ id, hits: hits.sort((x, y) => y.score - x.score), score: hits.reduce((a, h) => a + h.score, 0) + (norm(BRIEF.docs[id].name).includes(ws[0]) ? 50 : 0) })).sort((x, y) => y.score - x.score).slice(0, 12).map(r => ({ ...r, ws }));
+  return Object.entries(by).map(([id, hits]) => ({ id, hits: hits.sort((x, y) => y.score - x.score), score: hits.reduce((a, h) => a + h.score, 0) + (norm(docName(id)).includes(ws[0]) ? 50 : 0) })).sort((x, y) => y.score - x.score).slice(0, 12).map(r => ({ ...r, ws }));
 }
 function krHitsHtml(list) {
   if (!list.length) return '';
-  return `<h2 class="sec-h">В тексте кратких КР: ${list.length}</h2><div class="khits">${list.map(r => { const d = BRIEF.docs[r.id];
-    return `<div class="card khit"><a class="kh-h" href="#kr/${r.id}"><span class="krb">КР${esc(r.id)}</span><b>${esc(d.name)}</b></a>${r.hits.slice(0, 3).map(h => `<a class="kh-s" href="#kr/${r.id}/-/${h.e.tgt}"><small>${esc(h.e.sec)}</small><span>${snippet(h.e.text, h.e.low, r.ws)}</span></a>`).join('')}${r.hits.length > 3 ? `<a class="kh-more" href="#kr/${r.id}">ещё ${r.hits.length - 3} в этой КР ›</a>` : ''}</div>`; }).join('')}</div>`;
+  return `<h2 class="sec-h">В тексте кратких КР: ${list.length}</h2><div class="khits">${list.map(r => {
+    return `<div class="card khit"><a class="kh-h" href="#kr/${r.id}"><span class="krb ${BRIEF.docs[r.id] ? '' : 'nk'}">${esc(krTag(r.id))}</span><b>${esc(docName(r.id))}</b></a>${r.hits.slice(0, 3).map(h => `<a class="kh-s" href="#kr/${r.id}/-/${h.e.tgt}"><small>${esc(h.e.sec)}</small><span>${snippet(h.e.text, h.e.low, r.ws)}</span></a>`).join('')}${r.hits.length > 3 ? `<a class="kh-more" href="#kr/${r.id}">ещё ${r.hits.length - 3} в этой КР ›</a>` : ''}</div>`; }).join('')}</div>`;
 }
 function goTarget(t) {
-  const el = t[0] === 's' && t.length === 2 ? $('#' + t) : $('#r-' + t);
+  const el = $('#r-' + t) || $('#' + t);
   if (!el) return;
   for (let p = el.parentElement; p; p = p.parentElement) if (p.tagName === 'DETAILS') p.open = true;
   el.scrollIntoView({ block: 'center' });
@@ -792,7 +805,7 @@ function mkbIdx() { if (!MKBIDX) MKBIDX = MKB.n.map(r => ' ' + r[1].toLowerCase(
 function krFor(code) { return (MKB.kr[code] || []); }
 function mkbRow(r) {
   const ks = krFor(r[0]), nb = ks.filter(k => BRIEF.docs[k]).length;
-  const badge = ks.length ? `<span class="badge ${nb ? '' : 'out'}">КР ${ks.length}</span>` : refsFor(r[0]).length ? '<span class="badge">справка</span>' : '';
+  const badge = ks.length ? `<span class="badge ${nb ? '' : 'out'}">КР ${ks.length}</span>` : pseudoFor(r[0]).length ? '<span class="badge nk">не КР</span>' : refsFor(r[0]).length ? '<span class="badge">справка</span>' : '';
   return `<li><a href="#code/${encodeURIComponent(r[0])}"><span class="code">${esc(r[0])}</span><span style="flex:1;min-width:0">${esc(r[1])}</span>${badge}${svg('chev', 'class="chev" style="width:18px;height:18px"')}</a></li>`;
 }
 function mkbPage(q) {
@@ -819,16 +832,18 @@ function mkbResults(q) {
 function codePage(code) {
   const i = MKB.n.findIndex(r => r[0] === code); if (i < 0) return mkbPage(code);
   const r = MKB.n[i];
-  const ks = krFor(code), brief = ks.filter(k => BRIEF.docs[k]), refs = refsFor(code);
-  if (ks.length === 1 && brief.length === 1 && !refs.length) { location.replace('#kr/' + ks[0] + '/' + encodeURIComponent(code)); return; }
+  const ks = krFor(code), brief = ks.filter(k => BRIEF.docs[k]), refs = refsFor(code), ps = pseudoFor(code);
+  if (ks.length === 1 && brief.length === 1 && !refs.length && !ps.length) { location.replace('#kr/' + ks[0] + '/' + encodeURIComponent(code)); return; }
   setTitle(code + ' — МКБ-10', true);
   const kids = []; for (let j = i + 1; j < MKB.n.length && MKB.n[j][2] > r[2]; j++) if (MKB.n[j][2] === r[2] + 1) kids.push(MKB.n[j]);
   const krList = ks.map(k => { const b = BRIEF.docs[k], m = MKB.cr[k] || ['КР' + k, 1];
     return b ? `<li><a href="#kr/${k}/${encodeURIComponent(code)}"><span style="flex:1"><div class="tt">${esc(b.name)}</div><div class="ts">КР${esc(k)} · краткая КР${b.mode === 'brief' ? ' (сокращённая)' : ''}${(window.INTL || {})[k] ? ' · есть международная версия (' + esc(INTL[k].org) + ' ' + INTL[k].year + ')' : ''}</div></span>${svg('chev', 'class="chev"')}</a></li>`
       : `<li><a href="https://cr.minzdrav.gov.ru/preview-cr/${k}"><span style="flex:1"><div class="tt">${esc(m[0])}</div><div class="ts">КР${esc(k)} · нет в справочнике терапевта — открыть на cr.minzdrav.gov.ru</div></span>${svg('chev', 'class="chev"')}</a></li>`; }).join('');
+  const psList = ps.map(I => `<li><a href="#kr/${I.id}/${encodeURIComponent(code)}"><span style="flex:1"><div class="tt">${esc(I.name)}</div><div class="ts"><span class="krb nk">не КР Минздрава</span> по ${esc(I.org)}</div></span>${svg('chev', 'class="chev"')}</a></li>`).join('');
+  const nAll = ks.length + ps.length;
   view.innerHTML = `<div class="krhead"><div style="font-size:26px;font-weight:800;color:var(--accent)">${esc(code)}</div><div style="font-size:17px;font-weight:600">${esc(r[1])}</div></div>
     ${refs.length ? `<h2 class="sec-h">Справка</h2><ul class="list">${refs.map(r => `<li><a href="#mref/${r.id}/${encodeURIComponent(code)}"><span style="flex:1"><div class="tt">${esc(r.title)}</div><div class="ts">${esc(r.badge || '')}</div></span>${svg('chev', 'class="chev"')}</a></li>`).join('')}</ul>` : ''}
-    <h2 class="sec-h">${ks.length ? 'Клинические рекомендации: ' + ks.length : 'Клинические рекомендации'}</h2>${ks.length ? `<ul class="list">${krList}</ul>` : '<div class="empty">Действующих КР для взрослых с этим кодом нет.</div>'}
+    <h2 class="sec-h">${nAll ? 'Клинические рекомендации: ' + nAll : 'Клинические рекомендации'}</h2>${nAll ? `<ul class="list">${psList}${krList}</ul>` : '<div class="empty">Действующих КР для взрослых с этим кодом нет.</div>'}
     ${kids.length ? `<h2 class="sec-h">Входящие коды: ${kids.length}</h2><ul class="list">${kids.map(mkbRow).join('')}</ul>` : ''}`;
 }
 
@@ -877,14 +892,15 @@ function showTx(d, g) {
   box.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 const wrapT = h => (h || '').replace(/<table>/g, '<div class="tbl"><table>').replace(/<\/table>/g, '</table></div>');
-const INTLX = window.INTL || {};
 function modeSwitch(id, mode) {
-  if (!INTLX[id]) return '';
+  if (!INTLX[id] || INTLX[id].pseudo) return '';
   return `<div class="seg kmode" data-kmode="1"><button data-m="kr" class="${mode === 'kr' ? 'on' : ''}" aria-pressed="${mode === 'kr'}">КР Минздрава</button><button data-m="intl" class="${mode === 'intl' ? 'on' : ''}" aria-pressed="${mode === 'intl'}">Международные</button></div>`;
 }
 function bindMode(id, hlCode) { $$('[data-kmode] button').forEach(b => b.onclick = () => { LS.set('krmode', b.dataset.m); krPage(id, hlCode); window.scrollTo(0, 0); }); }
 function krPage(id, hlCode, target) {
-  const d = BRIEF.docs[id]; if (!d) { view.innerHTML = '<div class="empty">КР не найдена.</div>'; return; }
+  const d = BRIEF.docs[id];
+  if (!d && INTLX[id] && INTLX[id].pseudo) { const I = INTLX[id]; intlPage({ id, name: I.name, mkb: I.mkb }, I, hlCode); if (target) setTimeout(() => goTarget(target), 60); return; }
+  if (!d) { view.innerHTML = '<div class="empty">КР не найдена.</div>'; return; }
   if (INTLX[id] && LS.get('krmode', 'kr') === 'intl' && !target) return intlPage(d, INTLX[id], hlCode);
   setTitle('КР' + d.id, true);
   const S = (n, sid, title, src, body) => `<section class="ks" id="${sid}"><h3><span class="n">${n}</span><span>${title}</span><span class="src">${esc(src)}</span></h3>${body}</section>`;
@@ -929,23 +945,26 @@ function krPage(id, hlCode, target) {
 
 /* ---------------------------------------------------------------- международная версия краткой КР */
 const ulist = a => `<div class="card"><ul class="ilist">${a.map(x => `<li>${md(x)}</li>`).join('')}</ul></div>`;
-const itemH = it => `<div class="rec"><div>${markTerms(md(it.t))}</div>${it.dose ? `<div class="idose">${svg('pill', 'style="width:15px;height:15px;flex:none"')}<span>${markTerms(esc(it.dose))}</span></div>` : ''}${it.cls ? `<span class="grade">Класс ${esc(it.cls)}</span>` : ''}</div>`;
+const itemH = it => `<div class="rec"><div>${markTerms(md(it.t))}</div>${it.dose ? `<div class="idose">${svg('pill', 'style="width:15px;height:15px;flex:none"')}<span>${markTerms(esc(it.dose))}</span></div>` : ''}${it.cls ? `<span class="grade">Класс ${esc(it.cls)}</span>` : ''}${it.src ? `<span class="grade">${esc(it.src)}</span>` : ''}</div>`;
 function intlPage(d, I, hlCode) {
-  setTitle(I.org + ' ' + I.year, true);
+  const P = !!I.pseudo;
+  setTitle(P ? 'Не КР · ' + I.org : I.org + ' ' + I.year, true);
   const GO = [];
   const S = (n, sid, title, body) => `<section class="ks" id="${sid}"><h3><span class="n">${n}</span><span>${title}</span></h3>${body}</section>`;
   const tx = I.treatment.map((g, i) => `<details class="fold" ${i === 0 ? 'open' : ''} id="g_${g.id}"><summary>${esc(g.h)}<span class="meta">${g.items.length}${g.items.some(x => x.dose) ? ' · дозы' : ''}</span></summary><div>${g.items.map(itemH).join('')}</div></details>`).join('');
   view.innerHTML = `<div class="krhead"><h2>${esc(d.name)}</h2><div class="meta">${esc(I.guideline)}</div>
     <div class="chips">${d.mkb.map(c => `<span class="chip ${c === hlCode ? 'hl' : ''}">${esc(c)}</span>`).join('')}</div>${modeSwitch(d.id, 'intl')}</div>
-    <nav class="jump" aria-label="Разделы">${[['s0', 'Отличия'], ['s1', 'Классификация'], ['s2', 'Диагноз'], ['s3', 'Лечение'], ['s4', 'Обследование'], ['s5', 'Наблюдение']].map(x => `<button data-j="${x[0]}">${x[1]}</button>`).join('')}</nav>
-    ${S('≠', 's0', 'Отличия от КР Минздрава', `<div class="card idiff"><ul class="ilist">${I.diffs.map(x => `<li>${md(x)}</li>`).join('')}</ul></div>`)}
+    ${P ? `<div class="card nkr"><b>⚠ Не клиническая рекомендация Минздрава</b><span>${esc(I.note)}</span></div>` : ''}
+    <nav class="jump" aria-label="Разделы">${[...(P ? [] : [['s0', 'Отличия']]), ['s1', 'Классификация'], ['s2', 'Диагноз'], ['s3', 'Лечение'], ['s4', 'Обследование'], ['s5', 'Наблюдение']].map(x => `<button data-j="${x[0]}">${x[1]}</button>`).join('')}</nav>
+    ${P ? '' : S('≠', 's0', 'Отличия от КР Минздрава', `<div class="card idiff"><ul class="ilist">${I.diffs.map(x => `<li>${md(x)}</li>`).join('')}</ul></div>`)}
     ${S(1, 's1', 'Классификация', `<div class="cwrap">${clsHtml(I.classification, GO)}</div>`)}
     ${S(2, 's2', 'Диагноз', ulist(I.diagnosis))}
     ${S(3, 's3', 'Лечение', '<div id="txsel" class="card txsel" hidden></div><div style="display:flex;flex-direction:column;gap:8px">' + tx + '</div>')}
     ${S(4, 's4', 'Обследование', ulist(I.exam))}
     ${S(5, 's5', 'Наблюдение', ulist(I.followup))}
+    ${P && I.sources ? `<div class="card"><b>Источники</b>${I.sources.map(x => `<a class="lnk" href="${esc(x[1])}" style="font-weight:500">${esc(x[0])}</a>`).join('')}</div>` : ''}
     <a class="bigbtn" href="${esc(I.url)}">Оригинал: ${esc(I.org)} ${I.year}</a>
-    <p class="foot">Краткий пересказ на русском по ${esc(I.guideline)}. Сокращён и не заменяет оригинал; дозы — типичные из guideline, уточняйте по инструкции. Черновик, требует проверки врачом. Класс — класс рекомендации (и уровень доказательств) в терминах guideline.</p>`;
+    <p class="foot">${P ? 'Не КР Минздрава. ' : ''}Краткий пересказ на русском по ${esc(I.guideline)}. Сокращён и не заменяет оригинал; дозы — типичные из guideline, уточняйте по инструкции. Черновик, требует проверки врачом. Класс — класс рекомендации (и уровень доказательств) в терминах guideline.</p>`;
   $$('[data-j]').forEach(b => b.onclick = () => { const s = $('#' + b.dataset.j); if (s) s.scrollIntoView({ behavior: 'smooth' }); });
   bindMode(d.id, hlCode);
   view.onclick = e => {
