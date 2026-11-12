@@ -411,12 +411,42 @@ function markTerms(html) {
     return `<button class="term ${t.kind === 'method' ? 'm' : ''}" data-term="${k}">${m[0]}</button>`;
   })).join('');
 }
+/* ---- классификация: тезисы и инфографика (data/brief/cls), пункты ведут к лечению */
+const md = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+function goBtn(g, short) { const n = g.ti.length + g.si.length; return n ? `<span class="cgo">${short ? 'лечение' : 'лечение · ' + n} ›</span>` : ''; }
+function clsHtml(c, GO) {
+  const reg = (o) => { if (o.go && (o.go.ti.length + o.go.si.length)) { GO.push(o.go); return `data-go="${GO.length - 1}"`; } if (o.jump) return `data-cj="${o.jump}"`; if (o.calc) return `data-calc="${o.calc}"`; return ''; };
+  const head = b => `<div class="ch"><b>${esc(b.title)}</b>${b.sub ? `<span>${esc(b.sub)}</span>` : ''}</div>`;
+  const tag = (o, inner, cls) => { const a = reg(o); return a ? `<button class="${cls} act" ${a}>${inner}</button>` : `<div class="${cls}">${inner}</div>`; };
+  let h = '';
+  if (c.theses && c.theses.length) h += `<div class="card cth"><ul>${c.theses.map(t => `<li>${md(t)}</li>`).join('')}</ul></div>`;
+  c.blocks.forEach(b => {
+    let body = '';
+    if (b.type === 'scale') body = `<div class="cscale">${b.items.map(it => tag(it, `<i class="tn t${it.tone || 0}"></i><span class="cl"><b>${esc(it.label)}</b>${it.crit ? `<small>${esc(it.crit)}</small>` : ''}</span>${it.go ? goBtn(it.go) : it.jump ? '<span class="cgo">↓</span>' : ''}`, 'crow')).join('')}</div>`;
+    else if (b.type === 'tiles') body = `<div class="ctiles" style="grid-template-columns:repeat(${b.items.length},1fr)">${b.items.map(it => tag(it, `<span class="cbig">${esc(it.big)}</span><b>${esc(it.label)}</b>${it.crit ? `<small>${esc(it.crit)}</small>` : ''}${it.go ? goBtn(it.go, 1) : ''}`, 'ctile t' + (it.tone || 0))).join('')}</div>`;
+    else if (b.type === 'matrix') body = `<div class="cmx" style="grid-template-columns:auto repeat(${b.cols.length},1fr)"><span></span>${b.cols.map(x => `<span class="cmh">${esc(x)}</span>`).join('')}${b.rows.map((r, i) => `<span class="cmr">${esc(r)}</span>` + b.cells[i].map(cl => tag(cl, `<span class="cbig">${esc(cl.label)}</span>${cl.crit ? `<small>${esc(cl.crit)}</small>` : ''}${cl.go ? goBtn(cl.go, 1) : ''}`, 'ccell t' + (cl.tone || 0)).replace(/^<(\w+) /, `<$1 style="grid-column:span ${cl.span || 1}" `)).join('')).join('')}</div>`;
+    else if (b.type === 'list') body = `<div class="cscale">${b.items.map(it => tag(it, `<i class="tn dot"></i><span class="cl"><b>${esc(it.label)}</b>${it.crit ? `<small>${esc(it.crit)}</small>` : ''}</span>${it.go ? goBtn(it.go) : it.calc ? `<span class="cgo">${esc(CALCS[it.calc].t)} ›</span>` : ''}`, 'crow')).join('')}</div>`;
+    h += `<div class="card cblk" ${b.id ? `id="cj_${b.id}"` : ''}>${head(b)}${body}${b.note ? `<span class="meta">${esc(b.note)}</span>` : ''}</div>`;
+  });
+  return h;
+}
+function showTx(d, g) {
+  const box = $('#txsel'); if (!box) return;
+  const recs = g.ti.map(i => d.treatment[i]).concat(g.si.map(i => d.treatment_special[i]));
+  box.hidden = false;
+  box.innerHTML = `<div class="txh"><div><span class="meta">Лечение по классификации</span><b>${esc(g.title)}</b></div><button class="x" aria-label="Закрыть">×</button></div>${g.note ? `<div class="txn">${esc(g.note)}</div>` : ''}${recs.map(r => `<div class="rec kr"><b style="font-size:12px;color:var(--muted)">${esc(r.h || '')}</b>${markTerms(r.html)}${r.grade ? `<span class="grade">${esc(r.grade)}</span>` : ''}${r.comment_doses && r.comment_doses.length ? `<div class="cm">${markTerms(r.comment_doses.map(esc).join(' '))}</div>` : ''}</div>`).join('')}<button class="lnk" data-cj="top" style="border:0;cursor:pointer;align-self:flex-start">↑ К классификации</button>`;
+  box.querySelector('.x').onclick = () => { box.hidden = true; $('#s1').scrollIntoView({ behavior: 'smooth' }); };
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 const wrapT = h => (h || '').replace(/<table>/g, '<div class="tbl"><table>').replace(/<\/table>/g, '</table></div>');
 function krPage(id, hlCode) {
   const d = BRIEF.docs[id]; if (!d) { view.innerHTML = '<div class="empty">КР не найдена.</div>'; return; }
   setTitle('КР' + d.id, true);
   const S = (n, sid, title, src, body) => `<section class="ks" id="${sid}"><h3><span class="n">${n}</span><span>${title}</span><span class="src">${esc(src)}</span></h3>${body}</section>`;
-  const cls = d.classification.html ? `<div class="card kr">${wrapT(d.classification.html)}</div>` : '<div class="empty">Раздела 1.5 в КР нет.</div>';
+  const GO = [];
+  const orig = d.classification.html ? `<div class="card kr">${wrapT(d.classification.html)}</div>` : '';
+  const cls = d.cls_ui ? `<div class="cwrap">${clsHtml(d.cls_ui, GO)}</div>${orig ? `<details class="fold"><summary>Полный текст классификации из КР</summary><div class="kr">${wrapT(d.classification.html)}</div></details>` : ''}`
+    : orig || '<div class="empty">Раздела 1.5 в КР нет.</div>';
   let form = d.formulation.map(f => `<div class="card kr"><span class="chip ok" style="align-self:flex-start">из КР, раздел ${esc(f.src)}</span>${wrapT(f.html)}</div>`).join('<div style="height:8px"></div>');
   if (d.formulation_ext) form += `<div class="card"><span class="chip warn" style="align-self:flex-start">не из КР · ${esc(d.formulation_ext.src)}</span><ul style="margin:0;padding-left:20px">${d.formulation_ext.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul><span class="meta">${esc(d.formulation_ext.note)}</span></div>`;
   if (d.formulation_draft) form += `<div class="card"><span class="chip warn" style="align-self:flex-start">черновик · составлен, не из КР</span><ul style="margin:0;padding-left:20px">${d.formulation_draft.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul><span class="meta">${esc(d.formulation_draft.note)}</span></div>`;
@@ -438,11 +468,16 @@ function krPage(id, hlCode) {
   view.innerHTML = `<div class="krhead"><h2>${esc(d.name)}</h2><div class="meta">КР${esc(d.id)} · ${d.age === 3 ? 'взрослые и дети' : 'взрослые'} · утверждена ${dt(d.pub)}${d.mode === 'brief' ? ' · сокращённый вид' : ''}</div>
     <div class="chips">${d.mkb.map(c => `<span class="chip ${c === hlCode ? 'hl' : ''}">${esc(c)}</span>`).join('')}</div></div>
     <nav class="jump" aria-label="Разделы">${[['s1', 'Классификация'], ['s2', 'Диагноз'], ['s3', 'Лечение'], ['s4', 'Обследование'], ['s5', 'Наблюдение']].map(x => `<button data-j="${x[0]}">${x[1]}</button>`).join('')}</nav>
-    ${S(1, 's1', 'Классификация', 'раздел 1.5', cls)}${S(2, 's2', 'Формулировка диагноза', '', form)}${S(3, 's3', 'Лечение', 'разд. 3, 7, прил. А3, Б', treat)}${S(4, 's4', 'Обязательное обследование', d.exam.src, exam)}${S(5, 's5', 'Диспансерное наблюдение', 'приказ 168н', dn)}
+    ${S(1, 's1', 'Классификация', d.cls_ui ? 'тезисы · раздел 1.5' : 'раздел 1.5', cls)}${S(2, 's2', 'Формулировка диагноза', '', form)}${S(3, 's3', 'Лечение', 'разд. 3, 7, прил. А3, Б', '<div id="txsel" class="card txsel" hidden></div>' + treat)}${S(4, 's4', 'Обязательное обследование', d.exam.src, exam)}${S(5, 's5', 'Диспансерное наблюдение', 'приказ 168н', dn)}
     <a class="bigbtn" href="${esc(d.url)}">Полный текст на cr.minzdrav.gov.ru</a>
     <p class="foot">Фрагменты — из текста КР${esc(d.id)}, база КР от ${dt(d.built)}. Черновик, требует проверки врачом. Подсвеченные препараты и методы открывают обзоры Cochrane. ${esc(d.dispensary.order_note)}</p>`;
   $$('[data-j]').forEach(b => b.onclick = () => { const s = $('#' + b.dataset.j); if (s) s.scrollIntoView({ behavior: 'smooth' }); });
-  view.onclick = e => { const b = e.target.closest('.term'); if (b) cochraneSheet(TERM_BY[b.dataset.term], d.id); };
+  view.onclick = e => {
+    const b = e.target.closest('.term'); if (b) { cochraneSheet(TERM_BY[b.dataset.term], d.id); return; }
+    const g = e.target.closest('[data-go]'); if (g) { showTx(d, GO[+g.dataset.go]); return; }
+    const j = e.target.closest('[data-cj]'); if (j) { const t = j.dataset.cj === 'top' ? $('#s1') : $('#cj_' + j.dataset.cj); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    const c = e.target.closest('[data-calc]'); if (c) go('#calc/' + c.dataset.calc);
+  };
 }
 
 /* ---------------------------------------------------------------- Cochrane */
