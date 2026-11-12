@@ -1155,6 +1155,7 @@ const SHARE_TXT = 'Справочник врача-терапевта: каль�
 function shareCard() {
   const u = encodeURIComponent(SITE), t = encodeURIComponent(SHARE_TXT), ut = encodeURIComponent(SHARE_TXT + '\n' + SITE);
   const L = [['Telegram', `https://t.me/share/url?url=${u}&text=${t}`, '#2AABEE'], ['WhatsApp', `https://wa.me/?text=${ut}`, '#25D366'],
+    ['MAX', `https://max.ru/:share?text=${ut}`, '#7B3FF2'],
     ['ВКонтакте', `https://vk.com/share.php?url=${u}&title=${t}`, '#0077FF'], ['Одноклассники', `https://connect.ok.ru/offer?url=${u}&title=${t}`, '#EE8208']];
   return `<div class="card share"><b>Поделиться с коллегами</b><span class="meta">Ссылка открывает справочник в браузере. На Android будет предложено скачать приложение, на iPhone — добавить на экран «Домой».</span>
     <div class="shr">${L.map(x => `<a class="shb" href="${x[1]}" style="--sc:${x[2]}"><i></i>${x[0]}</a>`).join('')}</div>
