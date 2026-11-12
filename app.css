@@ -45,8 +45,12 @@ nav#tabs a.on { color: var(--accent); font-weight: 700; }
 .field .clr { border: 0; background: none; color: var(--muted); font-size: 22px; width: 36px; height: 36px; cursor: pointer; }
 .shell { display: flex; align-items: flex-start; }
 .shell > .main { flex: 1; min-width: 0; }
-.rail { position: sticky; top: calc(56px + var(--sat)); flex: none; width: 74px; align-self: stretch; background: var(--surface); border-left: 1px solid var(--line); min-height: calc(100vh - 118px); }
-.rail a { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 74px; padding: 6px 2px; text-decoration: none; color: var(--muted); font-size: 10px; line-height: 1.12; text-align: center; }
+/* все системы помещаются по высоте экрана без прокрутки: высота = экран − шапка − строка поиска − нижние вкладки */
+.rail { position: sticky; top: calc(56px + var(--sat)); flex: none; width: 74px; align-self: flex-start; display: flex; flex-direction: column; background: var(--surface); border-left: 1px solid var(--line);
+  height: calc(100vh - 56px - var(--sat) - 62px - var(--sab) - 61px); height: calc(100dvh - 56px - var(--sat) - 62px - var(--sab) - 61px); min-height: 360px; overflow-y: auto; scrollbar-width: none; }
+.rail::-webkit-scrollbar { display: none; }
+.rail a { position: relative; flex: 1 1 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 40px; max-height: 84px; padding: 2px; text-decoration: none; color: var(--muted); font-size: 10.5px; line-height: 1.1; text-align: center; white-space: nowrap; }
+.rail a svg { width: 22px; height: 22px; flex: none; }
 .rail a.on { font-weight: 700; }
 .rail a.on::before { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px; border-radius: 0 3px 3px 0; background: currentColor; }
 .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px 10px 8px; }
