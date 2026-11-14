@@ -248,6 +248,7 @@ def build_site(a):
         for f in files:
             shutil.copy(os.path.join(www, f[0]), d)
         open(os.path.join(d, 'sw.js'), 'w', encoding='utf-8').write(sw)
+    build_demos(site, www, files, v, tag)
 
     meta = json.loads(open(os.path.join(www, 'data_meta.js'), encoding='utf-8').read()[len('var META='):-2])
     apk_info = {}
@@ -288,10 +289,34 @@ h1{{font-size:26px;margin:0 0 4px}}.m{{color:#5C6670;font-size:14px}}.b{{display
     print('site', site, 'ota v', v, 'files', len(files))
 
 
+def active_demos(today=None):
+    """Действующие демо-копии из data/config.json (дата — по Екатеринбургу)."""
+    cfg = json.load(open(os.path.join(ROOT, 'data', 'config.json'), encoding='utf-8'))
+    today = today or (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=5)).strftime('%Y-%m-%d')
+    return [x for x in cfg.get('demos', []) if re.fullmatch(r'demo-[a-z0-9]{4,16}', x.get('id', '')) and x.get('until', '') >= today]
+
+
+def build_demos(site, www, files, v, tag):
+    for dm in active_demos():
+        d = os.path.join(site, dm['id'])
+        os.makedirs(d, exist_ok=True)
+        for f in files:
+            shutil.copy(os.path.join(www, f[0]), d)
+        mp = os.path.join(d, 'data_meta.js')
+        meta = json.loads(open(mp, encoding='utf-8').read()[len('var META='):-2])
+        meta['demo_until'] = dm['until']
+        open(mp, 'w', encoding='utf-8').write('var META=' + json.dumps(meta, ensure_ascii=False, separators=(',', ':')) + ';\n')
+        h = sha(mp)[:10]
+        fl = ['./'] + [f'{f[0]}?h={(h if f[0] == "data_meta.js" else f[1][:10])}' for f in files]
+        open(os.path.join(d, 'sw.js'), 'w', encoding='utf-8').write(SW_JS.replace('__VERSION__', f'{v}-{tag}-{h}').replace('__FILES__', json.dumps(fl)))
+        print('demo', dm['id'], 'до', dm['until'])
+
+
 SW_JS = r'''/* Справочник терапевта — офлайн-кэш веб-версии. Версия меняется при любом изменении файлов. */
 const VERSION = '__VERSION__';
 const FILES = __FILES__;
-const CACHE = 'terapevt-' + VERSION;
+const PFX = 'terapevt-' + new URL('./', self.location).pathname + '@';
+const CACHE = PFX + VERSION;
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => Promise.all(FILES.map(u => fetch(u, { cache: 'reload' }).then(r => {
     if (!r.ok) throw new Error(u + ' ' + r.status);
@@ -299,7 +324,7 @@ self.addEventListener('install', e => {
   }))))); // первая установка активируется сразу; обновление ждёт кнопки «Применить» (message 'skip')
 });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith('terapevt-') && k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => (k.startsWith(PFX) && k !== CACHE) || /^terapevt-\d/.test(k)).map(k => caches.delete(k)))).then(() => self.clients.claim()));
 });
 self.addEventListener('message', e => { if (e.data === 'skip') self.skipWaiting(); });
 self.addEventListener('fetch', e => {

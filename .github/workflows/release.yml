@@ -8,6 +8,8 @@ on:
     branches: [main]
     paths: ['web/**', 'data/**', 'tools/**', '.github/workflows/release.yml']
   workflow_dispatch:
+  schedule:
+    - cron: '7 20 * * *'   # 01:07 по Екатеринбургу: убрать демо-копии с истёкшим сроком
 
 permissions:
   contents: write
@@ -26,7 +28,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Нужна ли публикация
+        id: need
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then echo "run=1" >> "$GITHUB_OUTPUT"; exit 0; fi
+          git fetch --depth=1 origin gh-pages:gh-pages
+          if python3 tools/demos.py stale; then echo "run=1" >> "$GITHUB_OUTPUT"; else echo "run=0" >> "$GITHUB_OUTPUT"; fi
       - name: Публикация
+        if: steps.need.outputs.run == '1'
         env:
           OTA_KEY_PEM: ${{ secrets.OTA_KEY_PEM }}
         run: |
@@ -38,6 +47,6 @@ jobs:
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
           sh tools/fetch_kr.sh
           umask 077 && printf '%s\n' "$OTA_KEY_PEM" > "$RUNNER_TEMP/ota.pem"
-          git fetch --depth=1 origin gh-pages:gh-pages
+          git fetch --depth=1 origin gh-pages:gh-pages || true
           OTA_KEY="$RUNNER_TEMP/ota.pem" bash tools/release.sh data
           rm -f "$RUNNER_TEMP/ota.pem"
