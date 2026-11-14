@@ -1420,7 +1420,9 @@ if (!N) document.addEventListener('click', e => {
    (tools/google_stats.gs, адрес — data/config.json → META.stats). Имена и контакты не отправляются;
    контакт в отзыве — только если пользователь сам его вписал. */
 const AN = { last: '', lastAt: 0, sq: {}, busy: false };
-const statsUrl = () => { const u = String(META.stats || '').trim(); return /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u) ? u : ''; };
+// тестовые прогоны (локальный сервер, автоматизированный браузер) статистику не шлют
+const AN_OFF = !!navigator.webdriver || /^(localhost|127\.|0\.0\.0\.0|\[::1\])/.test(location.hostname);
+const statsUrl = () => { const u = AN_OFF ? '' : String(META.stats || '').trim(); return /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u) ? u : ''; };
 const PLAT = META.demo_until ? 'demo' : N ? 'android' : STANDALONE ? 'pwa' : IOS ? 'ios' : 'web';
 const APPV = () => { const i = N ? info() : {}; return (i.versionName ? String(i.versionName).split(' ')[0] + '/' : '') + META.v; };
 function anDev() { let d = LS.get('anDev', ''); if (!/^[a-z0-9]{12}$/.test(d)) { d = ''; while (d.length < 12) d += Math.random().toString(36).slice(2); d = d.slice(0, 12); LS.set('anDev', d); } return d; }
