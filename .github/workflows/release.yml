@@ -8,8 +8,6 @@ on:
     branches: [main]
     paths: ['web/**', 'data/**', 'tools/**', '.github/workflows/release.yml']
   workflow_dispatch:
-  schedule:
-    - cron: '7 20 * * *'   # 01:07 по Екатеринбургу: убрать демо-копии с истёкшим сроком
 
 permissions:
   contents: write
@@ -28,14 +26,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Нужна ли публикация
-        id: need
-        run: |
-          if [ "${{ github.event_name }}" != "schedule" ]; then echo "run=1" >> "$GITHUB_OUTPUT"; exit 0; fi
-          git fetch --depth=1 origin gh-pages:gh-pages
-          if python3 tools/demos.py stale; then echo "run=1" >> "$GITHUB_OUTPUT"; else echo "run=0" >> "$GITHUB_OUTPUT"; fi
       - name: Публикация
-        if: steps.need.outputs.run == '1'
         env:
           OTA_KEY_PEM: ${{ secrets.OTA_KEY_PEM }}
         run: |

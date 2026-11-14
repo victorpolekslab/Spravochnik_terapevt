@@ -1,12 +1,6 @@
 {
  "_": "Настройки сайта. stats — адрес веб-приложения Google Apps Script (tools/google_stats.gs): статистика использования и обратная связь.",
  "stats": "https://script.google.com/macros/s/AKfycbyJJG5CqKYiioaJT27uqBS70IYrgxItjZCDnc1AR5RdAgknOCT2Djer38nrqc_zF2Nhnw/exec",
- "_demos": "Демо-копии сайта: адрес …/Spravochnik_terapevt/<id>/, действует по until включительно (дата по Екатеринбургу). После срока копия не собирается (ежедневная проверка в Actions), а открытая ранее — показывает «Демо-доступ закончился».",
- "demos": [
-  {
-   "id": "demo-791cc8",
-   "until": "2026-11-28",
-   "note": "демо на 14 дней, создано 14.11.2026"
-  }
- ]
+ "_demo_sites": "Демо-копии на отдельных адресах (свой репозиторий на GitHub Pages) — tools/demo.py; срок истекает сам (Action в репозитории демо).",
+ "demo_sites": []
 }
