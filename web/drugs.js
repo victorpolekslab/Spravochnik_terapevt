@@ -33,6 +33,8 @@
 .dg-pick{width:100%;border:0;border-top:1px solid var(--line);background:none;font:inherit;text-align:left;cursor:pointer}\
 .dg-pick:first-child{border-top:0}\
 .dg-pick .dg-add{pointer-events:none;display:flex;align-items:center;justify-content:center}\
+.dg-rx{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--surface2);color:inherit;text-decoration:none;font-size:14.5px}\
+.dg-rx span:last-child{color:var(--accent);font-weight:600;white-space:nowrap}\
 .dg-ixbar{position:fixed;left:12px;right:12px;max-width:796px;margin:0 auto;bottom:calc(68px + var(--sab, 0px));z-index:15;display:flex;align-items:center;gap:10px;background:var(--accent);color:#fff;border-radius:14px;padding:10px 12px;text-decoration:none;box-shadow:0 6px 20px rgba(0,0,0,.22)}\
 .dg-ixbar .dg-ixn{flex:none;min-width:28px;height:28px;border-radius:14px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-weight:700}\
 .dg-ixbar .dg-ixl{flex:1;min-width:0;font-size:14px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\
@@ -224,6 +226,7 @@
       var q = q0 != null ? q0 : lsGet('q', '');
       view.innerHTML = '<div class="dg-wrap"><div class="dg-field"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg>' +
         '<input id="dgq" type="search" placeholder="Торговое название или МНН" autocomplete="off" spellcheck="false" value="' + esc(q) + '"><button id="dgclr" aria-label="Очистить"' + (q ? '' : ' hidden') + '>×</button></div>' +
+        (window.RxModule ? '<a class="dg-rx" href="#rx" style="margin:0 0 10px"><span>Выписка рецептов: какой бланк, сколько, печати</span><span>›</span></a>' : '') +
         '<div id="dgres"></div><div id="dgix"></div>' +
         '<p class="dg-disc">Инструкции: ОХЛП из Единого реестра ЕАЭС и инструкции из ГРЛС. Не заменяют инструкцию к конкретной упаковке. «К взаимодействиям» собирает препараты в список: проверка — кнопкой внизу.</p></div>';
       var inp = document.getElementById('dgq'), clr = document.getElementById('dgclr'), t = null;
@@ -265,7 +268,7 @@
       var head = '<div class="dg-card"><h2>' + esc(r[0]) + '</h2><div class="dg-sub">' + esc(r[1] || '—') + '<br>' + esc(r[2]) + '</div><div>' +
         '<span class="dg-tag">' + esc(r[3]) + '</span>' + (r[4] ? '<span class="dg-tag">АТХ ' + esc(r[4]) + '</span>' : '') + (r[5] ? '<span class="dg-tag">' + esc(r[5]) + '</span>' : '') + '</div>' +
         '<div class="dg-btns"><button class="dg-btn' + (inList(i) ? ' p' : '') + '" id="dgadd">' + (inList(i) ? '✓ В списке взаимодействий' : '+ К проверке взаимодействий') + '</button>' +
-        (list().length ? '<a class="dg-btn" href="#ix">Проверить список</a>' : '') + '</div></div>';
+        (list().length ? '<a class="dg-btn" href="#ix">Проверить список</a>' : '') + '</div>' + rxLine(i, r) + '</div>';
       if (!d) {
         view.innerHTML = '<div class="dg-wrap">' + head + '<div class="dg-note">Для этого препарата не нашлось ни ОХЛП в реестре ЕАЭС, ни инструкции в ГРЛС. Сверьтесь с инструкцией в упаковке.</div></div>';
         bindCardAdd(i); return;
@@ -302,6 +305,13 @@
         var w = view.querySelector('.dg-wrap'); if (w) w.innerHTML = head + '<div class="dg-note">Не удалось загрузить инструкцию (' + esc(e.message || e) + '). Нужен интернет: открытые инструкции сохраняются и потом доступны без сети.</div>';
         bindCardAdd(i);
       });
+    }
+    function rxLine(i, r) {   // форма рецептурного бланка — из помощника выписки рецептов (rx.js)
+      if (!window.RxClassify || !window.RX) return '';
+      try {
+        var c = window.RxClassify(r), t = { '107': 'бланк 107-1/у', '148': 'бланк 148-1/у-88', np: 'бланк 107/у-НП', otc: 'рецепт не нужен', hosp: 'для стационаров' }[c.form];
+        return '<a class="dg-rx" href="#rx/' + i + '"><span>Рецепт: <b>' + esc(t) + '</b></span><span>образец ›</span></a>';
+      } catch (e) { return ''; }
     }
     function bindCardAdd(i) {
       var b = document.getElementById('dgadd');
@@ -398,7 +408,11 @@
       href: function (name) { return '#drugs?q=' + encodeURIComponent(clean(name)); },
       // есть ли такой препарат в справочнике (для ссылок «Инструкция» в схемах); false, пока данные не загружены
       has: function (name) { if (!D) return false; var r = search(clean(name), 1); return !!(r.length && r[0].s >= 30 && D.rows[r[0].i][6] >= 0); },
-      preload: function () { load().catch(function () {}); }
+      preload: function () { load().catch(function () {}); },
+      // для помощника выписки рецептов
+      data: function () { return load().then(function () { return D; }); },
+      search: function (q, limit) { return search(q, limit); },
+      row: function (i) { return D && D.rows[i]; }
     };
   };
 })();

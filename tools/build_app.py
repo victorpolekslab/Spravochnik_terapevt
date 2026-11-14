@@ -160,6 +160,7 @@ def build_data(db, version):
         'data_terms.js': js('TERMS', {'terms': terms, 'conditions': t['conditions']}),
         'data_mkb.js': js('MKB', mkb),
         'data_intl.js': js('INTL', intl),
+        'data_rx.js': js('RX', json.load(open(os.path.join(ROOT, 'data', 'rx', 'rules.json'), encoding='utf-8'))),
     }
 
 
