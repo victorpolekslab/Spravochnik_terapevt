@@ -1387,7 +1387,7 @@ const SW = { reg: null };
 const SITE = 'https://victorpolekslab.github.io/Spravochnik_terapevt/';
 const ANDROID = /Android/i.test(navigator.userAgent);
 function apkBanner() {
-  if (N || !ANDROID || LS.get('apkHide', 0) > Date.now()) return;
+  if (N || META.demo_until || !ANDROID || LS.get('apkHide', 0) > Date.now()) return;
   const b = document.createElement('div'); b.id = 'apkban';
   b.innerHTML = `<span class="ab-i">📱</span><span class="ab-t"><b>Приложение для Android</b><small>Работает без интернета, данные обновляются в фоне</small></span><a class="ab-b" href="${SITE}download/SpravochnikTerapevt.apk">Скачать APK</a><button class="ab-x" aria-label="Скрыть">×</button>`;
   document.body.appendChild(b);
@@ -1421,7 +1421,7 @@ if (!N) document.addEventListener('click', e => {
    контакт в отзыве — только если пользователь сам его вписал. */
 const AN = { last: '', lastAt: 0, sq: {}, busy: false };
 const statsUrl = () => { const u = String(META.stats || '').trim(); return /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u) ? u : ''; };
-const PLAT = N ? 'android' : STANDALONE ? 'pwa' : IOS ? 'ios' : 'web';
+const PLAT = META.demo_until ? 'demo' : N ? 'android' : STANDALONE ? 'pwa' : IOS ? 'ios' : 'web';
 const APPV = () => { const i = N ? info() : {}; return (i.versionName ? String(i.versionName).split(' ')[0] + '/' : '') + META.v; };
 function anDev() { let d = LS.get('anDev', ''); if (!/^[a-z0-9]{12}$/.test(d)) { d = ''; while (d.length < 12) d += Math.random().toString(36).slice(2); d = d.slice(0, 12); LS.set('anDev', d); } return d; }
 function anPush(e, k, n) {
@@ -1535,7 +1535,7 @@ function statsPage() {
     const bars = (rows, lab) => { const mx = Math.max(1, ...rows.map(r => r[1])); return `<div class="ubars">${rows.map((r, i) => `<div class="ubar" title="${esc(r[0])}: ${r[1]}"><i style="height:${Math.round(r[1] / mx * 100)}%"></i><span>${esc(lab(r[0], i))}</span></div>`).join('')}</div>`; };
     const list = (rows, f, empty) => rows.length ? `<div class="ulist">${rows.map(r => `<div class="urow"><span>${f(r)}</span><b>${r[1]}</b>${r[2] != null ? `<small>${r[2]} устр.</small>` : ''}</div>`).join('')}</div>` : `<div class="meta">${empty}</div>`;
     const sq = s => { const i = s.indexOf(':'), sc = s.slice(0, i); return `<i class="usc">${sc === 'mkb' ? 'МКБ/КР' : sc === 'drugs' ? 'препар.' : sc === 'rx' ? 'рецепт' : esc(sc)}</i> ${esc(s.slice(i + 1))}`; };
-    const PL = { android: 'Android-приложение', pwa: 'На экране «Домой»', ios: 'iPhone, Safari', web: 'Браузер' };
+    const PL = { demo: 'Демо-ссылка', android: 'Android-приложение', pwa: 'На экране «Домой»', ios: 'iPhone, Safari', web: 'Браузер' };
     box.innerHTML = `<div class="ukpi"><div><b>${u.devices}</b><span>устройств за ${ST_DAYS} дн.</span></div><div><b>${u.newDev}</b><span>новых</span></div><div><b>${u.today}</b><span>сегодня</span></div><div><b>${u.avgDay}</b><span>в среднем в день</span></div></div>
       <h2 class="sec-h">Устройств по дням</h2>${bars(u.daily, (s, i) => { const st = Math.ceil(u.daily.length / 7), j = u.daily.length - 1 - i; return j % st === 0 ? s.slice(8, 10) + '.' + s.slice(5, 7) : ''; })}
       <h2 class="sec-h">Что открывают</h2>${list(u.views, r => esc(anTitle(r[0])), 'Пока нет данных.')}
@@ -1554,7 +1554,25 @@ function statsPage() {
 const PLAT_T = p => ({ android: 'Android', pwa: 'экран «Домой»', ios: 'iPhone', web: 'браузер' })[p] || p || '';
 
 /* ---------------------------------------------------------------- старт */
+/* демо-копия сайта (…/demo-xxxx/): плашка со сроком, после срока — только сообщение */
+function demoGate() {
+  const u = META.demo_until; if (!u) return true;
+  const d = new Date(Date.now() + 5 * 3600e3).toISOString().slice(0, 10);   // дата по Екатеринбургу
+  const ru = u.split('-').reverse().join('.');
+  if (d > u) {
+    document.body.classList.add('demo-off');
+    setTitle('Справочник терапевта', false);
+    view.innerHTML = `<div class="wrap"><div class="card"><b style="font-size:18px">Демо-доступ закончился</b><span>Ссылка действовала до ${ru} включительно.</span><span class="meta">Чтобы продолжить, попросите у автора действующую ссылку.</span></div></div>`;
+    try { navigator.serviceWorker && navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.scope === new URL('./', location.href).href && r.unregister())); } catch (e) {}
+    try { caches.keys().then(ks => ks.filter(k => k.indexOf('terapevt-' + new URL('./', location.href).pathname + '@') === 0).forEach(k => caches.delete(k))); } catch (e) {}
+    return false;
+  }
+  document.body.insertAdjacentHTML('afterbegin', `<div id="demoban">Демо-версия · доступ до ${ru}</div>`);
+  document.body.classList.add('demo');
+  return true;
+}
 (function start() {
+  if (!demoGate()) return;
   const i = info(); if (i.pending) App.otaReady();
   anOpen();
   route();

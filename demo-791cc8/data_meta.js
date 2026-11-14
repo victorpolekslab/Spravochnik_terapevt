@@ -1,0 +1,1 @@
+var META={"stats":"https://script.google.com/macros/s/AKfycbyJJG5CqKYiioaJT27uqBS70IYrgxItjZCDnc1AR5RdAgknOCT2Djer38nrqc_zF2Nhnw/exec","v":"202611141535","kr_built":"2026-11-03","built":"2026-11-14","ndocs":40,"demo_until":"2026-11-28"};
