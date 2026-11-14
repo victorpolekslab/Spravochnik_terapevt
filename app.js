@@ -725,7 +725,7 @@ function calcPage(id) {
     const t = $('#tips');
     if (r.tips && r.tips.length) {
       t.hidden = false;
-      t.innerHTML = `<h2>${svg('bulb', 'style="color:var(--accent);width:20px;height:20px"')}Что ещё сделать</h2><ol>${r.tips.map((x, n) => `<li><span>${n + 1}</span><div>${esc(x.t)}<small>${esc(x.s)}</small>${x.calc ? `<a class="lnk" href="#calc/${x.calc}">${esc(CALCS[x.calc].t)} ›</a>` : ''}${x.ref ? `<a class="lnk" href="#ref/${x.ref}">${esc(REF[x.ref].title)} ›</a>` : ''}${x.kr && BRIEF.docs[x.kr] ? `<a class="lnk" href="#kr/${x.kr}">${esc(BRIEF.docs[x.kr].name)} ›</a>` : ''}</div></li>`).join('')}</ol>`;
+      t.innerHTML = `<h2>${svg('bulb', 'style="color:var(--accent);width:20px;height:20px"')}Что ещё сделать</h2><ol>${r.tips.filter(x => !x.ref || REF[x.ref]).map((x, n) => `<li><span>${n + 1}</span><div>${esc(x.t)}<small>${esc(x.s)}</small>${x.calc ? `<a class="lnk" href="#calc/${x.calc}">${esc(CALCS[x.calc].t)} ›</a>` : ''}${x.ref ? `<a class="lnk" href="#ref/${x.ref}">${esc(REF[x.ref].title)} ›</a>` : ''}${x.kr && BRIEF.docs[x.kr] ? `<a class="lnk" href="#kr/${x.kr}">${esc(BRIEF.docs[x.kr].name)} ›</a>` : ''}</div></li>`).join('')}</ol>`;
     } else t.hidden = true;
     stickyRefresh();
   };

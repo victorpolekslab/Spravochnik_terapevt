@@ -1,6 +1,6 @@
 /* Справочник терапевта — офлайн-кэш веб-версии. Версия меняется при любом изменении файлов. */
-const VERSION = '202611141550-aaa460382a';
-const FILES = ["./", "app.css?h=5cb3b6515c", "app.js?h=97ea5ebad7", "data_brief.js?h=9d1947f5bd", "data_intl.js?h=eaf8469705", "data_meta.js?h=20c9eae290", "data_mkb.js?h=b10b88aedc", "data_ref.js?h=8411adc669", "data_rx.js?h=bf5ea0273c", "data_terms.js?h=d50ec20475", "drugs.js?h=c09a4c9a2e", "icon-180.png?h=c3c71aa63f", "icon-192.png?h=5028c8331e", "icon-512.png?h=56d616cc27", "icon-maskable-512.png?h=f32df9ff86", "index.html?h=399c24e15e", "manifest.webmanifest?h=077e009353", "route_addr.js?h=39bfd0c555", "route_data.js?h=4bb42aecb7", "rx.js?h=b35b42b7aa"];
+const VERSION = '202611141553-4f44a48f29';
+const FILES = ["./", "app.css?h=5cb3b6515c", "app.js?h=5e85c364ac", "data_brief.js?h=9d1947f5bd", "data_intl.js?h=eaf8469705", "data_meta.js?h=270925d0a3", "data_mkb.js?h=b10b88aedc", "data_ref.js?h=8411adc669", "data_rx.js?h=bf5ea0273c", "data_terms.js?h=d50ec20475", "drugs.js?h=c09a4c9a2e", "icon-180.png?h=c3c71aa63f", "icon-192.png?h=5028c8331e", "icon-512.png?h=56d616cc27", "icon-maskable-512.png?h=f32df9ff86", "index.html?h=399c24e15e", "manifest.webmanifest?h=077e009353", "route_addr.js?h=39bfd0c555", "route_data.js?h=4bb42aecb7", "rx.js?h=b35b42b7aa"];
 const PFX = 'terapevt-' + new URL('./', self.location).pathname + '@';
 const CACHE = PFX + VERSION;
 self.addEventListener('install', e => {
