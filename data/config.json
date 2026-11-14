@@ -2,5 +2,12 @@
  "_": "Настройки сайта. stats — адрес веб-приложения Google Apps Script (tools/google_stats.gs): статистика использования и обратная связь.",
  "stats": "https://script.google.com/macros/s/AKfycbyJJG5CqKYiioaJT27uqBS70IYrgxItjZCDnc1AR5RdAgknOCT2Djer38nrqc_zF2Nhnw/exec",
  "_demo_sites": "Демо-копии на отдельных адресах (свой репозиторий на GitHub Pages) — tools/demo.py; срок истекает сам (Action в репозитории демо).",
- "demo_sites": []
+ "demo_sites": [
+  {
+   "repo": "demo-bwbi0y4q",
+   "url": "https://victorpolekslab.github.io/demo-bwbi0y4q/",
+   "until": "2026-11-28",
+   "created": "2026-11-14"
+  }
+ ]
 }
