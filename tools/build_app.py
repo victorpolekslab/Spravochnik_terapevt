@@ -151,7 +151,8 @@ def build_data(db, version):
             kr[code] = sorted(s, key=lambda x: (x not in docs, x))
     used = set(x for v in kr.values() for x in v)
     mkb = {'n': nodes, 'kr': kr, 'cr': adult}
-    meta = {'v': str(version), 'kr_built': built, 'built': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d'), 'ndocs': len(docs)}
+    cfg = json.load(open(os.path.join(ROOT, 'data', 'config.json'), encoding='utf-8')) if os.path.exists(os.path.join(ROOT, 'data', 'config.json')) else {}
+    meta = {'stats': cfg.get('stats', ''), 'v': str(version), 'kr_built': built, 'built': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d'), 'ndocs': len(docs)}
     return {
         'data_meta.js': js('META', meta),
         'data_brief.js': js('BRIEF', {'docs': docs}),
