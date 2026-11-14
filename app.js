@@ -581,6 +581,7 @@ $('#hshare').onclick = () => go('#share');
 $('#hinfo').onclick = () => go('#about');
 // Препараты: поиск по инструкциям и проверка взаимодействий (drugs.js, данные — ветка drugs репозитория Spravochnik_nmp)
 const DM = window.DrugsModule ? window.DrugsModule({ view, go, setTitle: (t, back) => setTitle(t, back), fetchText: nfetch }) : null;
+const RXM = DM && window.RxModule ? window.RxModule({ view, go, esc, icon: n => svg(n), setTitle: (t, back) => setTitle(t, back), dm: DM }) : null;
 if (DM) setTimeout(() => DM.preload(), 1500);
 function route() {
   const raw = location.hash.slice(1) || 'home';
@@ -588,7 +589,7 @@ function route() {
   const h = decodeURIComponent(raw.split('?')[0]);
   const [p, a, b, c] = h.split('/');
   closeSheet(true); stickyCompact(null);
-  curTab = ['ref', 'duty', 'dtab'].includes(p) ? 'ref' : ['about', 'share', 'feedback', 'stats'].includes(p) ? '' : ['drugs', 'drug', 'ix'].includes(p) ? 'drugs' : 'home';
+  curTab = ['ref', 'duty', 'dtab'].includes(p) ? 'ref' : ['about', 'share', 'feedback', 'stats'].includes(p) ? '' : ['drugs', 'drug', 'ix', 'rx'].includes(p) ? 'drugs' : 'home';
   $('#hshare').classList.toggle('on', p === 'share'); $('#hinfo').classList.toggle('on', p === 'about');
   $$('#tabs a').forEach(x => x.classList.toggle('on', x.dataset.tab === curTab));
   window.scrollTo(0, 0);
@@ -608,6 +609,7 @@ function route() {
     else if (p === 'stats') statsPage();
     else if (p === 'duty') dutyPage();
     else if (p === 'dtab') dutyTable(a, b);
+    else if (p === 'rx' && RXM) RXM.route(a);
     else if (DM && ['drugs', 'drug', 'ix'].includes(p)) DM.route([p, a, b], new URLSearchParams(qs));
     else home(false);
   } catch (e) { view.innerHTML = `<div class="empty">Ошибка отображения: ${esc(e.message)}</div>`; }
@@ -1229,7 +1231,8 @@ function refList() {
   const items = Object.values(REF);
   const secs = [...new Set(items.map(x => x.section))];
   const duty = window.ROUTE ? `<a class="card dutycard" href="#duty"><svg viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><path d="M12 7v6M9 10h6"/></svg><span style="flex:1;min-width:0"><div class="tt">Дежурные стационары</div><div class="ts">куда везти: повод, район или адрес · Тюменская область</div></span>${svg('chev', 'class="chev"')}</a>` : '';
-  view.innerHTML = duty + secs.map(s => `<h2 class="sec-h">${esc(s)}</h2><ul class="list">${items.filter(x => x.section === s).map(x => `<li><a href="#ref/${x.id}"><span style="flex:1;min-width:0"><div class="tt">${esc(x.title)}</div><div class="ts">${esc(x.subtitle)}</div><span class="krb" style="display:inline-block;margin-top:4px">${esc(x.badge || x.kr.map(k => 'КР' + k).join(' · '))}</span></span>${svg('chev', 'class="chev"')}</a></li>`).join('')}</ul>`).join('')
+  const rxc = window.RxModule ? `<a class="card dutycard" href="#rx"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 12h3a2 2 0 0 1 0 4h-3v-4zM10 16v3M13 16l3 3"/></svg><span style="flex:1;min-width:0"><div class="tt">Выписка рецептов</div><div class="ts">бланк 107-1/у, 148-1/у-88 или 107/у-НП · количество · печати · образец</div></span>${svg('chev', 'class="chev"')}</a>` : '';
+  view.innerHTML = duty + rxc + secs.map(s => `<h2 class="sec-h">${esc(s)}</h2><ul class="list">${items.filter(x => x.section === s).map(x => `<li><a href="#ref/${x.id}"><span style="flex:1;min-width:0"><div class="tt">${esc(x.title)}</div><div class="ts">${esc(x.subtitle)}</div><span class="krb" style="display:inline-block;margin-top:4px">${esc(x.badge || x.kr.map(k => 'КР' + k).join(' · '))}</span></span>${svg('chev', 'class="chev"')}</a></li>`).join('')}</ul>`).join('')
     + '<p class="hint">Алгоритмы, которые не укладываются в калькулятор или краткую КР. Каждый пункт — со ссылками на разделы КР и уровнями доказательности.</p>';
 }
 function refPage(id) {
@@ -1436,7 +1439,7 @@ function anOpen() {
 }
 function anView(p, a) {
   if (p === 'stats' || p === 'edit') return;
-  const id = a || '', M = { sys: 'sys:' + id, calc: 'calc:' + id, kr: 'kr:' + id, ref: id ? 'ref:' + id : 'ref', mref: 'ref:' + id, dtab: 'duty', code: 'code:' + id };
+  const id = a || '', M = { rx: id ? 'rx:drug' : 'rx', sys: 'sys:' + id, calc: 'calc:' + id, kr: 'kr:' + id, ref: id ? 'ref:' + id : 'ref', mref: 'ref:' + id, dtab: 'duty', code: 'code:' + id };
   const k = String(M[p] || p || 'home').replace(/[^\w:.-]/g, '').slice(0, 60);
   if (k === AN.last && Date.now() - AN.lastAt < 30 * 60e3) return;
   AN.last = k; AN.lastAt = Date.now(); anPush('view', k);
@@ -1500,7 +1503,8 @@ function feedbackPage() {
 let ST_DAYS = 30;
 function anTitle(k) {
   const i = k.indexOf(':'), a = i < 0 ? k : k.slice(0, i), b = i < 0 ? '' : k.slice(i + 1);
-  const plain = { home: 'Избранное', mkb: 'Поиск МКБ-10 и КР', ref: 'Справочник', duty: 'Дежурные стационары', drugs: 'Препараты: поиск', drug: 'Препараты: инструкция', ix: 'Препараты: взаимодействия', about: 'О программе', share: 'Поделиться', feedback: 'Обратная связь' };
+  const plain = { rx: 'Выписка рецептов', 'rx:drug': 'Выписка рецептов: препарат', home: 'Избранное', mkb: 'Поиск МКБ-10 и КР', ref: 'Справочник', duty: 'Дежурные стационары', drugs: 'Препараты: поиск', drug: 'Препараты: инструкция', ix: 'Препараты: взаимодействия', about: 'О программе', share: 'Поделиться', feedback: 'Обратная связь' };
+  if (plain[k]) return plain[k];
   if (!b) return plain[a] || a;
   if (a === 'calc') return 'Калькулятор: ' + (CALCS[b] ? CALCS[b].t : b);
   if (a === 'kr') return 'КР: ' + (docName(b) || b);
@@ -1530,7 +1534,7 @@ function statsPage() {
     if (!u.devices) { box.innerHTML = '<div class="empty">Данных пока нет. Устройства присылают статистику раз в несколько часов — первые цифры появятся в течение дня.</div>'; return; }
     const bars = (rows, lab) => { const mx = Math.max(1, ...rows.map(r => r[1])); return `<div class="ubars">${rows.map((r, i) => `<div class="ubar" title="${esc(r[0])}: ${r[1]}"><i style="height:${Math.round(r[1] / mx * 100)}%"></i><span>${esc(lab(r[0], i))}</span></div>`).join('')}</div>`; };
     const list = (rows, f, empty) => rows.length ? `<div class="ulist">${rows.map(r => `<div class="urow"><span>${f(r)}</span><b>${r[1]}</b>${r[2] != null ? `<small>${r[2]} устр.</small>` : ''}</div>`).join('')}</div>` : `<div class="meta">${empty}</div>`;
-    const sq = s => { const i = s.indexOf(':'), sc = s.slice(0, i); return `<i class="usc">${sc === 'mkb' ? 'МКБ/КР' : sc === 'drugs' ? 'препар.' : esc(sc)}</i> ${esc(s.slice(i + 1))}`; };
+    const sq = s => { const i = s.indexOf(':'), sc = s.slice(0, i); return `<i class="usc">${sc === 'mkb' ? 'МКБ/КР' : sc === 'drugs' ? 'препар.' : sc === 'rx' ? 'рецепт' : esc(sc)}</i> ${esc(s.slice(i + 1))}`; };
     const PL = { android: 'Android-приложение', pwa: 'На экране «Домой»', ios: 'iPhone, Safari', web: 'Браузер' };
     box.innerHTML = `<div class="ukpi"><div><b>${u.devices}</b><span>устройств за ${ST_DAYS} дн.</span></div><div><b>${u.newDev}</b><span>новых</span></div><div><b>${u.today}</b><span>сегодня</span></div><div><b>${u.avgDay}</b><span>в среднем в день</span></div></div>
       <h2 class="sec-h">Устройств по дням</h2>${bars(u.daily, (s, i) => { const st = Math.ceil(u.daily.length / 7), j = u.daily.length - 1 - i; return j % st === 0 ? s.slice(8, 10) + '.' + s.slice(5, 7) : ''; })}
