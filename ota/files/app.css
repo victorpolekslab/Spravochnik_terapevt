@@ -417,3 +417,24 @@ html, body { overflow-anchor: none; }
 .dtab .flags { background: var(--warn-soft); }
 .dtab ol, .dtab ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
 .dtab .bnote { font-size: 13px; color: var(--muted); }
+
+/* обратная связь и статистика автора */
+.seg.s3 { grid-template-columns: repeat(3, 1fr); }
+.fbl { display: flex; flex-direction: column; gap: 4px; font-size: 14px; font-weight: 600; }
+.fb textarea, .fb input, .fbin { font: inherit; font-size: 16px; font-weight: 400; color: var(--fg); background: var(--surface2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; box-sizing: border-box; resize: vertical; }
+.fb textarea:focus, .fb input:focus, .fbin:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.ukpi { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 12px 0; }
+.ukpi div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; }
+.ukpi b { font-size: 24px; color: var(--accent); line-height: 1.1; } .ukpi span { font-size: 12.5px; color: var(--muted); }
+.ubars { display: flex; align-items: flex-end; gap: 2px; height: 110px; padding: 8px 6px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.ubar { flex: 1; height: 100%; position: relative; display: flex; align-items: flex-end; }
+.ubar i { display: block; width: 100%; min-height: 1px; background: var(--accent); border-radius: 2px 2px 0 0; opacity: .85; }
+.ubar span { position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%); font-size: 9.5px; color: var(--muted); white-space: nowrap; }
+.ulist { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.urow { display: flex; align-items: baseline; gap: 8px; padding: 8px 12px; border-top: 1px solid var(--line); font-size: 14px; }
+.urow:first-child { border-top: 0; } .urow span { flex: 1; min-width: 0; } .urow small { color: var(--muted); font-size: 11.5px; white-space: nowrap; }
+.usc { font-style: normal; font-size: 11px; color: var(--muted); background: var(--surface2); border-radius: 5px; padding: 0 5px; margin-right: 2px; }
+.fbi { gap: 4px; }
+.fbl .meta { font-weight: 400; }
+.fb #fbs, #sts { background: var(--accent); color: #fff; }
+.fb #fbs:disabled { opacity: .6; }

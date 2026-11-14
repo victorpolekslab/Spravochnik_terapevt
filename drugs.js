@@ -236,6 +236,7 @@
         lsSet('q', inp.value); clr.hidden = !inp.value;
         var res = search(inp.value), alt = '';
         if (!res.length && /[a-z]/i.test(inp.value)) { var rl = relayout(inp.value); res = search(rl); if (res.length) alt = rl; }
+        if (window.anSearch) window.anSearch('drugs', inp.value, res.length);
         var box = document.getElementById('dgres');
         if (!inp.value.trim()) { box.innerHTML = recent(); bindAdd(box, ixBar); return; }
         box.innerHTML = res.length ? (alt ? '<div class="dg-disc">Показаны результаты для «' + esc(alt) + '»</div>' : '') + '<div class="dg-list">' + res.map(function (o) { return rowH(o); }).join('') + '</div>'

@@ -588,7 +588,7 @@ function route() {
   const h = decodeURIComponent(raw.split('?')[0]);
   const [p, a, b, c] = h.split('/');
   closeSheet(true); stickyCompact(null);
-  curTab = ['ref', 'duty', 'dtab'].includes(p) ? 'ref' : ['about', 'share'].includes(p) ? '' : ['drugs', 'drug', 'ix'].includes(p) ? 'drugs' : 'home';
+  curTab = ['ref', 'duty', 'dtab'].includes(p) ? 'ref' : ['about', 'share', 'feedback', 'stats'].includes(p) ? '' : ['drugs', 'drug', 'ix'].includes(p) ? 'drugs' : 'home';
   $('#hshare').classList.toggle('on', p === 'share'); $('#hinfo').classList.toggle('on', p === 'about');
   $$('#tabs a').forEach(x => x.classList.toggle('on', x.dataset.tab === curTab));
   window.scrollTo(0, 0);
@@ -604,12 +604,16 @@ function route() {
     else if (p === 'ref') a ? refPage(a) : refList();
     else if (p === 'about') about();
     else if (p === 'share') sharePage();
+    else if (p === 'feedback') feedbackPage();
+    else if (p === 'stats') statsPage();
     else if (p === 'duty') dutyPage();
     else if (p === 'dtab') dutyTable(a, b);
     else if (DM && ['drugs', 'drug', 'ix'].includes(p)) DM.route([p, a, b], new URLSearchParams(qs));
     else home(false);
   } catch (e) { view.innerHTML = `<div class="empty">Ошибка отображения: ${esc(e.message)}</div>`; }
   if (N && N.ok) N.ok();
+  if (!['about', 'feedback', 'share', 'stats'].includes(p)) AN.page = h.slice(0, 80);
+  anView(p, a);
 }
 window.addEventListener('hashchange', route);
 function go(h) { if (location.hash === h) route(); else location.hash = h; }
@@ -847,7 +851,8 @@ function mkbResults(q) {
     const idx = mkbIdx(); rows = [];
     for (let i = 0; i < idx.length && rows.length < 300; i++) if (ws.every(w => idx[i].includes(' ' + w))) rows.push(MKB.n[i]);
   }
-  const kh = cs ? '' : krHitsHtml(searchKR(q));
+  const kl = cs ? [] : searchKR(q), kh = cs ? '' : krHitsHtml(kl);
+  anSearch('mkb', q, rows.length + kl.length);
   box.innerHTML = kh + `<h2 class="sec-h">${code ? 'Коды, начинающиеся на ' + esc(code) : 'Диагнозы МКБ-10'}: ${rows.length}${rows.length >= 300 ? '+' : ''}</h2>` + (rows.length ? `<ul class="list">${rows.map(mkbRow).join('')}</ul>` : '<div class="empty">В МКБ-10 не найдено. Попробуйте код (I48) или часть названия.</div>') +
     '<p class="hint">«КР N» — сколько действующих КР для взрослых указывают этот код в применимости. Зелёная метка — есть краткая КР в справочнике.</p>';
 }
@@ -1333,9 +1338,11 @@ function about() {
       <span class="meta">${N ? `Обновления данных загружаются в фоне раз в сутки при наличии интернета и применяются при следующем запуске. Последняя проверка: ${esc(ago)}.` : 'Обновления данных загружаются при открытии справочника, когда есть интернет; применить — кнопкой в баннере вверху.'}</span>
       ${N || SW.reg ? '<button id="chk" class="lnk" style="border:0;cursor:pointer">Проверить обновления сейчас</button><span id="upd" class="meta"></span>' : ''}</div>
     ${!N ? `<div class="card"><b>${IOS ? 'На iPhone' : 'Как приложение'}</b><span>${STANDALONE ? 'Справочник установлен на экран «Домой» и работает без интернета. Новые данные загружаются при открытии, когда есть сеть.' : IOS ? 'Откройте в Safari → кнопка «Поделиться» → «На экран „Домой“». Справочник откроется как приложение и будет работать без интернета.' : 'В меню браузера выберите «Установить приложение» или «Добавить на главный экран». Для Android есть APK — на странице скачивания.'}</span><a class="lnk" href="${SITE}download/">Страница скачивания ›</a></div>` : ''}
+    <div class="card"><b>Обратная связь</b><span class="meta">Пожелания, найденные ошибки, чего не хватает в справочнике — сообщение получит автор.</span><a class="bigbtn" href="#feedback" style="margin:4px 0 0">Написать автору</a></div>
     ${shareCard()}
     <div class="card"><b>Источники</b><span>Клинические рекомендации — рубрикатор cr.minzdrav.gov.ru (снимок ${dt(META.kr_built)}). Приказ Минздрава № 168н (диспансерное наблюдение). Дозы, которых нет в КР, — инструкции к препаратам, источник указан в строке. Обзоры Cochrane — через PubMed, по запросу.</span></div>
-    <div class="card" style="background:var(--warn-soft)"><b>Черновик для проверки врачом</b><span>Справочник не заменяет инструкцию к препарату и решение врача. Внешние и составленные фрагменты помечены.</span></div></div>`;
+    <div class="card" style="background:var(--warn-soft)"><b>Черновик для проверки врачом</b><span>Справочник не заменяет инструкцию к препарату и решение врача. Внешние и составленные фрагменты помечены.</span></div>
+    <p class="foot">Справочник собирает анонимную статистику: какие разделы открывают и что ищут — со случайным номером устройства, без имён и контактов. <a href="#stats">Для автора: статистика</a></p></div>`;
   bindShare();
   const b = $('#chk'); if (b) b.onclick = () => {
     $('#upd').textContent = 'Проверяю…';
@@ -1405,11 +1412,150 @@ if (!N) document.addEventListener('click', e => {
   if (a && a.origin !== location.origin) { e.preventDefault(); window.open(a.href, '_blank', 'noopener'); }
 });
 
+/* ---------------------------------------------------------------- статистика использования (анонимно) и обратная связь
+   Устройство получает случайный номер; события копятся и раз в несколько часов уходят пачкой на Google-скрипт
+   (tools/google_stats.gs, адрес — data/config.json → META.stats). Имена и контакты не отправляются;
+   контакт в отзыве — только если пользователь сам его вписал. */
+const AN = { last: '', lastAt: 0, sq: {}, busy: false };
+const statsUrl = () => { const u = String(META.stats || '').trim(); return /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u) ? u : ''; };
+const PLAT = N ? 'android' : STANDALONE ? 'pwa' : IOS ? 'ios' : 'web';
+const APPV = () => { const i = N ? info() : {}; return (i.versionName ? String(i.versionName).split(' ')[0] + '/' : '') + META.v; };
+function anDev() { let d = LS.get('anDev', ''); if (!/^[a-z0-9]{12}$/.test(d)) { d = ''; while (d.length < 12) d += Math.random().toString(36).slice(2); d = d.slice(0, 12); LS.set('anDev', d); } return d; }
+function anPush(e, k, n) {
+  const q = LS.get('anQ', []); q.push([Math.floor(Date.now() / 1000), e, String(k || '').slice(0, 60), n == null ? '' : n]);
+  LS.set('anQ', q.slice(-1500));
+  if (Date.now() - LS.get('anSent', 0) > 3 * 3600e3 || q.length >= 200) anFlush();
+}
+function anOpen() {
+  anDev(); anPush('open', PLAT);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { LS.set('anHid', Date.now()); anFlush(); }
+    else if (Date.now() - LS.get('anHid', Date.now()) > 30 * 60e3) anPush('open', PLAT);
+  });
+  window.addEventListener('online', () => { anFlush(); fbFlush(); });
+}
+function anView(p, a) {
+  if (p === 'stats' || p === 'edit') return;
+  const id = a || '', M = { sys: 'sys:' + id, calc: 'calc:' + id, kr: 'kr:' + id, ref: id ? 'ref:' + id : 'ref', mref: 'ref:' + id, dtab: 'duty', code: 'code:' + id };
+  const k = String(M[p] || p || 'home').replace(/[^\w:.-]/g, '').slice(0, 60);
+  if (k === AN.last && Date.now() - AN.lastAt < 30 * 60e3) return;
+  AN.last = k; AN.lastAt = Date.now(); anPush('view', k);
+}
+function anSearch(scope, q, n) {   // итоговый запрос, а не каждая буква
+  q = String(q || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  clearTimeout(AN.sq[scope]);
+  if (q.length < 2) return;
+  AN.sq[scope] = setTimeout(() => anPush('search', scope + ':' + q.slice(0, 50), n), 2000);
+}
+window.anSearch = anSearch;
+const post = (url, o, keep) => fetch(url, { method: 'POST', mode: 'no-cors', keepalive: !!keep, headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(o) });
+function anFlush() {
+  const url = statsUrl(), q = LS.get('anQ', []);
+  if (!url || !q.length || AN.busy || navigator.onLine === false) return;
+  AN.busy = true; const batch = q.slice(0, 500);
+  post(url, { op: 'ev', dev: anDev(), v: APPV(), p: PLAT, ev: batch }, batch.length < 150)
+    .then(() => { LS.set('anQ', LS.get('anQ', []).slice(batch.length)); LS.set('anSent', Date.now()); })
+    .catch(() => {}).finally(() => { AN.busy = false; });
+}
+
+/* обратная связь: без сети или до настройки адреса сообщение ждёт в очереди и уходит позже */
+function fbFlush() {
+  const url = statsUrl(), q = LS.get('fbQ', []);
+  if (!url || !q.length || navigator.onLine === false) return Promise.resolve(false);
+  return q.reduce((pr, m) => pr.then(() => post(url, Object.assign({ op: 'fb', dev: anDev(), v: APPV(), p: PLAT }, m)).then(() => {
+    LS.set('fbQ', LS.get('fbQ', []).filter(x => x.id !== m.id));
+  })), Promise.resolve()).then(() => true).catch(() => false);
+}
+function feedbackPage() {
+  setTitle('Обратная связь', true);
+  const K = [['wish', 'Пожелание'], ['bug', 'Ошибка'], ['other', 'Другое']];
+  let kind = 'wish';
+  const from = AN.page || '';
+  const queued = LS.get('fbQ', []).length;
+  view.innerHTML = `<div class="wrap fb">
+    <div class="card"><b>Напишите автору</b><span class="meta">Что добавить, что неудобно, где ошибка в тексте или расчёте. Если нужен ответ — оставьте контакт.</span>
+      <div class="seg s3" id="fbk">${K.map(k => `<button data-k="${k[0]}" class="${k[0] === kind ? 'on' : ''}">${k[1]}</button>`).join('')}</div>
+      <label class="fbl">Сообщение<textarea id="fbm" rows="6" maxlength="3000" placeholder="Например: добавьте калькулятор …"></textarea></label>
+      <label class="fbl">Контакт для ответа <span class="meta">— необязательно: телефон, Telegram или почта</span><input id="fbc" type="text" maxlength="120" autocomplete="email"></label>
+      <button class="bigbtn" id="fbs" style="margin:4px 0 0;border:0;cursor:pointer;width:100%">Отправить</button>
+      <span id="fbr" class="meta" role="status">${queued ? 'Ждут отправки: ' + queued + ' — уйдут, когда появится интернет.' : ''}</span></div>
+    <p class="foot">Вместе с сообщением передаются версия справочника и тип устройства (Android, iPhone, браузер) — чтобы воспроизвести ошибку.</p></div>`;
+  $$('#fbk button').forEach(a => a.onclick = () => { kind = a.dataset.k; $$('#fbk button').forEach(x => x.classList.toggle('on', x === a)); });
+  $('#fbs').onclick = () => {
+    const msg = $('#fbm').value.trim(), r = $('#fbr');
+    if (msg.length < 3) { r.textContent = 'Напишите сообщение.'; $('#fbm').focus(); return; }
+    const m = { id: Date.now().toString(36), kind, msg, contact: $('#fbc').value.trim(), scr: from };
+    LS.set('fbQ', LS.get('fbQ', []).concat([m]));
+    $('#fbs').disabled = true; r.textContent = 'Отправляю…';
+    fbFlush().then(ok => {
+      const left = LS.get('fbQ', []).some(x => x.id === m.id);
+      r.textContent = !left ? 'Спасибо! Сообщение отправлено.' : 'Нет связи — сообщение сохранено и уйдёт автоматически, когда появится интернет.';
+      if (!left || !ok) { $('#fbm').value = ''; }
+      $('#fbs').disabled = false;
+    });
+  };
+}
+
+/* экран автора: статистика и отзывы (ключ READ_KEY из скрипта) */
+let ST_DAYS = 30;
+function anTitle(k) {
+  const i = k.indexOf(':'), a = i < 0 ? k : k.slice(0, i), b = i < 0 ? '' : k.slice(i + 1);
+  const plain = { home: 'Избранное', mkb: 'Поиск МКБ-10 и КР', ref: 'Справочник', duty: 'Дежурные стационары', drugs: 'Препараты: поиск', drug: 'Препараты: инструкция', ix: 'Препараты: взаимодействия', about: 'О программе', share: 'Поделиться', feedback: 'Обратная связь' };
+  if (!b) return plain[a] || a;
+  if (a === 'calc') return 'Калькулятор: ' + (CALCS[b] ? CALCS[b].t : b);
+  if (a === 'kr') return 'КР: ' + (docName(b) || b);
+  if (a === 'sys') { const x = SYS.find(s => s[0] === b); return 'Раздел: ' + (x ? x[2] : b); }
+  if (a === 'ref') return 'Справка: ' + (REF[b] ? REF[b].title : b);
+  if (a === 'code') return 'МКБ-10: ' + b;
+  return k;
+}
+function statsPage() {
+  setTitle('Статистика', true);
+  const url = statsUrl(), key = LS.get('statsKey', '');
+  if (!url) { view.innerHTML = '<div class="wrap"><div class="card"><b>Статистика ещё не подключена</b><span>Нужно установить Google-скрипт (tools/google_stats.gs) и прописать его адрес в data/config.json.</span></div></div>'; return; }
+  if (!key) {
+    view.innerHTML = `<div class="wrap"><div class="card"><b>Ключ автора</b><span class="meta">Тот же, что в строке READ_KEY скрипта. Сохранится на этом устройстве.</span>
+      <input id="stk" type="password" class="fbin" autocomplete="current-password"><button class="bigbtn" id="sts" style="border:0;cursor:pointer;width:100%;margin:4px 0 0">Открыть</button></div></div>`;
+    $('#sts').onclick = () => { const v = $('#stk').value.trim(); if (v) { LS.set('statsKey', v); statsPage(); } };
+    return;
+  }
+  anFlush();
+  view.innerHTML = `<div class="wrap"><div class="seg s3" id="std">${[7, 30, 90].map(n => `<button data-d="${n}" class="${n === ST_DAYS ? 'on' : ''}">${n} дней</button>`).join('')}</div><div id="stb"><div class="empty">Загрузка…</div></div><div id="stf"></div></div>`;
+  $$('#std button').forEach(a => a.onclick = () => { ST_DAYS = +a.dataset.d; statsPage(); });
+  const get = q => fetch(url + '?key=' + encodeURIComponent(key) + '&' + q, { cache: 'no-store' }).then(r => r.json());
+  const fail = (box, e) => { if (!box) return; box.innerHTML = e === 'key' ? '<div class="card"><b>Скрипт не принял ключ</b><button class="lnk" id="stx" style="border:0;cursor:pointer">Ввести заново</button></div>' : '<div class="empty">Нет связи со скриптом.</div>'; const x = $('#stx'); if (x) x.onclick = () => { LS.set('statsKey', ''); statsPage(); }; };
+  get('op=usage&days=' + ST_DAYS).then(u => {
+    const box = $('#stb'); if (!box) return;
+    if (!u.ok) return fail(box, u.err);
+    if (!u.devices) { box.innerHTML = '<div class="empty">Данных пока нет. Устройства присылают статистику раз в несколько часов — первые цифры появятся в течение дня.</div>'; return; }
+    const bars = (rows, lab) => { const mx = Math.max(1, ...rows.map(r => r[1])); return `<div class="ubars">${rows.map((r, i) => `<div class="ubar" title="${esc(r[0])}: ${r[1]}"><i style="height:${Math.round(r[1] / mx * 100)}%"></i><span>${esc(lab(r[0], i))}</span></div>`).join('')}</div>`; };
+    const list = (rows, f, empty) => rows.length ? `<div class="ulist">${rows.map(r => `<div class="urow"><span>${f(r)}</span><b>${r[1]}</b>${r[2] != null ? `<small>${r[2]} устр.</small>` : ''}</div>`).join('')}</div>` : `<div class="meta">${empty}</div>`;
+    const sq = s => { const i = s.indexOf(':'), sc = s.slice(0, i); return `<i class="usc">${sc === 'mkb' ? 'МКБ/КР' : sc === 'drugs' ? 'препар.' : esc(sc)}</i> ${esc(s.slice(i + 1))}`; };
+    const PL = { android: 'Android-приложение', pwa: 'На экране «Домой»', ios: 'iPhone, Safari', web: 'Браузер' };
+    box.innerHTML = `<div class="ukpi"><div><b>${u.devices}</b><span>устройств за ${ST_DAYS} дн.</span></div><div><b>${u.newDev}</b><span>новых</span></div><div><b>${u.today}</b><span>сегодня</span></div><div><b>${u.avgDay}</b><span>в среднем в день</span></div></div>
+      <h2 class="sec-h">Устройств по дням</h2>${bars(u.daily, (s, i) => { const st = Math.ceil(u.daily.length / 7), j = u.daily.length - 1 - i; return j % st === 0 ? s.slice(8, 10) + '.' + s.slice(5, 7) : ''; })}
+      <h2 class="sec-h">Что открывают</h2>${list(u.views, r => esc(anTitle(r[0])), 'Пока нет данных.')}
+      <h2 class="sec-h">Что ищут</h2>${list(u.searches, r => sq(r[0]), 'Пока никто ничего не искал.')}
+      <h2 class="sec-h">Искали, но не нашли</h2><p class="meta" style="margin:-4px 0 8px">Подсказка, чего не хватает в справочнике.</p>${list(u.empty, r => sq(r[0]), 'Таких поисков нет.')}
+      <h2 class="sec-h">Время суток (Екатеринбург/Тюмень)</h2>${bars(u.hours.map((n, h) => [String(h), n]), s => +s % 3 === 0 ? s : '')}
+      <h2 class="sec-h">Как пользуются</h2>${list(u.platforms, r => esc(PL[r[0]] || r[0]), '—')}
+      <h2 class="sec-h">Версии</h2>${list(u.versions, r => esc(r[0]), '—')}
+      <p class="foot">Статистика анонимная: случайный номер устройства, без имён. Данные приходят пачками раз в несколько часов, поэтому сегодняшние цифры неполные. <a href="${esc(u.sheet || '#')}">Открыть таблицу</a></p>`;
+  }).catch(() => fail($('#stb')));
+  get('op=feedback&n=100').then(f => {
+    const box = $('#stf'); if (!box || !f.ok) return;
+    box.innerHTML = `<h2 class="sec-h">Обратная связь: ${f.items.length}</h2>` + (f.items.length ? f.items.map(x => `<div class="card fbi"><div class="meta">${esc(new Date(x.at).toLocaleString('ru-RU'))} · <b>${esc(x.kind)}</b> · ${esc(PLAT_T(x.p))}${x.v ? ' · ' + esc(x.v) : ''}</div><span style="white-space:pre-wrap">${esc(x.msg)}</span>${x.contact ? `<span class="meta">Контакт: ${esc(x.contact)}</span>` : ''}</div>`).join('') : '<div class="meta">Сообщений пока нет.</div>');
+  }).catch(() => {});
+}
+const PLAT_T = p => ({ android: 'Android', pwa: 'экран «Домой»', ios: 'iPhone', web: 'браузер' })[p] || p || '';
+
 /* ---------------------------------------------------------------- старт */
 (function start() {
   const i = info(); if (i.pending) App.otaReady();
+  anOpen();
   route();
   swInit();
   apkBanner();
+  fbFlush();
   if (N) setTimeout(appUpdateCheck, 3000);
 })();
