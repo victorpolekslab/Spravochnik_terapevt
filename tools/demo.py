@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Демо-копия справочника на отдельном адресе: свой репозиторий GitHub Pages, по адресу не видно основной сайт.
 
-    python3 tools/demo.py build <repo> <YYYY-MM-DD>   → build/demo/<repo>/ (затем git push в репозиторий <repo>)
+    python3 tools/demo.py build <repo> <YYYY-MM-DD> [--hide-ref id1,id2]   → build/demo/<repo>/ (затем git push в репозиторий <repo>)
+    --hide-ref — убрать разделы «Справочника» (ключи data/reference/*.json), например poak_periop,dapt_periop
 
 Что внутри: текущая веб-версия (build/www) со сроком META.demo_until, ссылки «поделиться» ведут на демо,
 баннера APK нет. В .github/workflows/expire.yml — ежедневная проверка: после срока содержимое заменяется
@@ -53,7 +54,7 @@ jobs:
 '''
 
 
-def build(repo, until):
+def build(repo, until, hide=()):
     www = os.path.join(OUT, 'www')
     if not os.path.exists(os.path.join(www, 'ota_version.txt')):
         sys.exit('сначала: build_app.py www')
@@ -72,6 +73,12 @@ def build(repo, until):
             meta = json.loads(open(p, encoding='utf-8').read()[len('var META='):-2])
             meta['demo_until'] = until
             open(p, 'w', encoding='utf-8').write('var META=' + json.dumps(meta, ensure_ascii=False, separators=(',', ':')) + ';\n')
+        if f == 'data_ref.js' and hide:   # скрытые в демо разделы справочника
+            ref = json.loads(open(p, encoding='utf-8').read()[len('var REF='):-2])
+            for k in hide:
+                assert k in ref, k
+                ref.pop(k)
+            open(p, 'w', encoding='utf-8').write('var REF=' + json.dumps(ref, ensure_ascii=False, separators=(',', ':')) + ';\n')
         if f == 'app.js':   # ссылки «поделиться» и т. п. — на демо, а не на основной сайт
             t = open(p, encoding='utf-8').read()
             assert MAIN in t
@@ -91,6 +98,10 @@ def build(repo, until):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 4 or sys.argv[1] != 'build':
+    args = sys.argv[1:]
+    hide = []
+    if '--hide-ref' in args:
+        i = args.index('--hide-ref'); hide = [x for x in args[i + 1].split(',') if x]; del args[i:i + 2]
+    if len(args) != 3 or args[0] != 'build':
         sys.exit(__doc__)
-    build(sys.argv[2], sys.argv[3])
+    build(args[1], args[2], hide)
