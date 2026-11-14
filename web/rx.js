@@ -144,6 +144,95 @@
     return out.join(' ');
   }
 
+  // ------------------------------------------------------------------ латынь
+  // МНН в родительном падеже — RX.lat (tools/rx_latin.py); комбинации и препараты без латинского МНН — торговое
+  // наименование латиницей в кавычках (1094н, прил. 3, п. 11: МНН, группировочное или торговое наименование)
+  var TRL = { а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i', й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'sch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'yu', я: 'ya' };
+  function translit(s) {
+    var t = String(s || '').replace(/[®™*]/g, '').trim().split('').map(function (c) { var l = c.toLowerCase(), r = TRL[l]; return r == null ? c : c === l ? r : r.charAt(0).toUpperCase() + r.slice(1); }).join('');
+    return t.replace(/\s+/g, ' ');
+  }
+  // латынь по МНН: каждое действующее вещество (комбинации — через «+»); нет в словаре — составляется по правилам
+  // латинских МНН (флаг auto: показать «проверьте»); МНН не указано — торговое наименование латиницей
+  var ANION = { 'гидрохлорид': 'hydrochloridi', 'гидрохлорида': 'hydrochloridi', 'гидробромид': 'hydrobromidi', 'бромид': 'bromidi', 'хлорид': 'chloridi', 'хлорида': 'chloridi', 'йодид': 'iodidi',
+    'сульфат': 'sulfatis', 'сульфата': 'sulfatis', 'фосфат': 'phosphatis', 'фосфата': 'phosphatis', 'малеат': 'maleatis', 'фумарат': 'fumaratis', 'тартрат': 'tartratis', 'сукцинат': 'succinatis',
+    'ацетат': 'acetatis', 'цитрат': 'citratis', 'лактат': 'lactatis', 'глюконат': 'gluconatis', 'нитрат': 'nitratis', 'мезилат': 'mesilatis', 'бесилат': 'besilatis', 'гидрокарбонат': 'hydrocarbonatis',
+    'пропионат': 'propionatis', 'дипропионат': 'dipropionatis', 'валерат': 'valeratis', 'тозилат': 'tosilatis', 'аргинин': 'arginini', 'лизин': 'lysini' };
+  var DROP = /^(моно|ди|три|тетра|пента|гекса|гепта|полу|геми|сескви)?гидрат[а]?$|^безводн/;
+  var DESCR = /(^|\s)(для|из|человека|экстракт\S*|трав\S*|лист\S*|корн\S*|цвет\S*|плод\S*|вакцин\S*|раствор\S*|аллерген\S*|штамм\S*|вирус\S*|эмульси\S*|фактор|комплекс\S*|масл\S*|сок|настой\S*|сухой|сухие|водн\S*|скота|мозга|пыльц\S*|лизат\S*|бактери\S*)(\s|$)/;
+  var CAT = { 'натрия': 'natrii', 'калия': 'kalii', 'кальция': 'calcii', 'магния': 'magnesii', 'железа': 'ferri', 'цинка': 'zinci', 'лития': 'lithii', 'серебра': 'argenti', 'алюминия': 'aluminii' };
+  function lword(w) {
+    var t = w.replace(/кс/g, 'x').replace(/ц/g, 'c').replace(/х/g, 'ch').replace(/к/g, 'c').replace(/й/g, 'i').replace(/ы/g, 'y').replace(/ф/g, 'f')
+      .replace(/^гидро/, 'hydro').replace(/ю/g, 'yu').replace(/я/g, 'ya').replace(/ж/g, 'zh').replace(/ш/g, 'sh').replace(/щ/g, 'sch').replace(/[ъь]/g, '');
+    return t.split('').map(function (c) { return TRL[c] != null ? TRL[c] : c; }).join('');
+  }
+  function autoLat(part) {
+    if (DESCR.test(part)) return null;
+    var ws = part.split(/\s+/).filter(function (w) { return !DROP.test(w); });
+    if (ws.length === 2 && ws[1] === 'кислота') return 'Acidi ' + lword(ws[0].replace(/(ов|ев)ая$/, '').replace(/ная$/, 'n')) + 'ici';
+    var out = ws.map(function (w, k) {
+      if (CAT[w]) return CAT[w];
+      if (k && ANION[w]) return ANION[w];
+      if (/^[a-z0-9\-]+$/.test(w)) return w;
+      if (ws.length > 1 && !k) w = w.replace(/([бвгджзклмнпрстфхцчшщ])а$/, '$1').replace(/ы$/, 'а');   // «пазопаниба гидрохлорид», «декстрозы моногидрат»
+      var g = w.replace(/ия$/, 'ium').replace(/ина$/, 'ин').replace(/ола$/, 'ол').replace(/ама$/, 'ам').replace(/ида$/, 'ид').replace(/ана$/, 'ан').replace(/она$/, 'он');
+      var l = lword(g);
+      if (/ium$/.test(l)) return l.replace(/ium$/, 'ii');
+      if (/oza$/.test(l)) return l.replace(/oza$/, 'osi');
+      if (/at$/.test(l)) return l + (k ? 'is' : 'i');
+      if (/a$/.test(l)) return l + 'e';
+      if (/[bcdfghklmnprstvxz]$/.test(l)) return l + 'i';
+      return l;
+    }).join(' ');
+    return out.charAt(0).toUpperCase() + out.slice(1);
+  }
+  function latName(r) {
+    var m = low(r[1]), L = window.RX.lat || {};
+    if (!m) return { t: '"' + translit(r[0]) + '"', inn: false, auto: false };
+    var auto = false, bad = false, t = m.split(/\s*[+,]\s*/).map(function (p) {
+      p = p.trim(); if (L[p]) return L[p];
+      var q = p.split(/\s+/).filter(function (w) { return !DROP.test(w); }).join(' '); if (L[q]) return L[q];
+      auto = true; var a = autoLat(p); if (!a) bad = true; return a;
+    }).join(' + ');
+    if (bad) return { t: '"' + translit(r[0]) + '"', inn: false, auto: false };
+    return { t: t, inn: true, auto: auto };
+  }
+  function latUnits(s) {
+    return String(s || '').replace(/мкг/g, 'mcg').replace(/мг/g, 'mg').replace(/мл/g, 'ml').replace(/(\d)\s*г\b/g, '$1 g').replace(/\/\s*час/g, '/h').replace(/\/\s*ч\b/g, '/h').replace(/доза/g, 'dosis').replace(/ЕД/g, 'ED').replace(/МЕ/g, 'ME');
+  }
+  function latForm(form) {
+    var f = low(form);
+    if (/пластыр|трансдерм/.test(f)) return ['TTS', 'unit'];
+    if (/суппозит/.test(f)) return ['Supp.', 'unit'];
+    if (/драже/.test(f)) return ['Dragee', 'unit'];
+    if (/капсул/.test(f)) return ['Caps.', 'unit'];
+    if (/таблет|пастил/.test(f)) return ['Tab.', 'unit'];
+    if (/лиофилизат|порошок для приготовления раствора для (инъекц|инфуз|внутривен)/.test(f)) return ['Pulv.', 'amp'];
+    if (/инъекц|внутривен|внутримыш|подкожн|инфуз|концентрат/.test(f)) return ['Sol.', 'amp'];
+    if (/капли/.test(f)) return ['Gtt.', 'vol'];
+    if (/спрей/.test(f)) return ['Spray', 'vol'];
+    if (/аэрозол/.test(f)) return ['Aerosol', 'vol'];
+    if (/суспенз/.test(f)) return ['Susp.', 'vol'];
+    if (/сироп/.test(f)) return ['Sir.', 'vol'];
+    if (/мазь/.test(f)) return ['Ung.', 'vol'];
+    if (/крем/.test(f)) return ['Cream.', 'vol'];
+    if (/гель/.test(f)) return ['Gel.', 'vol'];
+    if (/настойк/.test(f)) return ['Tinct.', 'vol'];
+    if (/гранул/.test(f)) return ['Gran.', 'vol'];
+    if (/порош/.test(f)) return ['Pulv.', 'vol'];
+    if (/раствор/.test(f)) return ['Sol.', 'vol'];
+    return ['', 'vol'];
+  }
+  // строки Rp: [первая строка, вторая строка или ''] — латынь; количество для 107/у-НП дублируется прописью
+  function latRp(r, form, dose, n, np) {
+    var nm = latName(r), lf = latForm(form), d = dose ? ' ' + latUnits(dose) : ' … mg';
+    var q = '№ ' + n + (np ? ' (' + words(n) + ')' : '');
+    var head = (lf[0] ? lf[0] + ' ' : '') + nm.t + d;
+    if (lf[1] === 'unit') return [head + ' ' + q, '', nm];
+    if (lf[1] === 'amp') return [head, 'D.t.d. ' + q + ' in amp.', nm];
+    return [head, 'D.t.d. ' + q, nm];
+  }
+
   // ------------------------------------------------------------------ интерфейс
   window.RxClassify = classify;
   window.RxModule = function (host) {
@@ -272,10 +361,8 @@
     // образец бланка
     function blank(r, c, o) {
       var today = new Date(), dd = ('0' + today.getDate()).slice(-2), mm = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'][today.getMonth()], yy = String(today.getFullYear()).slice(-2);
-      var name = (r[1] && !/\+/.test(r[1]) ? r[1] : r[1] || r[0]).replace(/\s+/g, ' ');
-      var formShort = String(o.formTxt || r[2]).split(/,|\(/)[0].trim();
-      var qty = c.form === 'np' ? '№ ' + o.n + ' (' + words(o.n) + ')' : '№ ' + o.n;
-      var rp = esc(name + ' ' + formShort + (o.dose ? ' ' + o.dose : ' … мг')) + ' <span class="nw">' + esc(qty) + '</span>';
+      var L = latRp(r, o.formTxt || r[2], o.dose, o.n, c.form === 'np');
+      var rp = esc(L[0]) + (L[1] ? '<br>' + esc(L[1]) : '');
       var ds = 'D.S. ' + esc(o.s || '…');
       var ink = function (s) { return '<span class="ink">' + s + '</span>'; };
       var stampMO = '<div class="rb-mo">' + (c.form === 'np' ? 'ГБУЗ ТО «Городская поликлиника № 1»' : 'ГБУЗ ТО «Городская поликлиника № 1»') + '<br>г. Тюмень, ул. Примерная, 1<br>тел. (3452) 00-00-00</div>';
@@ -323,7 +410,7 @@
           '<div class="rb-l"><b>Срок действия рецепта 15 дней</b></div>';
       }
       return '<div class="rb rb-' + c.form + '"><div class="rb-wm">ОБРАЗЕЦ</div>' + h + '</div>' +
-        '<p class="meta" style="margin:8px 4px 0">Синим — что вписывает врач. Ф. И. О., адрес, медицинская организация и печати условные. Дозу и способ применения указывайте по назначению и инструкции препарата.</p>';
+        '<p class="meta" style="margin:8px 4px 0">Rp. — по МНН на латыни, в родительном падеже' + (L[2].auto ? ' (<b>латинское название составлено автоматически — проверьте написание</b>)' : '') + (!L[2].inn ? ' — МНН в справочнике не указано, показано торговое наименование; впишите МНН' : '') + '; способ применения (D.S.) — на русском (1094н, п. 16 и прил. 3, п. 11). Синим — что вписывает врач. Ф. И. О., адрес, медицинская организация и печати условные. Дозу и способ применения указывайте по назначению и инструкции препарата.</p>';
     }
     return {
       route: function (a) { if (a) drugPage(+a); else searchPage(''); },
