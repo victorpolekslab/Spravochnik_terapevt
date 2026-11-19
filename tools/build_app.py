@@ -187,7 +187,7 @@ def route_files():
 
         def valid(data):
             raw = data.encode('utf-8')
-            header = ('blob %d\\0' % len(raw)).encode('ascii')
+            header = ('blob %d' % len(raw)).encode('ascii') + bytes([0])
             return hashlib.sha1(header + raw).hexdigest() == expected and mark in data
 
         text = None
