@@ -56,7 +56,7 @@ jobs:
           import json, re
           root = Path('android/app/src/main/assets/www')
           html = (root / 'index.html').read_text(encoding='utf-8')
-          scripts = re.findall(r'<script\\s+src="([^"]+)"', html)
+          scripts = re.findall(r'<script\s+src="([^"]+)"', html)
           assert scripts, 'No scripts declared in offline HTML'
           for src in scripts:
               assert not src.startswith(('http:', 'https:', '/')), f'Non-local script: {src}'
@@ -64,7 +64,7 @@ jobs:
           for name, var in [('data_meta.js', 'META'), ('data_brief.js', 'BRIEF'),
                             ('data_mkb.js', 'MKB')]:
               body = (root / name).read_text(encoding='utf-8')
-              match = re.search(r'\\b(?:var|const|let)\\s+' + var + r'\\s*=\\s*', body)
+              match = re.search(r'\b(?:var|const|let)\s+' + var + r'\s*=\s*', body)
               assert match, f'{name}: missing {var} declaration'
               value = body[match.end():].split(';', 1)[0]
               obj = json.loads(value)
