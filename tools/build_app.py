@@ -166,7 +166,7 @@ def build_data(db, version):
 
 # Дежурные стационары (маршрутизация, Тюменская область) — из «Справочника НМП», ветка main; только чтение.
 # Свежая копия скачивается при каждой сборке, без сети берётся последняя из .cache/nmp_route.
-NMP_RAW = 'https://raw.githubusercontent.com/victorpolekslab/Spravochnik_nmp/main/android/app/src/main/assets/www/'
+NMP_RAW = 'https://raw.githubusercontent.com/victorpolekslab/Spravochnik_nmp/80ea4c022c135d40a7c9fecf54ae064de595322d/android/app/src/main/assets/www/'
 ROUTE_SRC = {'route_data.js': ('content_route.js', 'window.ROUTE'), 'route_addr.js': ('content_addr.js', 'window.TMN_ADDR')}
 
 
