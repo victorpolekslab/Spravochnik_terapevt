@@ -1347,9 +1347,21 @@ function about() {
     <div class="card"><b>Источники</b><span>Клинические рекомендации — рубрикатор cr.minzdrav.gov.ru (снимок ${dt(META.kr_built)}). Приказ Минздрава № 168н (диспансерное наблюдение). Дозы, которых нет в КР, — инструкции к препаратам, источник указан в строке. Обзоры Cochrane — через PubMed, по запросу.</span></div>
     <div class="card" style="background:var(--warn-soft)"><b>Черновик для проверки врачом</b><span>Справочник не заменяет инструкцию к препарату и решение врача. Внешние и составленные фрагменты помечены.</span></div>
     <p class="foot">Справочник собирает анонимную статистику: какие разделы открывают и что ищут — со случайным номером устройства, без имён и контактов. <a href="#stats">Для автора: статистика</a></p></div>`;
+  window.onDrugsInstall = (ok, message) => {
+    const status = $('#drugsOfflineStatus'), button = $('#drugsOffline');
+    if (status) status.textContent = ok ? 'База установлена, версия: ' + message + '. Откройте раздел препаратов заново.' : 'Установка не завершена: ' + message;
+    if (button) button.disabled = false;
+  };
   const offlineBtn = $('#drugsOffline');
   if (offlineBtn) offlineBtn.onclick = () => {
     const status = $('#drugsOfflineStatus');
+    if (window.Native && typeof window.Native.installDrugs === 'function') {
+      offlineBtn.disabled = true;
+      status.textContent = 'Скачивание и проверка подписанной базы…';
+      try { window.Native.installDrugs(); }
+      catch (e) { status.textContent = 'Ошибка запуска: ' + e.message; offlineBtn.disabled = false; }
+      return;
+    }
     if (!DM || !DM.downloadAll) { status.textContent = 'Модуль препаратов недоступен'; return; }
     offlineBtn.disabled = true;
     status.textContent = 'Подготовка загрузки…';
