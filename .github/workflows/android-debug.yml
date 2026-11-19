@@ -3,6 +3,9 @@ on:
   pull_request:
     paths:
       - 'android/**'
+      - 'tools/**'
+      - 'web/**'
+      - 'data/**'
       - '.gitmodules'
       - 'shared-nmp'
       - '.github/workflows/android-debug.yml'
@@ -42,6 +45,11 @@ jobs:
           yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$SDK" --licenses > /dev/null
           set -o pipefail
           "$SDK/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$SDK" --install "platforms;android-35" "build-tools;35.0.0"
+      - name: Restore verified clinical archive cache
+        uses: actions/cache@v4
+        with:
+          path: .cache/kr_full.db.gz
+          key: kr-59fae545-ae62b884144dda073c96c8546b3a688728b2acb765851da491d6e06e63cadf22
       - name: Generate complete offline clinical assets
         shell: bash
         run: |
