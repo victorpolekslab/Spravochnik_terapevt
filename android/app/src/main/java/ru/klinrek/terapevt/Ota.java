@@ -80,6 +80,14 @@ final class Ota {
 
     /** Проверить сайт и скачать новую версию в фоне. onReady — если загружено новое, onDone — в любом случае. */
     static void check(Context ctx, Runnable onReady, Runnable onDone) {
+        run(ctx, false, onReady, onDone);
+    }
+
+    static void download(Context ctx, Runnable onReady, Runnable onDone) {
+        run(ctx, true, onReady, onDone);
+    }
+
+    private static void run(Context ctx, boolean download, Runnable onReady, Runnable onDone) {
         if (busy) { if (onDone != null) onDone.run(); return; }
         busy = true;
         final Context c = ctx.getApplicationContext();
@@ -98,6 +106,8 @@ final class Ota {
                 long v = m.getLong("v");
                 if (v <= Math.max(bundledVersion(c), p.getLong("ver", 0)) || v == p.getLong("bad", -1)) return;
                 if (m.optLong("minNative", 0) > nativeCode(c)) return;
+                p.edit().putLong("remote", v).putString("error", "").apply();
+                if (!download) return;
                 File dir = new File(root(c), String.valueOf(v)), tmp = new File(root(c), v + ".tmp");
                 deleteTree(tmp); tmp.mkdirs();
                 File cur = new File(root(c), String.valueOf(p.getLong("ver", 0)));
@@ -122,7 +132,8 @@ final class Ota {
                     if (!n.equals(String.valueOf(v)) && !n.equals(String.valueOf(running(c)))) deleteTree(d);
                 }
                 got = true;
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                sp(c).edit().putString("error", String.valueOf(e.getMessage())).apply();
             } finally {
                 busy = false;
                 if (got && onReady != null) onReady.run();
