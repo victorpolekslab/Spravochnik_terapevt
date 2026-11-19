@@ -477,6 +477,12 @@
       // есть ли такой препарат в справочнике (для ссылок «Инструкция» в схемах); false, пока данные не загружены
       has: function (name) { if (!D) return false; var r = search(clean(name), 1); return !!(r.length && r[0].s >= 30 && D.rows[r[0].i][6] >= 0); },
       preload: function () { load().catch(function () {}); },
+      // After a verified native database install, invalidate the in-memory index.
+      // The next route/data request loads the newly installed local snapshot.
+      refreshNative: function () {
+        loading = null; D = null; IX = null; CLS = {};
+        return load();
+      },
       downloadAll: downloadAll,
       // для помощника выписки рецептов
       data: function () { return load().then(function () { return D; }); },
