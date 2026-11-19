@@ -1338,15 +1338,78 @@ function about() {
     <div class="card"><b style="font-size:17px">Справочник врача-терапевта</b><span class="meta">Калькуляторы и шкалы, краткие клинические рекомендации Минздрава, алгоритмы.</span>
       <span>Версия приложения: <b>${esc(i.versionName || 'веб-версия')}</b></span>
       <span>Данные: <b>${esc(META.v)}</b> · база КР от <b>${dt(META.kr_built)}</b>${i.running && i.running !== i.bundled ? ' · загружены обновлением' : ''}</span>
-      <span class="meta">${N ? `Обновления данных загружаются в фоне раз в сутки при наличии интернета и применяются при следующем запуске. Последняя проверка: ${esc(ago)}.` : 'Обновления данных загружаются при открытии справочника, когда есть интернет; применить — кнопкой в баннере вверху.'}</span>
-      ${N || SW.reg ? '<button id="chk" class="lnk" style="border:0;cursor:pointer">Проверить обновления сейчас</button><span id="upd" class="meta"></span>' : ''}</div>
+      <span class="meta">${N ? `Обновления проверяются автоматически раз в сутки. Скачивание — только по нажатию кнопки; применение при следующем запуске. Последняя проверка: ${esc(ago)}.` : 'Обновления данных загружаются при открытии справочника, когда есть интернет; применить — кнопкой в баннере вверху.'}</span>
+      ${N || SW.reg ? '<button id="chk" class="lnk" style="border:0;cursor:pointer">Проверить обновления сейчас</button><span id="upd" class="meta"></span>' : ''}${N ? '<button id="otaDownload" class="lnk" style="border:0;cursor:pointer">Скачать обновление вручную</button>' : ''}</div>
+    <div class="card"><b>Офлайн-инструкции препаратов</b><span>Однократная загрузка полной базы для использования без интернета. При повторном запуске сохранённые инструкции пропускаются.</span><button id="drugsOffline" class="lnk">Скачать базу инструкций</button><span id="drugsOfflineStatus" class="meta"></span></div>
     ${!N && !META.demo_until ? `<div class="card"><b>${IOS ? 'На iPhone' : 'Как приложение'}</b><span>${STANDALONE ? 'Справочник установлен на экран «Домой» и работает без интернета. Новые данные загружаются при открытии, когда есть сеть.' : IOS ? 'Откройте в Safari → кнопка «Поделиться» → «На экран „Домой“». Справочник откроется как приложение и будет работать без интернета.' : 'В меню браузера выберите «Установить приложение» или «Добавить на главный экран». Для Android есть APK — на странице скачивания.'}</span><a class="lnk" href="${SITE}download/">Страница скачивания ›</a></div>` : ''}
     <div class="card"><b>Обратная связь</b><span class="meta">Пожелания, найденные ошибки, чего не хватает в справочнике — сообщение получит автор.</span><a class="bigbtn" href="#feedback" style="margin:4px 0 0">Написать автору</a></div>
     ${shareCard()}
     <div class="card"><b>Источники</b><span>Клинические рекомендации — рубрикатор cr.minzdrav.gov.ru (снимок ${dt(META.kr_built)}). Приказ Минздрава № 168н (диспансерное наблюдение). Дозы, которых нет в КР, — инструкции к препаратам, источник указан в строке. Обзоры Cochrane — через PubMed, по запросу.</span></div>
     <div class="card" style="background:var(--warn-soft)"><b>Черновик для проверки врачом</b><span>Справочник не заменяет инструкцию к препарату и решение врача. Внешние и составленные фрагменты помечены.</span></div>
     <p class="foot">Справочник собирает анонимную статистику: какие разделы открывают и что ищут — со случайным номером устройства, без имён и контактов. <a href="#stats">Для автора: статистика</a></p></div>`;
+  // Daily signed-manifest check only; downloading remains an explicit user action.
+  window.onDrugsUpdate = (available, remote, local) => {
+    try { localStorage.setItem('drugsLastCheck', String(Date.now())); } catch (_) {}
+    const status = $('#drugsOfflineStatus');
+    if (status && available) status.textContent = 'Доступна новая база препаратов: ' + remote + (local ? ' (установлена: ' + local + ')' : ' (ещё не установлена)') + '. Для загрузки нажмите кнопку ниже.';
+    else if (status && !available) status.textContent = 'База препаратов актуальна: ' + remote;
+  };
+  window.onDrugsUpdateError = (message) => {
+    const status = $('#drugsOfflineStatus');
+    if (status) status.textContent = 'Не удалось проверить обновление базы: ' + message + '. Офлайн-данные доступны.';
+  };
+  try {
+    const nativeDrugs = window.Native;
+    const lastCheck = Number(localStorage.getItem('drugsLastCheck') || 0);
+    if (nativeDrugs && typeof nativeDrugs.checkDrugsUpdate === 'function' &&
+        (!lastCheck || Date.now() - lastCheck > 24 * 60 * 60 * 1000)) nativeDrugs.checkDrugsUpdate();
+  } catch (_) {}
+  window.onDrugsInstall = (ok, message) => {
+    const status = $('#drugsOfflineStatus'), button = $('#drugsOffline');
+    if (status) status.textContent = ok ? 'База установлена, версия: ' + message + '. Обновление данных…' : 'Установка не завершена: ' + message;
+    if (ok && DM && DM.refreshNative) {
+      DM.refreshNative().then(() => {
+        const label = $('#drugsOfflineStatus');
+        if (label) label.textContent = 'База установлена, версия: ' + message + '. Новые данные доступны без перезапуска.';
+      }).catch(e => {
+        const label = $('#drugsOfflineStatus');
+        if (label) label.textContent = 'База установлена, но обновление экрана не удалось: ' + (e.message || e) + '. Перезапустите приложение.';
+      });
+    }
+    if (button) button.disabled = false;
+  };
+  const offlineBtn = $('#drugsOffline');
+  if (offlineBtn) offlineBtn.onclick = () => {
+    const status = $('#drugsOfflineStatus');
+    if (window.Native && typeof window.Native.installDrugs === 'function') {
+      offlineBtn.disabled = true;
+      status.textContent = 'Скачивание и проверка подписанной базы…';
+      try { window.Native.installDrugs(); }
+      catch (e) { status.textContent = 'Ошибка запуска: ' + e.message; offlineBtn.disabled = false; }
+      return;
+    }
+    if (!DM || !DM.downloadAll) { status.textContent = 'Модуль препаратов недоступен'; return; }
+    offlineBtn.disabled = true;
+    status.textContent = 'Подготовка загрузки…';
+    DM.downloadAll((done, total, failed) => { status.textContent = 'Сохранено или проверено: ' + done + ' из ' + total + (failed ? ' · ошибок: ' + failed : ''); })
+      .then(count => { status.textContent = 'Готово: ' + count + ' инструкций доступны без интернета'; })
+      .catch(e => { status.textContent = 'Загрузка не завершена: ' + (e.message || e) + '. Повторите для продолжения.'; })
+      .finally(() => { offlineBtn.disabled = false; });
+  };
   bindShare();
+  const dl = $('#otaDownload');
+  if (dl) {
+    if (!(N && typeof N.downloadUpdates === 'function')) {
+      dl.disabled = true;
+      dl.title = 'Для ручного обновления требуется новая версия приложения';
+      dl.onclick = () => { $('#upd').textContent = 'Обновите APK приложения, чтобы скачивать обновления вручную.'; };
+    } else {
+      dl.onclick = () => {
+        $('#upd').textContent = 'Загрузка запущена…';
+        try { N.downloadUpdates(); } catch (e) { $('#upd').textContent = 'Не удалось начать загрузку: ' + (e.message || e); }
+      };
+    }
+  }
   const b = $('#chk'); if (b) b.onclick = () => {
     $('#upd').textContent = 'Проверяю…';
     if (N) N.checkUpdates();
