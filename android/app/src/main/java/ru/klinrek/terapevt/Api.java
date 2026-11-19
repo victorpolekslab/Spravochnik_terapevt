@@ -54,6 +54,21 @@ final class Api {
     }
 
     @JavascriptInterface
+    public void checkDrugsUpdate() {
+        new Thread(() -> {
+            try {
+                String remote = DrugsDatabase.availableVersion();
+                String local = DrugsDatabase.version(act);
+                js("window.onDrugsUpdate&&window.onDrugsUpdate(" + !remote.equals(local) + ","
+                        + JSONObject.quote(remote) + "," + JSONObject.quote(local) + ")");
+            } catch (Exception e) {
+                js("window.onDrugsUpdateError&&window.onDrugsUpdateError("
+                        + JSONObject.quote(e.getMessage() == null ? "Ошибка проверки" : e.getMessage()) + ")");
+            }
+        }).start();
+    }
+
+    @JavascriptInterface
     public String drugsVersion() { return DrugsDatabase.version(act); }
 
     @JavascriptInterface
