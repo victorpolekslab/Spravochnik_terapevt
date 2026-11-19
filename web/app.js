@@ -1397,7 +1397,19 @@ function about() {
       .finally(() => { offlineBtn.disabled = false; });
   };
   bindShare();
-  const dl = $('#otaDownload'); if (dl) dl.onclick = () => { $('#upd').textContent = 'Загрузка запущена…'; N.downloadUpdates(); };
+  const dl = $('#otaDownload');
+  if (dl) {
+    if (!(N && typeof N.downloadUpdates === 'function')) {
+      dl.disabled = true;
+      dl.title = 'Для ручного обновления требуется новая версия приложения';
+      dl.onclick = () => { $('#upd').textContent = 'Обновите APK приложения, чтобы скачивать обновления вручную.'; };
+    } else {
+      dl.onclick = () => {
+        $('#upd').textContent = 'Загрузка запущена…';
+        try { N.downloadUpdates(); } catch (e) { $('#upd').textContent = 'Не удалось начать загрузку: ' + (e.message || e); }
+      };
+    }
+  }
   const b = $('#chk'); if (b) b.onclick = () => {
     $('#upd').textContent = 'Проверяю…';
     if (N) N.checkUpdates();
