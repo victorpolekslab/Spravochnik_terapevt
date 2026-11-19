@@ -42,6 +42,15 @@ jobs:
           yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$SDK" --licenses > /dev/null
           set -o pipefail
           "$SDK/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$SDK" --install "platforms;android-35" "build-tools;35.0.0"
+      - name: Generate complete offline clinical assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          sh tools/fetch_kr.sh
+          python3 tools/build_app.py www --db .cache/kr_full.db
+          test -s android/app/src/main/assets/www/data_mkb.js
+          test -s android/app/src/main/assets/www/data_brief.js
+          test -s android/app/src/main/assets/www/route_data.js
       - name: Compile Android debug APK
         working-directory: android
         run: gradle --no-daemon :app:assembleDebug
@@ -50,3 +59,12 @@ jobs:
           name: debug-apk-unverified
           path: android/app/build/outputs/apk/debug/*.apk
           retention-days: 7
+      - name: Verify required offline files inside APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK=$(find android/app/build/outputs/apk/debug -maxdepth 1 -name '*.apk' -print -quit)
+          test -n "$APK"
+          for file in index.html app.js drugs.js data_meta.js data_brief.js data_ref.js data_terms.js data_mkb.js data_intl.js data_rx.js route_data.js route_addr.js ota_version.txt; do
+            unzip -Z1 "$APK" | grep -Fx "assets/www/$file" > /dev/null || { echo "::error::Missing APK asset: $file"; exit 1; }
+          done
