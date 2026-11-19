@@ -1,0 +1,3 @@
+[submodule "shared-nmp"]
+	path = shared-nmp
+	url = https://github.com/victorpolekslab/Spravochnik_nmp.git
