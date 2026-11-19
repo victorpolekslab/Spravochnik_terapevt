@@ -1347,6 +1347,23 @@ function about() {
     <div class="card"><b>Источники</b><span>Клинические рекомендации — рубрикатор cr.minzdrav.gov.ru (снимок ${dt(META.kr_built)}). Приказ Минздрава № 168н (диспансерное наблюдение). Дозы, которых нет в КР, — инструкции к препаратам, источник указан в строке. Обзоры Cochrane — через PubMed, по запросу.</span></div>
     <div class="card" style="background:var(--warn-soft)"><b>Черновик для проверки врачом</b><span>Справочник не заменяет инструкцию к препарату и решение врача. Внешние и составленные фрагменты помечены.</span></div>
     <p class="foot">Справочник собирает анонимную статистику: какие разделы открывают и что ищут — со случайным номером устройства, без имён и контактов. <a href="#stats">Для автора: статистика</a></p></div>`;
+  // Daily signed-manifest check only; downloading remains an explicit user action.
+  window.onDrugsUpdate = (available, remote, local) => {
+    try { localStorage.setItem('drugsLastCheck', String(Date.now())); } catch (_) {}
+    const status = $('#drugsOfflineStatus');
+    if (status && available) status.textContent = 'Доступна новая база препаратов: ' + remote + (local ? ' (установлена: ' + local + ')' : ' (ещё не установлена)') + '. Для загрузки нажмите кнопку ниже.';
+    else if (status && !available) status.textContent = 'База препаратов актуальна: ' + remote;
+  };
+  window.onDrugsUpdateError = (message) => {
+    const status = $('#drugsOfflineStatus');
+    if (status) status.textContent = 'Не удалось проверить обновление базы: ' + message + '. Офлайн-данные доступны.';
+  };
+  try {
+    const nativeDrugs = window.Native;
+    const lastCheck = Number(localStorage.getItem('drugsLastCheck') || 0);
+    if (nativeDrugs && typeof nativeDrugs.checkDrugsUpdate === 'function' &&
+        (!lastCheck || Date.now() - lastCheck > 24 * 60 * 60 * 1000)) nativeDrugs.checkDrugsUpdate();
+  } catch (_) {}
   window.onDrugsInstall = (ok, message) => {
     const status = $('#drugsOfflineStatus'), button = $('#drugsOffline');
     if (status) status.textContent = ok ? 'База установлена, версия: ' + message + '. Обновление данных…' : 'Установка не завершена: ' + message;
