@@ -51,9 +51,34 @@ jobs:
           test -s android/app/src/main/assets/www/data_mkb.js
           test -s android/app/src/main/assets/www/data_brief.js
           test -s android/app/src/main/assets/www/route_data.js
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, re
+          root = Path('android/app/src/main/assets/www')
+          html = (root / 'index.html').read_text(encoding='utf-8')
+          scripts = re.findall(r'<script\\s+src=["\\']([^"\\']+)["\\']', html)
+          assert scripts, 'No scripts declared in offline HTML'
+          for src in scripts:
+              assert not src.startswith(('http:', 'https:', '/')), f'Non-local script: {src}'
+              assert (root / src).is_file(), f'Missing referenced script: {src}'
+          for name, var in [('data_meta.js', 'META'), ('data_brief.js', 'BRIEF'),
+                            ('data_mkb.js', 'MKB')]:
+              body = (root / name).read_text(encoding='utf-8')
+              match = re.search(r'\\b(?:var|const|let)\\s+' + var + r'\\s*=\\s*', body)
+              assert match, f'{name}: missing {var} declaration'
+              value = body[match.end():].split(';', 1)[0]
+              obj = json.loads(value)
+              assert isinstance(obj, (dict, list)) and obj, f'{name}: empty dataset'
+              print(name, 'parsed:', len(obj), 'top-level entries')
+          print('Offline HTML references and core JSON datasets validated')
+          PY
+          for script in android/app/src/main/assets/www/*.js; do node --check "$script" >/dev/null; done
       - name: Compile Android debug APK
         working-directory: android
         run: gradle --no-daemon :app:assembleDebug
+      - name: Compile release APK with CI debug signing (not for distribution)
+        working-directory: android
+        run: gradle --no-daemon :app:assembleRelease
       - name: Verify required offline files inside APK
         shell: bash
         run: |
@@ -62,6 +87,11 @@ jobs:
           test -n "$APK"
           for file in index.html app.js drugs.js data_meta.js data_brief.js data_ref.js data_terms.js data_mkb.js data_intl.js data_rx.js route_data.js route_addr.js ota_version.txt; do
             unzip -Z1 "$APK" | grep -Fx "assets/www/$file" > /dev/null || { echo "::error::Missing APK asset: $file"; exit 1; }
+          done
+          RELEASE=$(find android/app/build/outputs/apk/release -maxdepth 1 -name '*.apk' -print -quit)
+          test -n "$RELEASE"
+          for file in index.html app.js data_meta.js data_brief.js data_mkb.js ota_version.txt; do
+            unzip -Z1 "$RELEASE" | grep -Fx "assets/www/$file" > /dev/null || { echo "::error::Missing release asset: $file"; exit 1; }
           done
       - uses: actions/upload-artifact@v4
         with:
