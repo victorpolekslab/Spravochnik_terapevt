@@ -1,5 +1,7 @@
 package ru.klinrek.terapevt;
 
+import ru.klinrek.drugscore.DrugsDatabase;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -43,6 +45,49 @@ final class Api {
     @JavascriptInterface
     public void checkUpdates() {
         Ota.check(act, null, () -> js("window.App&&App.otaChecked&&App.otaChecked(" + Ota.pending(act) + ")"));
+    }
+
+    @JavascriptInterface
+    public void downloadUpdates() {
+        Ota.download(act, () -> js("window.App&&App.otaReady&&App.otaReady()"),
+                () -> js("window.App&&App.otaChecked&&App.otaChecked(" + Ota.pending(act) + ")"));
+    }
+
+    @JavascriptInterface
+    public void checkDrugsUpdate() {
+        new Thread(() -> {
+            try {
+                String remote = DrugsDatabase.availableVersion();
+                String local = DrugsDatabase.version(act);
+                js("window.onDrugsUpdate&&window.onDrugsUpdate(" + !remote.equals(local) + ","
+                        + JSONObject.quote(remote) + "," + JSONObject.quote(local) + ")");
+            } catch (Exception e) {
+                js("window.onDrugsUpdateError&&window.onDrugsUpdateError("
+                        + JSONObject.quote(e.getMessage() == null ? "Ошибка проверки" : e.getMessage()) + ")");
+            }
+        }).start();
+    }
+
+    @JavascriptInterface
+    public String drugsVersion() { return DrugsDatabase.version(act); }
+
+    @JavascriptInterface
+    public String drugsIndex(String key) { return DrugsDatabase.index(act, key); }
+
+    @JavascriptInterface
+    public String drugsInstruction(String id) { return DrugsDatabase.instruction(act, id); }
+
+    @JavascriptInterface
+    public void installDrugs() {
+        new Thread(() -> {
+            try {
+                String version = DrugsDatabase.install(act);
+                js("window.onDrugsInstall&&window.onDrugsInstall(true," + JSONObject.quote(version) + ")");
+            } catch (Exception e) {
+                js("window.onDrugsInstall&&window.onDrugsInstall(false," +
+                        JSONObject.quote(e.getMessage() == null ? "Ошибка установки" : e.getMessage()) + ")");
+            }
+        }, "drugs-install").start();
     }
 
     @JavascriptInterface

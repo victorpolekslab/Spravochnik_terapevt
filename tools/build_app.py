@@ -166,8 +166,14 @@ def build_data(db, version):
 
 # Дежурные стационары (маршрутизация, Тюменская область) — из «Справочника НМП», ветка main; только чтение.
 # Свежая копия скачивается при каждой сборке, без сети берётся последняя из .cache/nmp_route.
-NMP_RAW = 'https://raw.githubusercontent.com/victorpolekslab/Spravochnik_nmp/main/android/app/src/main/assets/www/'
+NMP_RAW = 'https://raw.githubusercontent.com/victorpolekslab/Spravochnik_nmp/80ea4c022c135d40a7c9fecf54ae064de595322d/android/app/src/main/assets/www/'
 ROUTE_SRC = {'route_data.js': ('content_route.js', 'window.ROUTE'), 'route_addr.js': ('content_addr.js', 'window.TMN_ADDR')}
+
+
+ROUTE_GIT_BLOBS = {
+    'content_route.js': 'cf3426a301dd934d4b362f33b639ecdef8d3de72',
+    'content_addr.js': '79dfbe7283c6f3a2818d3a70fb7debba02055bbe',
+}
 
 
 def route_files():
@@ -177,16 +183,28 @@ def route_files():
     out = {}
     for name, (src, mark) in ROUTE_SRC.items():
         cp = os.path.join(cache, src)
-        try:
-            text = urllib.request.urlopen(NMP_RAW + src, timeout=30).read().decode('utf-8')
-            if mark not in text:
-                raise ValueError(f'в {src} нет {mark}')
+        expected = ROUTE_GIT_BLOBS[src]
+
+        def valid(data):
+            raw = data.encode('utf-8')
+            header = ('blob %d' % len(raw)).encode('ascii') + bytes([0])
+            return hashlib.sha1(header + raw).hexdigest() == expected and mark in data
+
+        text = None
+        if os.path.isfile(cp):
+            cached = open(cp, encoding='utf-8').read()
+            if valid(cached):
+                text = cached
+                print(f'route {src}: verified cached source')
+        if text is None:
+            try:
+                text = urllib.request.urlopen(NMP_RAW + src, timeout=30).read().decode('utf-8')
+            except Exception as e:
+                sys.exit(f'route {src}: no verified cache and download failed: {e}')
+            if not valid(text):
+                sys.exit(f'route {src}: content differs from pinned Git blob {expected}')
             open(cp, 'w', encoding='utf-8').write(text)
-        except Exception as e:
-            if not os.path.exists(cp):
-                sys.exit(f'дежурные стационары: не удалось скачать {src} ({e}), копии в .cache нет')
-            print(f'! {src}: {e}; беру копию из .cache')
-            text = open(cp, encoding='utf-8').read()
+            print(f'route {src}: verified pinned source')
         out[name] = text
     return out
 
