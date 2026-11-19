@@ -55,7 +55,7 @@ dependencies { implementation project(':drugs-core') }
      doLast {
          def versionFile = offlineAssetsDir.get().file('www/ota_version.txt').asFile
          versionFile.parentFile.mkdirs()
-         versionFile.text = '0\\n'
+         versionFile.text = '0'
          if (!offlineAssetsDir.get().file('www/index.html').asFile.isFile()) {
              throw new GradleException('Offline index.html missing from Android APK assets')
          }
