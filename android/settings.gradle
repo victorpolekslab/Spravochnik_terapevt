@@ -6,4 +6,5 @@ dependencyResolutionManagement {
     repositories { google(); mavenCentral() }
 }
 rootProject.name = "SpravochnikTerapevt"
-include ':app'
+include ':app', ':drugs-core'
+project(':drugs-core').projectDir = file('../shared-nmp/android/drugs-core')
