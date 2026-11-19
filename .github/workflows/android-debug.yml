@@ -50,6 +50,11 @@ jobs:
         with:
           path: .cache/kr_full.db.gz
           key: kr-59fae545-ae62b884144dda073c96c8546b3a688728b2acb765851da491d6e06e63cadf22
+      - name: Restore verified routing source cache
+        uses: actions/cache@v4
+        with:
+          path: .cache/nmp_route
+          key: nmp-route-80ea4c02-cf3426a3-79dfbe72
       - name: Generate complete offline clinical assets
         shell: bash
         run: |
