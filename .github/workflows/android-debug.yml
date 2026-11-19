@@ -66,8 +66,8 @@ jobs:
               body = (root / name).read_text(encoding='utf-8')
               match = re.search(r'\b(?:var|const|let)\s+' + var + r'\s*=\s*', body)
               assert match, f'{name}: missing {var} declaration'
-              value = body[match.end():].split(';', 1)[0]
-              obj = json.loads(value)
+              obj, end = json.JSONDecoder().raw_decode(body[match.end():].lstrip())
+              assert body[match.end():].lstrip()[end:].lstrip().startswith(';'), f'{name}: missing terminator'
               assert isinstance(obj, (dict, list)) and obj, f'{name}: empty dataset'
               print(name, 'parsed:', len(obj), 'top-level entries')
           print('Offline HTML references and core JSON datasets validated')
