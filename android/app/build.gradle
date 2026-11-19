@@ -43,3 +43,23 @@ android {
 }
 
 dependencies { implementation project(':drugs-core') }
+
+ // The APK must contain a complete offline UI; the web/ directory is the source of truth.
+ // A successful Gradle build without www/index.html would produce an unusable APK.
+ def offlineAssetsDir = layout.buildDirectory.dir('generated/offline-assets')
+ tasks.register('bundleOfflineWeb', Copy) {
+     from(rootProject.file('../web')) {
+         include 'index.html', '*.js', '*.css', '*.png', '*.webmanifest'
+     }
+     into(offlineAssetsDir.map { it.dir('www') })
+     doLast {
+         def versionFile = offlineAssetsDir.get().file('www/ota_version.txt').asFile
+         versionFile.parentFile.mkdirs()
+         versionFile.text = '0\\n'
+         if (!offlineAssetsDir.get().file('www/index.html').asFile.isFile()) {
+             throw new GradleException('Offline index.html missing from Android APK assets')
+         }
+     }
+ }
+ android.sourceSets.main.assets.srcDir(offlineAssetsDir)
+ tasks.named('preBuild').configure { dependsOn(tasks.named('bundleOfflineWeb')) }
