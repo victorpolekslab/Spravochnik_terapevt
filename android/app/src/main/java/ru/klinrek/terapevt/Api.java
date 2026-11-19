@@ -52,6 +52,28 @@ final class Api {
     }
 
     @JavascriptInterface
+    public String drugsVersion() { return DrugsDatabase.version(act); }
+
+    @JavascriptInterface
+    public String drugsIndex(String key) { return DrugsDatabase.index(act, key); }
+
+    @JavascriptInterface
+    public String drugsInstruction(String id) { return DrugsDatabase.instruction(act, id); }
+
+    @JavascriptInterface
+    public void installDrugs() {
+        new Thread(() -> {
+            try {
+                String version = DrugsDatabase.install(act);
+                js("window.onDrugsInstall&&window.onDrugsInstall(true," + JSONObject.quote(version) + ")");
+            } catch (Exception e) {
+                js("window.onDrugsInstall&&window.onDrugsInstall(false," +
+                        JSONObject.quote(e.getMessage() == null ? "Ошибка установки" : e.getMessage()) + ")");
+            }
+        }, "drugs-install").start();
+    }
+
+    @JavascriptInterface
     public void openUrl(String url) {
         if (url == null || !(url.startsWith("https://") || url.startsWith("http://"))) return;
         act.runOnUiThread(() -> {
