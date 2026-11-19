@@ -1,5 +1,7 @@
 package ru.klinrek.terapevt;
 
+import ru.klinrek.drugscore.DrugsDatabase;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
