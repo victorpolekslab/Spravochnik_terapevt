@@ -1340,12 +1340,24 @@ function about() {
       <span>Данные: <b>${esc(META.v)}</b> · база КР от <b>${dt(META.kr_built)}</b>${i.running && i.running !== i.bundled ? ' · загружены обновлением' : ''}</span>
       <span class="meta">${N ? `Обновления проверяются автоматически раз в сутки. Скачивание — только по нажатию кнопки; применение при следующем запуске. Последняя проверка: ${esc(ago)}.` : 'Обновления данных загружаются при открытии справочника, когда есть интернет; применить — кнопкой в баннере вверху.'}</span>
       ${N || SW.reg ? '<button id="chk" class="lnk" style="border:0;cursor:pointer">Проверить обновления сейчас</button><span id="upd" class="meta"></span>' : ''}${N ? '<button id="otaDownload" class="lnk" style="border:0;cursor:pointer">Скачать обновление вручную</button>' : ''}</div>
+    <div class="card"><b>Офлайн-инструкции препаратов</b><span>Однократная загрузка полной базы для использования без интернета. При повторном запуске сохранённые инструкции пропускаются.</span><button id="drugsOffline" class="lnk">Скачать базу инструкций</button><span id="drugsOfflineStatus" class="meta"></span></div>
     ${!N && !META.demo_until ? `<div class="card"><b>${IOS ? 'На iPhone' : 'Как приложение'}</b><span>${STANDALONE ? 'Справочник установлен на экран «Домой» и работает без интернета. Новые данные загружаются при открытии, когда есть сеть.' : IOS ? 'Откройте в Safari → кнопка «Поделиться» → «На экран „Домой“». Справочник откроется как приложение и будет работать без интернета.' : 'В меню браузера выберите «Установить приложение» или «Добавить на главный экран». Для Android есть APK — на странице скачивания.'}</span><a class="lnk" href="${SITE}download/">Страница скачивания ›</a></div>` : ''}
     <div class="card"><b>Обратная связь</b><span class="meta">Пожелания, найденные ошибки, чего не хватает в справочнике — сообщение получит автор.</span><a class="bigbtn" href="#feedback" style="margin:4px 0 0">Написать автору</a></div>
     ${shareCard()}
     <div class="card"><b>Источники</b><span>Клинические рекомендации — рубрикатор cr.minzdrav.gov.ru (снимок ${dt(META.kr_built)}). Приказ Минздрава № 168н (диспансерное наблюдение). Дозы, которых нет в КР, — инструкции к препаратам, источник указан в строке. Обзоры Cochrane — через PubMed, по запросу.</span></div>
     <div class="card" style="background:var(--warn-soft)"><b>Черновик для проверки врачом</b><span>Справочник не заменяет инструкцию к препарату и решение врача. Внешние и составленные фрагменты помечены.</span></div>
     <p class="foot">Справочник собирает анонимную статистику: какие разделы открывают и что ищут — со случайным номером устройства, без имён и контактов. <a href="#stats">Для автора: статистика</a></p></div>`;
+  const offlineBtn = $('#drugsOffline');
+  if (offlineBtn) offlineBtn.onclick = () => {
+    const status = $('#drugsOfflineStatus');
+    if (!DM || !DM.downloadAll) { status.textContent = 'Модуль препаратов недоступен'; return; }
+    offlineBtn.disabled = true;
+    status.textContent = 'Подготовка загрузки…';
+    DM.downloadAll((done, total, failed) => { status.textContent = 'Сохранено или проверено: ' + done + ' из ' + total + (failed ? ' · ошибок: ' + failed : ''); })
+      .then(count => { status.textContent = 'Готово: ' + count + ' инструкций доступны без интернета'; })
+      .catch(e => { status.textContent = 'Загрузка не завершена: ' + (e.message || e) + '. Повторите для продолжения.'; })
+      .finally(() => { offlineBtn.disabled = false; });
+  };
   bindShare();
   const dl = $('#otaDownload'); if (dl) dl.onclick = () => { $('#upd').textContent = 'Загрузка запущена…'; N.downloadUpdates(); };
   const b = $('#chk'); if (b) b.onclick = () => {
