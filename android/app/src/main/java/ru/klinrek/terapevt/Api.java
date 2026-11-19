@@ -46,6 +46,12 @@ final class Api {
     }
 
     @JavascriptInterface
+    public void downloadUpdates() {
+        Ota.download(act, () -> js("window.App&&App.otaReady&&App.otaReady()"),
+                () -> js("window.App&&App.otaChecked&&App.otaChecked(" + Ota.pending(act) + ")"));
+    }
+
+    @JavascriptInterface
     public void openUrl(String url) {
         if (url == null || !(url.startsWith("https://") || url.startsWith("http://"))) return;
         act.runOnUiThread(() -> {
