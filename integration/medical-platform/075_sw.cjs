@@ -66,7 +66,7 @@ test('production SW template: install, update, offline and API bypass',async()=>
    await poll(()=>page.evaluate(async()=>{
     const worker=(await navigator.serviceWorker.ready).waiting;
     if(!worker)return false;
-    worker.postMessage('skipWaiting');
+    worker.postMessage('skip');
     return true;
    }),'updated SW never entered waiting');
    await poll(()=>page.evaluate(async name=>{
