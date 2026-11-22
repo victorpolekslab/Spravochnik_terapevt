@@ -327,7 +327,7 @@ self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET' || u.origin !== location.origin) return;
   const root = new URL('./', self.location).pathname;
   if (u.pathname.endsWith('/') && u.pathname !== root) return;
-  e.respondWith(caches.open(CACHE).then(c => c.match(u.pathname === root ? './' : e.request, { ignoreSearch: true }).then(r => r || fetch(e.request))));
+  e.respondWith(caches.match(u.pathname === root ? './' : e.request, { cacheName: CACHE, ignoreSearch: true }).then(r => r || fetch(e.request)));
 });
 '''
 
