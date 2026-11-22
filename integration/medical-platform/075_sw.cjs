@@ -19,7 +19,8 @@ test('production SW template: install, update, offline and API bypass',async()=>
   if(name==='sw.js'){
    const files=app==='nmp'?names.map(x=>[x,'verified-fixture']):['./',...names];
    res.writeHead(200,{'Content-Type':'text/javascript','Cache-Control':'no-store'});
-   res.end(template.replace('__VERSION__',version).replace('__FILES__',JSON.stringify(files)));
+   res.end(template.replace('__VERSION__',version).replace('__FILES__',JSON.stringify(files)) +
+     "\nself.addEventListener('fetch', e => { if (new URL(e.request.url).pathname === '/audit-sw-state/') e.respondWith(new Response(VERSION)); });");
    return;
   }
   if(name.startsWith('v1/')||name.startsWith('pilot/')){
@@ -69,9 +70,11 @@ test('production SW template: install, update, offline and API bypass',async()=>
     return true;
    }),'updated SW never entered waiting');
    await poll(()=>page.evaluate(async name=>{
-    const keys=await caches.keys();
-    return keys.length===1&&keys[0].endsWith(name);
-   },next),'updated SW did not activate');
+    const response=await fetch('/audit-sw-state/');
+    return response.ok && (await response.text())===name;
+   },next),'updated SW did not control page');
+   const keys=await page.evaluate(()=>caches.keys());
+   assert.deepEqual(keys.filter(k=>k.startsWith('terapevt-/@')),['terapevt-/@'+next]);
   };
   await switchVersion('two');
   await switchVersion('one');
