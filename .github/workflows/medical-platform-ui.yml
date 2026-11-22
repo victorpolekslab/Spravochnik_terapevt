@@ -33,4 +33,4 @@ jobs:
           "$RUNNER_TEMP/medical-test/node_modules/.bin/playwright" install --with-deps chromium
           export CHROMIUM="$(node -p 'require("playwright").chromium.executablePath()')"
           "$CHROMIUM" --version
-          node --test integration/medical-platform/074_test_ui.cjs
+          node --test integration/medical-platform/074_test_ui.cjs integration/medical-platform/075_sw.cjs
