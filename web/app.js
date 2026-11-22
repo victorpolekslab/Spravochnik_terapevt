@@ -1470,8 +1470,14 @@ function apkBanner() {
 function swBanner(w) { banner('Загружено обновление справочника', 'Применить', () => w.postMessage('skip')); }
 function swInit() {
   if (N || !('serviceWorker' in navigator) || (location.protocol !== 'https:' && location.hostname !== 'localhost')) return;
-  let reloading = false; const had = !!navigator.serviceWorker.controller;
-  navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !reloading) { reloading = true; location.reload(); } });
+  let reloading = false;
+  let controller = navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    const next = navigator.serviceWorker.controller;
+    const replacing = controller && next && controller !== next;
+    controller = next;
+    if (replacing && !reloading) { reloading = true; location.reload(); }
+  });
   navigator.serviceWorker.register('sw.js').then(reg => {
     SW.reg = reg;
     if (reg.waiting && navigator.serviceWorker.controller) swBanner(reg.waiting);

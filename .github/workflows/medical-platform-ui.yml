@@ -34,3 +34,8 @@ jobs:
           export CHROMIUM="$(node -p 'require("playwright").chromium.executablePath()')"
           "$CHROMIUM" --version
           node --test integration/medical-platform/074_test_ui.cjs integration/medical-platform/075_sw.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: therapist-sw-trace
+          path: sw-trace.zip

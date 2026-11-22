@@ -320,7 +320,7 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => (k.startsWith(PFX) && k !== CACHE) || /^terapevt-\d/.test(k)).map(k => caches.delete(k)))).then(() => self.clients.claim()));
 });
-self.addEventListener('message', e => { if (e.data === 'skip') self.skipWaiting(); });
+self.addEventListener('message', e => { if (e.data === 'skip') e.waitUntil(self.skipWaiting()); });
 self.addEventListener('fetch', e => {
   const u = new URL(e.request.url);
   if (u.pathname.startsWith('/v1/') || u.pathname.startsWith('/pilot/')) return;

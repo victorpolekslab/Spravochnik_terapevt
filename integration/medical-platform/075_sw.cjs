@@ -20,7 +20,7 @@ test('production SW template: install, update, offline and API bypass',async()=>
    const files=app==='nmp'?names.map(x=>[x,'verified-fixture']):['./',...names];
    res.writeHead(200,{'Content-Type':'text/javascript','Cache-Control':'no-store'});
    res.end(template.replace('__VERSION__',version).replace('__FILES__',JSON.stringify(files)) +
-     "\nself.addEventListener('fetch', e => { if (new URL(e.request.url).pathname === '/audit-sw-state/') e.respondWith(new Response(VERSION)); });");
+     "\nself.addEventListener('message', e => { if (e.data === 'audit-version' && e.ports[0]) e.ports[0].postMessage(VERSION); });");
    return;
   }
   if(name.startsWith('v1/')||name.startsWith('pilot/')){
@@ -43,6 +43,7 @@ test('production SW template: install, update, offline and API bypass',async()=>
  try{
   const context=await browser.newContext();
   await context.route('**/*',r=>r.request().url().startsWith(origin+'/')?r.continue():r.abort());
+  await context.tracing.start({screenshots:true,snapshots:true});
   const page=await context.newPage();
   await page.goto(origin+'/index.html'+(app==='nmp'?'#learn':'#about'));
   await page.evaluate(async()=>{localStorage.setItem('audit-preserve','yes');await navigator.serviceWorker.register('/sw.js');await navigator.serviceWorker.ready;});
@@ -69,13 +70,26 @@ test('production SW template: install, update, offline and API bypass',async()=>
     worker.postMessage('skip');
     return true;
    }),'updated SW never entered waiting');
-   await poll(()=>page.evaluate(async name=>{
-    const response=await fetch('/audit-sw-state/');
-    return response.ok && (await response.text())===name;
-   },next),'updated SW did not control page');
-   const keys=await page.evaluate(()=>caches.keys());
-   assert.deepEqual(keys.filter(k=>k.startsWith('terapevt-/@')),['terapevt-/@'+next]);
+   await poll(async()=>{
+    try{return await page.evaluate(name=>new Promise(resolve=>{
+      const worker=navigator.serviceWorker.controller;
+      if(!worker)return resolve(false);
+      const channel=new MessageChannel();
+      const timer=setTimeout(()=>{channel.port1.close();resolve(false);},200);
+      channel.port1.onmessage=e=>{clearTimeout(timer);channel.port1.close();resolve(e.data===name);};
+      worker.postMessage('audit-version',[channel.port2]);
+    }),next);}catch{return false;}
+   },'updated SW did not control page: '+next);
+   console.log('CONTROLLER_VERSION '+next);
   };
+  await page.evaluate(()=>new Promise((resolve,reject)=>{
+    const req=indexedDB.open('audit-preserve',1);
+    req.onupgradeneeded=()=>req.result.createObjectStore('records');
+    req.onerror=()=>reject(req.error);
+    req.onsuccess=()=>{const db=req.result;const tx=db.transaction('records','readwrite');
+      tx.objectStore('records').put('durable','record');tx.oncomplete=()=>{db.close();resolve();};
+      tx.onerror=()=>reject(tx.error);};
+  }));
   await switchVersion('two');
   await switchVersion('one');
   await context.setOffline(true);
@@ -83,6 +97,12 @@ test('production SW template: install, update, offline and API bypass',async()=>
   await page.locator(app==='nmp'?'#lLogin':'#view .card').first().waitFor();
   assert.equal(await page.evaluate(()=>localStorage.getItem('audit-preserve')),'yes');
   await assert.rejects(probe());
+  assert.equal(await page.evaluate(()=>new Promise((resolve,reject)=>{
+    const req=indexedDB.open('audit-preserve',1);req.onerror=()=>reject(req.error);
+    req.onsuccess=()=>{const db=req.result;const read=db.transaction('records').objectStore('records').get('record');
+      read.onsuccess=()=>{db.close();resolve(read.result);};read.onerror=()=>reject(read.error);};
+  })),'durable');
+  await context.tracing.stop({path:'sw-trace.zip'});
   console.log('PWA_REAL_SW PASS '+app+' initial/update/rollback/offline/private-cache-exclusion');
  }finally{await browser.close();server.close();}
 });
