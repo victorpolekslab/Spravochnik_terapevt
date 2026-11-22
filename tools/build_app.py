@@ -323,6 +323,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('message', e => { if (e.data === 'skip') self.skipWaiting(); });
 self.addEventListener('fetch', e => {
   const u = new URL(e.request.url);
+  if (u.pathname.startsWith('/v1/') || u.pathname.startsWith('/pilot/')) return;
   if (e.request.method !== 'GET' || u.origin !== location.origin) return;
   const root = new URL('./', self.location).pathname;
   if (u.pathname.endsWith('/') && u.pathname !== root) return;

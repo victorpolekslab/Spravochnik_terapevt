@@ -603,7 +603,17 @@ function route() {
     else if (p === 'kr') krPage(a, b && b !== '-' ? b : undefined, c);
     else if (p === 'mref') { refPage(a); setTitle(REF[a] ? REF[a].title : 'Справка', true); }
     else if (p === 'ref') a ? refPage(a) : refList();
-    else if (p === 'about') about();
+    else if (p === 'about') {
+      about();
+      if (location.hostname === 'localhost' && window.isSecureContext && navigator.locks) {
+        let enabled = false;
+        try { enabled = sessionStorage.getItem('medical-platform-pilot') === '1'; } catch {}
+        if (enabled) import('/pilot/074_panel.mjs').then(module => {
+          if (location.hash === '#about' && sessionStorage.getItem('medical-platform-pilot') === '1')
+            module.mountMedicalPanel(view, 'terapevt');
+        }).catch(() => {});
+      }
+    }
     else if (p === 'share') sharePage();
     else if (p === 'feedback') feedbackPage();
     else if (p === 'stats') statsPage();

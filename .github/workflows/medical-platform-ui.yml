@@ -1,0 +1,36 @@
+name: Medical Platform therapist UI
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'integration/medical-platform/**'
+      - 'web/**'
+      - 'tools/build_app.py'
+      - '.github/workflows/medical-platform-ui.yml'
+permissions:
+  contents: read
+jobs:
+  chromium:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      MEDICAL_UI_APP: terapevt
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPATH: integration/medical-platform:integration/medical-platform/testdeps
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          npm install --prefix "$RUNNER_TEMP/medical-test" --no-audit --no-fund playwright@1.57.0
+          export NODE_PATH="$RUNNER_TEMP/medical-test/node_modules"
+          "$RUNNER_TEMP/medical-test/node_modules/.bin/playwright" install --with-deps chromium
+          export CHROMIUM="$(node -p 'require("playwright").chromium.executablePath()')"
+          "$CHROMIUM" --version
+          node --test integration/medical-platform/074_test_ui.cjs
