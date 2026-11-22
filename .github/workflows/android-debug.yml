@@ -111,9 +111,24 @@ jobs:
           name: debug-apk-unverified
           path: android/app/build/outputs/apk/debug/*.apk
           retention-days: 7
-      - name: Android emulator runtime smoke
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/checkout@v4
+        with:
+          repository: victorpolekslab/Spravochnik_nmp
+          ref: d2ccfa29eb9c0ef7ce6d089276178372d3518cbd
+          path: backend-audit
+          persist-credentials: false
+      - name: Android emulator runtime and WebView
         env:
           MEDICAL_ANDROID_START_EMULATOR: '1'
+          MP_ANDROID_APP: terapevt
+          MP_E2E_HARNESS: backend-audit/integration/medical-platform/077_android_backend.sh
+          MP_THERAPIST_WEB: ${{ github.workspace }}/web
         shell: bash
         run: |
           APK=$(find android/app/build/outputs/apk/debug -maxdepth 1 -name '*.apk' -print -quit)
