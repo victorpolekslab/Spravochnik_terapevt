@@ -89,6 +89,8 @@ test('actual application route: default off, embedded opt-in and auth', {timeout
   await panel.getByText('Вход выполнен.').waitFor();
   await page.reload();
   await panel.getByText('Сессия восстановлена.').waitFor();
+  const screenshot=await panel.screenshot({type:'jpeg',quality:55,animations:'disabled'});
+  console.log('AUDIT_SCREENSHOT_'+app+'='+screenshot.toString('base64'));
   if(app==='nmp'){
    assert.ok(await page.locator('#lLogin').isVisible());
    await panel.getByRole('button',{name:'Загрузить'}).click();
@@ -110,5 +112,12 @@ test('actual application route: default off, embedded opt-in and auth', {timeout
   await panel.getByText('Вы вышли.').waitFor();
   await panel.getByRole('button',{name:'Отключить пилот'}).click();
   await panel.waitFor({state:'detached'});
+  const unsupported=await context.newPage();
+  await unsupported.addInitScript(()=>{
+   sessionStorage.setItem('medical-platform-pilot','1');
+   Object.defineProperty(Navigator.prototype,'locks',{value:undefined});
+  });
+  await unsupported.goto(origin+'/'+target);
+  assert.equal(await unsupported.locator('[data-medical-platform]').count(),0);
  }finally{await browser.close();server.close();}
 });
