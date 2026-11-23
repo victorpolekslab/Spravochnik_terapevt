@@ -605,7 +605,7 @@ function route() {
     else if (p === 'ref') a ? refPage(a) : refList();
     else if (p === 'about') {
       about();
-      if (location.hostname === 'localhost' && window.isSecureContext && navigator.locks) {
+      if ((location.protocol === 'https:' || location.hostname === 'localhost') && window.isSecureContext && navigator.locks) {
         let enabled = false;
         try { enabled = sessionStorage.getItem('medical-platform-pilot') === '1'; } catch {}
         if (enabled) import('/pilot/074_panel.mjs').then(module => {
