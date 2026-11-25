@@ -86,6 +86,8 @@ jobs:
           print('Offline HTML references and core JSON datasets validated')
           PY
           for script in android/app/src/main/assets/www/*.js; do node --check "$script" >/dev/null; done
+      - name: Create ephemeral debug-only CA
+        run: bash integration/medical-platform/079_test_ca.sh "$RUNNER_TEMP/pilot-tls" "$GITHUB_WORKSPACE"
       - name: Compile Android debug APK
         working-directory: android
         run: gradle --no-daemon :app:assembleDebug
@@ -111,3 +113,31 @@ jobs:
           name: debug-apk-unverified
           path: android/app/build/outputs/apk/debug/*.apk
           retention-days: 7
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/checkout@v4
+        with:
+          repository: victorpolekslab/Spravochnik_nmp
+          ref: b294615f464f774d2fc24768df1674132533ec85
+          path: backend-audit
+          persist-credentials: false
+      - name: Android emulator runtime and WebView
+        env:
+          MEDICAL_ANDROID_START_EMULATOR: '1'
+          MP_ANDROID_APP: terapevt
+          MP_TEST_TLS_DIR: ${{ runner.temp }}/pilot-tls
+          MP_E2E_HARNESS: backend-audit/integration/medical-platform/077_android_backend.sh
+          MP_THERAPIST_WEB: ${{ github.workspace }}/web
+        shell: bash
+        run: |
+          APK=$(find android/app/build/outputs/apk/debug -maxdepth 1 -name '*.apk' -print -quit)
+          bash integration/medical-platform/076_android.sh "$APK" android-runtime-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-runtime-evidence
+          path: android-runtime-evidence/

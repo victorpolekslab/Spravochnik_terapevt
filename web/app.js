@@ -603,7 +603,17 @@ function route() {
     else if (p === 'kr') krPage(a, b && b !== '-' ? b : undefined, c);
     else if (p === 'mref') { refPage(a); setTitle(REF[a] ? REF[a].title : 'Справка', true); }
     else if (p === 'ref') a ? refPage(a) : refList();
-    else if (p === 'about') about();
+    else if (p === 'about') {
+      about();
+      if ((location.protocol === 'https:' || location.hostname === 'localhost') && window.isSecureContext && navigator.locks) {
+        let enabled = false;
+        try { enabled = sessionStorage.getItem('medical-platform-pilot') === '1'; } catch {}
+        if (enabled) import('/pilot/074_panel.mjs').then(module => {
+          if (location.hash === '#about' && sessionStorage.getItem('medical-platform-pilot') === '1')
+            module.mountMedicalPanel(view, 'terapevt');
+        }).catch(() => {});
+      }
+    }
     else if (p === 'share') sharePage();
     else if (p === 'feedback') feedbackPage();
     else if (p === 'stats') statsPage();
@@ -1460,8 +1470,14 @@ function apkBanner() {
 function swBanner(w) { banner('Загружено обновление справочника', 'Применить', () => w.postMessage('skip')); }
 function swInit() {
   if (N || !('serviceWorker' in navigator) || (location.protocol !== 'https:' && location.hostname !== 'localhost')) return;
-  let reloading = false; const had = !!navigator.serviceWorker.controller;
-  navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !reloading) { reloading = true; location.reload(); } });
+  let reloading = false;
+  let controller = navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    const next = navigator.serviceWorker.controller;
+    const replacing = controller && next && controller !== next;
+    controller = next;
+    if (replacing && !reloading) { reloading = true; location.reload(); }
+  });
   navigator.serviceWorker.register('sw.js').then(reg => {
     SW.reg = reg;
     if (reg.waiting && navigator.serviceWorker.controller) swBanner(reg.waiting);

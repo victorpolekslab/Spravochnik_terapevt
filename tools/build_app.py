@@ -320,13 +320,14 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => (k.startsWith(PFX) && k !== CACHE) || /^terapevt-\d/.test(k)).map(k => caches.delete(k)))).then(() => self.clients.claim()));
 });
-self.addEventListener('message', e => { if (e.data === 'skip') self.skipWaiting(); });
+self.addEventListener('message', e => { if (e.data === 'skip') e.waitUntil(self.skipWaiting()); });
 self.addEventListener('fetch', e => {
   const u = new URL(e.request.url);
+  if (u.pathname.startsWith('/v1/') || u.pathname.startsWith('/pilot/')) return;
   if (e.request.method !== 'GET' || u.origin !== location.origin) return;
   const root = new URL('./', self.location).pathname;
   if (u.pathname.endsWith('/') && u.pathname !== root) return;
-  e.respondWith(caches.open(CACHE).then(c => c.match(u.pathname === root ? './' : e.request, { ignoreSearch: true }).then(r => r || fetch(e.request))));
+  e.respondWith(caches.match(u.pathname === root ? './' : e.request, { cacheName: CACHE, ignoreSearch: true }).then(r => r || fetch(e.request)));
 });
 '''
 
